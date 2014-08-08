@@ -1,0 +1,2801 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="GRASPModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="GRASPModelStoreContainer">
+          <EntitySet Name="BindingContainer" EntityType="GRASPModel.Store.BindingContainer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ConstraintContainer" EntityType="GRASPModel.Store.ConstraintContainer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Contact" EntityType="GRASPModel.Store.Contact" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="DataTransfer" EntityType="GRASPModel.Store.DataTransfer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Email" EntityType="GRASPModel.Store.Email" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EmailAccount" EntityType="GRASPModel.Store.EmailAccount" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Form" EntityType="GRASPModel.Store.Form" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Form_FormField" EntityType="GRASPModel.Store.Form_FormField" store:Type="Tables" store:Schema="dbo" store:Name="Form_FormField">
+            <DefiningQuery>SELECT 
+      [Form_FormField].[Form_id] AS [Form_id], 
+      [Form_FormField].[fields_id] AS [fields_id]
+      FROM [dbo].[Form_FormField] AS [Form_FormField]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="FormField" EntityType="GRASPModel.Store.FormField" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FormField_ConstraintContainer" EntityType="GRASPModel.Store.FormField_ConstraintContainer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FormField_FormField" EntityType="GRASPModel.Store.FormField_FormField" store:Type="Tables" store:Schema="dbo" store:Name="FormField_FormField">
+            <DefiningQuery>SELECT 
+      [FormField_FormField].[FormField_id] AS [FormField_id], 
+      [FormField_FormField].[repetableFormFields_id] AS [repetableFormFields_id]
+      FROM [dbo].[FormField_FormField] AS [FormField_FormField]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="FormField_FormFieldAndBinding" EntityType="GRASPModel.Store.FormField_FormFieldAndBinding" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FormField_FormResponse" EntityType="GRASPModel.Store.FormField_FormResponse" store:Type="Tables" store:Schema="dbo" store:Name="FormField_FormResponse">
+            <DefiningQuery>SELECT 
+      [FormField_FormResponse].[FormField_id] AS [FormField_id], 
+      [FormField_FormResponse].[formResponses_id] AS [formResponses_id]
+      FROM [dbo].[FormField_FormResponse] AS [FormField_FormResponse]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="FormFieldAndBinding" EntityType="GRASPModel.Store.FormFieldAndBinding" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FormResponse" EntityType="GRASPModel.Store.FormResponse" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FormResponse_ResponseValue" EntityType="GRASPModel.Store.FormResponse_ResponseValue" store:Type="Tables" store:Schema="dbo" store:Name="FormResponse_ResponseValue">
+            <DefiningQuery>SELECT 
+      [FormResponse_ResponseValue].[FormResponse_id] AS [FormResponse_id], 
+      [FormResponse_ResponseValue].[results_id] AS [results_id]
+      FROM [dbo].[FormResponse_ResponseValue] AS [FormResponse_ResponseValue]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="FormResponseCoords" EntityType="GRASPModel.Store.FormResponseCoords" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FormResponseCoords_ResponseValue" EntityType="GRASPModel.Store.FormResponseCoords_ResponseValue" store:Type="Tables" store:Schema="dbo" store:Name="FormResponseCoords_ResponseValue">
+            <DefiningQuery>SELECT 
+      [FormResponseCoords_ResponseValue].[FormResponseCoords_FRCoordID] AS [FormResponseCoords_FRCoordID], 
+      [FormResponseCoords_ResponseValue].[formResponses_id] AS [formResponses_id]
+      FROM [dbo].[FormResponseCoords_ResponseValue] AS [FormResponseCoords_ResponseValue]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="frontline_group" EntityType="GRASPModel.Store.frontline_group" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="FrontlineMultimediaMessagePart" EntityType="GRASPModel.Store.FrontlineMultimediaMessagePart" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="GroupMembership" EntityType="GRASPModel.Store.GroupMembership" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Keyword" EntityType="GRASPModel.Store.Keyword" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="keywordaction" EntityType="GRASPModel.Store.keywordaction" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="message" EntityType="GRASPModel.Store.message" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="message_FrontlineMultimediaMessagePart" EntityType="GRASPModel.Store.message_FrontlineMultimediaMessagePart" store:Type="Tables" store:Schema="dbo" store:Name="message_FrontlineMultimediaMessagePart">
+            <DefiningQuery>SELECT 
+      [message_FrontlineMultimediaMessagePart].[message_id] AS [message_id], 
+      [message_FrontlineMultimediaMessagePart].[multimediaParts_id] AS [multimediaParts_id]
+      FROM [dbo].[message_FrontlineMultimediaMessagePart] AS [message_FrontlineMultimediaMessagePart]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="reminder" EntityType="GRASPModel.Store.reminder" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ReportFields" EntityType="GRASPModel.Store.ReportFields" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Reports" EntityType="GRASPModel.Store.Reports" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ResponseValue" EntityType="GRASPModel.Store.ResponseValue" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ResponseValue_ResponseValue" EntityType="GRASPModel.Store.ResponseValue_ResponseValue" store:Type="Tables" store:Schema="dbo" store:Name="ResponseValue_ResponseValue">
+            <DefiningQuery>SELECT 
+      [ResponseValue_ResponseValue].[ResponseValue_id] AS [ResponseValue_id], 
+      [ResponseValue_ResponseValue].[repetableResponseValues_id] AS [repetableResponseValues_id]
+      FROM [dbo].[ResponseValue_ResponseValue] AS [ResponseValue_ResponseValue]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Roles" EntityType="GRASPModel.Store.Roles" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SmsInternetServiceSettings" EntityType="GRASPModel.Store.SmsInternetServiceSettings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue" EntityType="GRASPModel.Store.SmsInternetServiceSettings_SmsInternetServiceSettingValue" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SmsInternetServiceSettingValue" EntityType="GRASPModel.Store.SmsInternetServiceSettingValue" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SmsModemSettings" EntityType="GRASPModel.Store.SmsModemSettings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StatisticsTable" EntityType="GRASPModel.Store.StatisticsTable" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Survey" EntityType="GRASPModel.Store.Survey" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Survey_SurveyElement" EntityType="GRASPModel.Store.Survey_SurveyElement" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SurveyElement" EntityType="GRASPModel.Store.SurveyElement" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="User_Credential" EntityType="GRASPModel.Store.User_Credential" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="BindingRules" EntityType="GRASPModel.Store.BindingRules" store:Type="Views" store:Schema="dbo" store:Name="BindingRules">
+            <DefiningQuery>SELECT 
+      [BindingRules].[FormField_id] AS [FormField_id], 
+      [BindingRules].[id] AS [id], 
+      [BindingRules].[bType] AS [bType], 
+      [BindingRules].[value] AS [value], 
+      [BindingRules].[label] AS [label], 
+      [BindingRules].[name] AS [name], 
+      [BindingRules].[positionIndex] AS [positionIndex], 
+      [BindingRules].[type] AS [type], 
+      [BindingRules].[x_form] AS [x_form], 
+      [BindingRules].[form_id] AS [form_id], 
+      [BindingRules].[bindingsPolicy] AS [bindingsPolicy], 
+      [BindingRules].[Expr1] AS [Expr1], 
+      [BindingRules].[calculated] AS [calculated], 
+      [BindingRules].[formula] AS [formula], 
+      [BindingRules].[required] AS [required]
+      FROM [dbo].[BindingRules] AS [BindingRules]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="FormFieldExport" EntityType="GRASPModel.Store.FormFieldExport" store:Type="Views" store:Schema="dbo" store:Name="FormFieldExport">
+            <DefiningQuery>SELECT 
+      [FormFieldExport].[id] AS [id], 
+      [FormFieldExport].[label] AS [label], 
+      [FormFieldExport].[name] AS [name], 
+      [FormFieldExport].[positionIndex] AS [positionIndex], 
+      [FormFieldExport].[required] AS [required], 
+      [FormFieldExport].[type] AS [type], 
+      [FormFieldExport].[x_form] AS [x_form], 
+      [FormFieldExport].[form_id] AS [form_id], 
+      [FormFieldExport].[survey_id] AS [survey_id], 
+      [FormFieldExport].[isReadOnly] AS [isReadOnly], 
+      [FormFieldExport].[numberOfRep] AS [numberOfRep], 
+      [FormFieldExport].[FFCreateDate] AS [FFCreateDate], 
+      [FormFieldExport].[FormFieldParentID] AS [FormFieldParentID], 
+      [FormFieldExport].[calculated] AS [calculated], 
+      [FormFieldExport].[formula] AS [formula]
+      FROM [dbo].[FormFieldExport] AS [FormFieldExport]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="SurveyListAPI" EntityType="GRASPModel.Store.SurveyListAPI" store:Type="Views" store:Schema="dbo" store:Name="SurveyListAPI">
+            <DefiningQuery>SELECT 
+      [SurveyListAPI].[id] AS [id], 
+      [SurveyListAPI].[name] AS [name], 
+      [SurveyListAPI].[value] AS [value]
+      FROM [dbo].[SurveyListAPI] AS [SurveyListAPI]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK2180E4D3148215" Association="GRASPModel.Store.FK2180E4D3148215">
+            <End Role="frontline_group" EntitySet="frontline_group" />
+            <End Role="Form" EntitySet="Form" />
+          </AssociationSet>
+          <AssociationSet Name="FK3FF5B7C77FBC69D" Association="GRASPModel.Store.FK3FF5B7C77FBC69D">
+            <End Role="EmailAccount" EntitySet="EmailAccount" />
+            <End Role="Email" EntitySet="Email" />
+          </AssociationSet>
+          <AssociationSet Name="FK4210107B162222E6" Association="GRASPModel.Store.FK4210107B162222E6">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField_FormFieldAndBinding" EntitySet="FormField_FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FK4210107B66ACF65C" Association="GRASPModel.Store.FK4210107B66ACF65C">
+            <End Role="FormFieldAndBinding" EntitySet="FormFieldAndBinding" />
+            <End Role="FormField_FormFieldAndBinding" EntitySet="FormField_FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FK475D51213B0E124D" Association="GRASPModel.Store.FK475D51213B0E124D">
+            <End Role="ResponseValue" EntitySet="ResponseValue" />
+            <End Role="ResponseValue_ResponseValue" EntitySet="ResponseValue_ResponseValue" />
+          </AssociationSet>
+          <AssociationSet Name="FK475D51219AE2EA6" Association="GRASPModel.Store.FK475D51219AE2EA6">
+            <End Role="ResponseValue" EntitySet="ResponseValue" />
+            <End Role="ResponseValue_ResponseValue" EntitySet="ResponseValue_ResponseValue" />
+          </AssociationSet>
+          <AssociationSet Name="FK594E3BBB162222E6" Association="GRASPModel.Store.FK594E3BBB162222E6">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField_ConstraintContainer" EntitySet="FormField_ConstraintContainer" />
+          </AssociationSet>
+          <AssociationSet Name="FK594E3BBB95BCFCF4" Association="GRASPModel.Store.FK594E3BBB95BCFCF4">
+            <End Role="ConstraintContainer" EntitySet="ConstraintContainer" />
+            <End Role="FormField_ConstraintContainer" EntitySet="FormField_ConstraintContainer" />
+          </AssociationSet>
+          <AssociationSet Name="FK623D294B7F468633" Association="GRASPModel.Store.FK623D294B7F468633">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="User_Credential" EntitySet="User_Credential" />
+          </AssociationSet>
+          <AssociationSet Name="FK7110EE1D882251EE" Association="GRASPModel.Store.FK7110EE1D882251EE">
+            <End Role="Survey" EntitySet="Survey" />
+            <End Role="Survey_SurveyElement" EntitySet="Survey_SurveyElement" />
+          </AssociationSet>
+          <AssociationSet Name="FK7110EE1DB3405EA6" Association="GRASPModel.Store.FK7110EE1DB3405EA6">
+            <End Role="SurveyElement" EntitySet="SurveyElement" />
+            <End Role="Survey_SurveyElement" EntitySet="Survey_SurveyElement" />
+          </AssociationSet>
+          <AssociationSet Name="FK822AE55F3D2C2C41" Association="GRASPModel.Store.FK822AE55F3D2C2C41">
+            <End Role="EmailAccount" EntitySet="EmailAccount" />
+            <End Role="keywordaction" EntitySet="keywordaction" />
+          </AssociationSet>
+          <AssociationSet Name="FK822AE55FC5482473" Association="GRASPModel.Store.FK822AE55FC5482473">
+            <End Role="Keyword" EntitySet="Keyword" />
+            <End Role="keywordaction" EntitySet="keywordaction" />
+          </AssociationSet>
+          <AssociationSet Name="FK822AE55FDAF23DFD" Association="GRASPModel.Store.FK822AE55FDAF23DFD">
+            <End Role="frontline_group" EntitySet="frontline_group" />
+            <End Role="keywordaction" EntitySet="keywordaction" />
+          </AssociationSet>
+          <AssociationSet Name="FK8325D545D92B32C4" Association="GRASPModel.Store.FK8325D545D92B32C4">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="FormResponse" EntitySet="FormResponse" />
+          </AssociationSet>
+          <AssociationSet Name="FK891CCCDB1F476EAE" Association="GRASPModel.Store.FK891CCCDB1F476EAE">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="Form_FormField" EntitySet="Form_FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FK891CCCDBF2FF003" Association="GRASPModel.Store.FK891CCCDBF2FF003">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="Form_FormField" EntitySet="Form_FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FK9448937AAACA0E5F" Association="GRASPModel.Store.FK9448937AAACA0E5F">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="Survey" EntitySet="Survey" />
+          </AssociationSet>
+          <AssociationSet Name="FKA24BD3BD32373A6A" Association="GRASPModel.Store.FKA24BD3BD32373A6A">
+            <End Role="SmsInternetServiceSettingValue" EntitySet="SmsInternetServiceSettingValue" />
+            <End Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" EntitySet="SmsInternetServiceSettings_SmsInternetServiceSettingValue" />
+          </AssociationSet>
+          <AssociationSet Name="FKA24BD3BD6E7ADCE1" Association="GRASPModel.Store.FKA24BD3BD6E7ADCE1">
+            <End Role="SmsInternetServiceSettings" EntitySet="SmsInternetServiceSettings" />
+            <End Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" EntitySet="SmsInternetServiceSettings_SmsInternetServiceSettingValue" />
+          </AssociationSet>
+          <AssociationSet Name="FKAA958F0A2B00A379" Association="GRASPModel.Store.FKAA958F0A2B00A379">
+            <End Role="message" EntitySet="message" />
+            <End Role="message_FrontlineMultimediaMessagePart" EntitySet="message_FrontlineMultimediaMessagePart" />
+          </AssociationSet>
+          <AssociationSet Name="FKAA958F0AFC9C3E5E" Association="GRASPModel.Store.FKAA958F0AFC9C3E5E">
+            <End Role="FrontlineMultimediaMessagePart" EntitySet="FrontlineMultimediaMessagePart" />
+            <End Role="message_FrontlineMultimediaMessagePart" EntitySet="message_FrontlineMultimediaMessagePart" />
+          </AssociationSet>
+          <AssociationSet Name="FKAFB41BED162222E6" Association="GRASPModel.Store.FKAFB41BED162222E6">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField_FormField" EntitySet="FormField_FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FKAFB41BED1AD43419" Association="GRASPModel.Store.FKAFB41BED1AD43419">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField_FormField" EntitySet="FormField_FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FKBA9C3F955A18C292" Association="GRASPModel.Store.FKBA9C3F955A18C292">
+            <End Role="Contact" EntitySet="Contact" />
+            <End Role="GroupMembership" EntitySet="GroupMembership" />
+          </AssociationSet>
+          <AssociationSet Name="FKBA9C3F95DAF23DFD" Association="GRASPModel.Store.FKBA9C3F95DAF23DFD">
+            <End Role="frontline_group" EntitySet="frontline_group" />
+            <End Role="GroupMembership" EntitySet="GroupMembership" />
+          </AssociationSet>
+          <AssociationSet Name="FKCA47C8161674AB2E" Association="GRASPModel.Store.FKCA47C8161674AB2E">
+            <End Role="FormResponse" EntitySet="FormResponse" />
+            <End Role="FormResponse_ResponseValue" EntitySet="FormResponse_ResponseValue" />
+          </AssociationSet>
+          <AssociationSet Name="FKCA47C816F8F076C0" Association="GRASPModel.Store.FKCA47C816F8F076C0">
+            <End Role="ResponseValue" EntitySet="ResponseValue" />
+            <End Role="FormResponse_ResponseValue" EntitySet="FormResponse_ResponseValue" />
+          </AssociationSet>
+          <AssociationSet Name="FKD3503BC4981CDFEB" Association="GRASPModel.Store.FKD3503BC4981CDFEB">
+            <End Role="BindingContainer" EntitySet="BindingContainer" />
+            <End Role="FormFieldAndBinding" EntitySet="FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FKD3503BC49F9D5488" Association="GRASPModel.Store.FKD3503BC49F9D5488">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormFieldAndBinding" EntitySet="FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FKE116C0723D2C2C41" Association="GRASPModel.Store.FKE116C0723D2C2C41">
+            <End Role="EmailAccount" EntitySet="EmailAccount" />
+            <End Role="reminder" EntitySet="reminder" />
+          </AssociationSet>
+          <AssociationSet Name="FKE1EB1E761F476EAE" Association="GRASPModel.Store.FKE1EB1E761F476EAE">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="FormField" EntitySet="FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FKE1EB1E76882251EE" Association="GRASPModel.Store.FKE1EB1E76882251EE">
+            <End Role="Survey" EntitySet="Survey" />
+            <End Role="FormField" EntitySet="FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FKF395D06E162222E6" Association="GRASPModel.Store.FKF395D06E162222E6">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField_FormResponse" EntitySet="FormField_FormResponse" />
+          </AssociationSet>
+          <AssociationSet Name="FKF395D06EBD67FB85" Association="GRASPModel.Store.FKF395D06EBD67FB85">
+            <End Role="FormResponse" EntitySet="FormResponse" />
+            <End Role="FormField_FormResponse" EntitySet="FormField_FormResponse" />
+          </AssociationSet>
+          <AssociationSet Name="FKFA275C14699E17A8" Association="GRASPModel.Store.FKFA275C14699E17A8">
+            <End Role="ResponseValue" EntitySet="ResponseValue" />
+            <End Role="FormResponseCoords_ResponseValue" EntitySet="FormResponseCoords_ResponseValue" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="BindingContainer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="bType" Type="nvarchar" MaxLength="255" />
+          <Property Name="maxRange" Type="int" />
+          <Property Name="minRange" Type="int" />
+          <Property Name="pushed" Type="tinyint" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="ConstraintContainer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="cType" Type="varchar" MaxLength="255" />
+          <Property Name="maxRange" Type="int" Nullable="false" />
+          <Property Name="minRange" Type="int" Nullable="false" />
+          <Property Name="pushed" Type="tinyint" />
+          <Property Name="value" Type="varchar" MaxLength="255" />
+          <Property Name="cNumber" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="contact_id" />
+          </Key>
+          <Property Name="contact_id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="active" Type="tinyint" Nullable="false" />
+          <Property Name="emailAddress" Type="nvarchar" MaxLength="255" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" />
+          <Property Name="notes" Type="nvarchar" MaxLength="255" />
+          <Property Name="otherPhoneNumber" Type="nvarchar" MaxLength="255" />
+          <Property Name="phoneNumber" Type="nvarchar" MaxLength="255" />
+          <Property Name="pushed" Type="tinyint" />
+        </EntityType>
+        <EntityType Name="DataTransfer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="dbname" Type="nvarchar" MaxLength="255" />
+          <Property Name="dbpassword" Type="nvarchar" MaxLength="255" />
+          <Property Name="dbusername" Type="nvarchar" MaxLength="255" />
+          <Property Name="manual" Type="tinyint" />
+          <Property Name="scheduled" Type="tinyint" />
+          <Property Name="scheduledtime" Type="datetime" />
+          <Property Name="servername" Type="nvarchar" MaxLength="255" />
+          <Property Name="serverport" Type="nvarchar" MaxLength="255" />
+          <Property Name="sharable" Type="tinyint" />
+        </EntityType>
+        <EntityType Name="Email">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="content" Type="nvarchar" MaxLength="255" />
+          <Property Name="date" Type="numeric" Precision="19" />
+          <Property Name="recipients" Type="nvarchar" MaxLength="255" />
+          <Property Name="status" Type="int" />
+          <Property Name="subject" Type="nvarchar" MaxLength="255" />
+          <Property Name="sender_id" Type="numeric" Precision="19" />
+        </EntityType>
+        <EntityType Name="EmailAccount">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="accountName" Type="nvarchar" MaxLength="255" />
+          <Property Name="accountPassword" Type="nvarchar" MaxLength="255" />
+          <Property Name="accountServer" Type="nvarchar" MaxLength="255" />
+          <Property Name="accountServerPort" Type="int" />
+          <Property Name="enabled" Type="tinyint" />
+          <Property Name="isForReceiving" Type="tinyint" />
+          <Property Name="lastCheck" Type="numeric" Precision="19" />
+          <Property Name="protocol" Type="nvarchar" MaxLength="255" />
+          <Property Name="useSsl" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Form">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="Code_Form" Type="nvarchar" MaxLength="255" />
+          <Property Name="bindingsPolicy" Type="nvarchar" MaxLength="255" />
+          <Property Name="designerVersion" Type="nvarchar" MaxLength="255" />
+          <Property Name="finalised" Type="tinyint" Nullable="false" />
+          <Property Name="id_flsmsId" Type="nvarchar" MaxLength="255" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" />
+          <Property Name="owner" Type="nvarchar" MaxLength="255" />
+          <Property Name="pushed" Type="tinyint" Nullable="false" />
+          <Property Name="permittedGroup_path" Type="nvarchar" MaxLength="255" />
+          <Property Name="FormCreateDate" Type="datetime" />
+          <Property Name="isHidden" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.Form_FormField' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="Form_FormField">
+          <Key>
+            <PropertyRef Name="Form_id" />
+            <PropertyRef Name="fields_id" />
+          </Key>
+          <Property Name="Form_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="fields_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="FormField">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="id_flsmsId" Type="nvarchar" MaxLength="255" />
+          <Property Name="label" Type="nvarchar(max)" />
+          <Property Name="name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="positionIndex" Type="int" Nullable="false" />
+          <Property Name="pushed" Type="tinyint" />
+          <Property Name="required" Type="tinyint" />
+          <Property Name="type" Type="nvarchar" MaxLength="255" />
+          <Property Name="x_form" Type="ntext" />
+          <Property Name="form_id" Type="numeric" Precision="19" />
+          <Property Name="survey_id" Type="numeric" Precision="19" />
+          <Property Name="bindingsPolicy" Type="varchar" MaxLength="255" />
+          <Property Name="calculated" Type="tinyint" />
+          <Property Name="constraintPolicy" Type="varchar" MaxLength="255" />
+          <Property Name="formula" Type="varchar" MaxLength="255" />
+          <Property Name="isReadOnly" Type="tinyint" />
+          <Property Name="numberOfRep" Type="int" />
+          <Property Name="FFCreateDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="FormField_ConstraintContainer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="FormField_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="constraints_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.FormField_FormField' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="FormField_FormField">
+          <Key>
+            <PropertyRef Name="FormField_id" />
+            <PropertyRef Name="repetableFormFields_id" />
+          </Key>
+          <Property Name="FormField_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="repetableFormFields_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="FormField_FormFieldAndBinding">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="FormField_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="bindingCouples_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.FormField_FormResponse' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="FormField_FormResponse">
+          <Key>
+            <PropertyRef Name="FormField_id" />
+            <PropertyRef Name="formResponses_id" />
+          </Key>
+          <Property Name="FormField_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="formResponses_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="FormFieldAndBinding">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="pushed" Type="tinyint" />
+          <Property Name="bContainer_id" Type="numeric" Precision="19" />
+          <Property Name="fField_id" Type="numeric" Precision="19" />
+        </EntityType>
+        <EntityType Name="FormResponse">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="clientVersion" Type="nvarchar" MaxLength="255" />
+          <Property Name="id_flsmsId" Type="nvarchar" MaxLength="255" />
+          <Property Name="pushed" Type="tinyint" Nullable="false" />
+          <Property Name="senderMsisdn" Type="nvarchar" MaxLength="255" />
+          <Property Name="parentForm_id" Type="numeric" Precision="19" />
+          <Property Name="Code_Form" Type="nvarchar" MaxLength="255" />
+          <Property Name="fromDataEntry" Type="tinyint" />
+          <Property Name="FRCreateDate" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.FormResponse_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="FormResponse_ResponseValue">
+          <Key>
+            <PropertyRef Name="FormResponse_id" />
+            <PropertyRef Name="results_id" />
+          </Key>
+          <Property Name="FormResponse_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="results_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="FormResponseCoords">
+          <Key>
+            <PropertyRef Name="FRCoordID" />
+          </Key>
+          <Property Name="FRCoordID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="FormResponseID" Type="int" />
+          <Property Name="FRCoordText" Type="nvarchar" MaxLength="100" />
+          <Property Name="FRCoordGeo" Type="geography" />
+          <Property Name="frXCoordText" Type="varchar" MaxLength="255" />
+          <Property Name="FRCoordGeometry" Type="geometry" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.FormResponseCoords_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="FormResponseCoords_ResponseValue">
+          <Key>
+            <PropertyRef Name="FormResponseCoords_FRCoordID" />
+            <PropertyRef Name="formResponses_id" />
+          </Key>
+          <Property Name="FormResponseCoords_FRCoordID" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="formResponses_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="frontline_group">
+          <Key>
+            <PropertyRef Name="path" />
+          </Key>
+          <Property Name="path" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="id_flsmsId" Type="nvarchar" MaxLength="255" />
+          <Property Name="parentPath" Type="nvarchar" MaxLength="255" />
+          <Property Name="pushed" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FrontlineMultimediaMessagePart">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="binaryData" Type="tinyint" />
+          <Property Name="content" Type="varchar" MaxLength="4096" />
+        </EntityType>
+        <EntityType Name="GroupMembership">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="pushed" Type="tinyint" />
+          <Property Name="contact_contact_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="group_path" Type="nvarchar" Nullable="false" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Keyword">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="nvarchar" MaxLength="255" />
+          <Property Name="keyword" Type="nvarchar" Nullable="false" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="keywordaction">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="commandInteger" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="commandString" Type="nvarchar(max)" />
+          <Property Name="counter" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="emailRecipients" Type="nvarchar" MaxLength="255" />
+          <Property Name="emailSubject" Type="nvarchar" MaxLength="255" />
+          <Property Name="endDate" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="externalCommand" Type="nvarchar" MaxLength="255" />
+          <Property Name="externalCommandResponseActionType" Type="numeric" Precision="19" />
+          <Property Name="externalCommandResponseType" Type="numeric" Precision="19" />
+          <Property Name="externalCommandType" Type="numeric" Precision="19" />
+          <Property Name="startDate" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="type" Type="numeric" Precision="11" />
+          <Property Name="emailAccount_id" Type="numeric" Precision="19" />
+          <Property Name="group_path" Type="nvarchar" MaxLength="255" />
+          <Property Name="keyword_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="message">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="binaryMessageContent" Type="varbinary" MaxLength="255" />
+          <Property Name="date" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="dtype" Type="nvarchar" MaxLength="255" />
+          <Property Name="recipientMsisdn" Type="nvarchar" MaxLength="255" />
+          <Property Name="recipientSmsPort" Type="int" Nullable="false" />
+          <Property Name="retriesRemaining" Type="int" Nullable="false" />
+          <Property Name="senderMsisdn" Type="nvarchar" MaxLength="255" />
+          <Property Name="smsPartsCount" Type="int" Nullable="false" />
+          <Property Name="smscReference" Type="int" />
+          <Property Name="status" Type="int" />
+          <Property Name="textContent" Type="ntext" />
+          <Property Name="type" Type="int" />
+          <Property Name="subject" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.message_FrontlineMultimediaMessagePart' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="message_FrontlineMultimediaMessagePart">
+          <Key>
+            <PropertyRef Name="message_id" />
+            <PropertyRef Name="multimediaParts_id" />
+          </Key>
+          <Property Name="message_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="multimediaParts_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="reminder">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="occurrence" Type="nvarchar" Nullable="false" MaxLength="31" />
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="content" Type="nvarchar" MaxLength="255" />
+          <Property Name="enddate" Type="numeric" Precision="19" />
+          <Property Name="recipients" Type="nvarchar" MaxLength="255" />
+          <Property Name="startdate" Type="numeric" Precision="19" />
+          <Property Name="status" Type="int" />
+          <Property Name="subject" Type="nvarchar" MaxLength="255" />
+          <Property Name="type" Type="int" />
+          <Property Name="emailAccount_id" Type="numeric" Precision="19" />
+        </EntityType>
+        <EntityType Name="ReportFields">
+          <Key>
+            <PropertyRef Name="ReportFieldID" />
+          </Key>
+          <Property Name="ReportFieldID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ReportID" Type="int" Nullable="false" />
+          <Property Name="ReportFieldLabel" Type="nvarchar(max)" />
+          <Property Name="FormFieldID" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="ReportFieldCreateDate" Type="datetime" />
+          <Property Name="ChartType" Type="nvarchar" MaxLength="50" />
+          <Property Name="ReportFieldValueLabel" Type="nvarchar(max)" />
+          <Property Name="ValueFormFieldID" Type="numeric" Precision="19" />
+          <Property Name="ReportFieldAggregate" Type="nvarchar" MaxLength="50" />
+          <Property Name="ReportFieldLegend" Type="int" />
+          <Property Name="ReportFieldTableData" Type="int" />
+        </EntityType>
+        <EntityType Name="Reports">
+          <Key>
+            <PropertyRef Name="ReportID" />
+          </Key>
+          <Property Name="ReportID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ReportName" Type="nvarchar" Nullable="false" MaxLength="512" />
+          <Property Name="ReportDescription" Type="nvarchar(max)" />
+          <Property Name="FormID" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="ReportCreateDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ResponseValue">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="id_flsmsId" Type="nvarchar" MaxLength="255" />
+          <Property Name="pushed" Type="tinyint" Nullable="false" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="RVRepeatCount" Type="int" />
+          <Property Name="FormResponseID" Type="int" />
+          <Property Name="RVCreateDate" Type="datetime" />
+          <Property Name="formFieldId" Type="int" />
+          <Property Name="positionIndex" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.ResponseValue_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="ResponseValue_ResponseValue">
+          <Key>
+            <PropertyRef Name="ResponseValue_id" />
+            <PropertyRef Name="repetableResponseValues_id" />
+          </Key>
+          <Property Name="ResponseValue_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="repetableResponseValues_id" Type="numeric" Nullable="false" Precision="19" />
+        </EntityType>
+        <EntityType Name="Roles">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="SmsInternetServiceSettings">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="serviceClassName" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+          <Key>
+            <PropertyRef Name="SmsInternetServiceSettings_id" />
+            <PropertyRef Name="mapkey" />
+          </Key>
+          <Property Name="SmsInternetServiceSettings_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="properties_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="mapkey" Type="nvarchar" Nullable="false" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="SmsInternetServiceSettingValue">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="SmsModemSettings">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="deleteMessagesAfterReceiving" Type="tinyint" Nullable="false" />
+          <Property Name="manufacturer" Type="nvarchar" MaxLength="255" />
+          <Property Name="model" Type="nvarchar" MaxLength="255" />
+          <Property Name="serial" Type="nvarchar" MaxLength="255" />
+          <Property Name="simPin" Type="nvarchar" MaxLength="255" />
+          <Property Name="smscNumber" Type="nvarchar" MaxLength="255" />
+          <Property Name="supportingReceive" Type="tinyint" />
+          <Property Name="useDeliveryReports" Type="tinyint" Nullable="false" />
+          <Property Name="useForReceiving" Type="tinyint" Nullable="false" />
+          <Property Name="useForSending" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StatisticsTable">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="chartType" Type="numeric" Precision="19" />
+          <Property Name="form_id" Type="numeric" Precision="19" />
+          <Property Name="query" Type="nvarchar(max)" />
+          <Property Name="title" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Survey">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" />
+          <Property Name="owner_id" Type="numeric" Precision="19" />
+        </EntityType>
+        <EntityType Name="Survey_SurveyElement">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="Survey_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="values_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="SurveyElement">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" StoreGeneratedPattern="Identity" />
+          <Property Name="position" Type="int" />
+          <Property Name="survey" Type="nvarchar" MaxLength="255" />
+          <Property Name="positionIndex" Type="int" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="defaultValue" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User_Credential">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="email" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="frontlinesms_id" Type="nvarchar" MaxLength="255" />
+          <Property Name="name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="password" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="phone_number" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="pushed" Type="tinyint" />
+          <Property Name="supervisor" Type="nvarchar" MaxLength="255" />
+          <Property Name="surname" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="username" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="roles_id" Type="int" />
+          <Property Name="UserDeleteDate" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.BindingRules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="BindingRules">
+          <Key>
+            <PropertyRef Name="FormField_id" />
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+            <PropertyRef Name="Expr1" />
+          </Key>
+          <Property Name="FormField_id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="bType" Type="nvarchar" MaxLength="255" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="label" Type="nvarchar(max)" />
+          <Property Name="name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="positionIndex" Type="int" Nullable="false" />
+          <Property Name="type" Type="nvarchar" MaxLength="255" />
+          <Property Name="x_form" Type="ntext" />
+          <Property Name="form_id" Type="numeric" Precision="19" />
+          <Property Name="bindingsPolicy" Type="varchar" MaxLength="255" />
+          <Property Name="Expr1" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="calculated" Type="tinyint" />
+          <Property Name="formula" Type="varchar" MaxLength="255" />
+          <Property Name="required" Type="tinyint" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.FormFieldExport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="FormFieldExport">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="label" Type="nvarchar(max)" />
+          <Property Name="name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="positionIndex" Type="int" Nullable="false" />
+          <Property Name="required" Type="tinyint" />
+          <Property Name="type" Type="nvarchar" MaxLength="255" />
+          <Property Name="x_form" Type="ntext" />
+          <Property Name="form_id" Type="numeric" Precision="19" />
+          <Property Name="survey_id" Type="numeric" Precision="19" />
+          <Property Name="isReadOnly" Type="tinyint" />
+          <Property Name="numberOfRep" Type="int" />
+          <Property Name="FFCreateDate" Type="datetime" />
+          <Property Name="FormFieldParentID" Type="numeric" Precision="19" />
+          <Property Name="calculated" Type="tinyint" />
+          <Property Name="formula" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="SurveyListAPI">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="numeric" Nullable="false" Precision="19" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <Association Name="FK2180E4D3148215">
+          <End Role="frontline_group" Type="GRASPModel.Store.frontline_group" Multiplicity="0..1" />
+          <End Role="Form" Type="GRASPModel.Store.Form" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="frontline_group">
+              <PropertyRef Name="path" />
+            </Principal>
+            <Dependent Role="Form">
+              <PropertyRef Name="permittedGroup_path" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK3FF5B7C77FBC69D">
+          <End Role="EmailAccount" Type="GRASPModel.Store.EmailAccount" Multiplicity="0..1" />
+          <End Role="Email" Type="GRASPModel.Store.Email" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAccount">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Email">
+              <PropertyRef Name="sender_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK4210107B162222E6">
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="1" />
+          <End Role="FormField_FormFieldAndBinding" Type="GRASPModel.Store.FormField_FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormFieldAndBinding">
+              <PropertyRef Name="FormField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK4210107B66ACF65C">
+          <End Role="FormFieldAndBinding" Type="GRASPModel.Store.FormFieldAndBinding" Multiplicity="1" />
+          <End Role="FormField_FormFieldAndBinding" Type="GRASPModel.Store.FormField_FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormFieldAndBinding">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormFieldAndBinding">
+              <PropertyRef Name="bindingCouples_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK475D51213B0E124D">
+          <End Role="ResponseValue" Type="GRASPModel.Store.ResponseValue" Multiplicity="1" />
+          <End Role="ResponseValue_ResponseValue" Type="GRASPModel.Store.ResponseValue_ResponseValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ResponseValue">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ResponseValue_ResponseValue">
+              <PropertyRef Name="repetableResponseValues_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK475D51219AE2EA6">
+          <End Role="ResponseValue" Type="GRASPModel.Store.ResponseValue" Multiplicity="1" />
+          <End Role="ResponseValue_ResponseValue" Type="GRASPModel.Store.ResponseValue_ResponseValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ResponseValue">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ResponseValue_ResponseValue">
+              <PropertyRef Name="ResponseValue_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK594E3BBB162222E6">
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="1" />
+          <End Role="FormField_ConstraintContainer" Type="GRASPModel.Store.FormField_ConstraintContainer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_ConstraintContainer">
+              <PropertyRef Name="FormField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK594E3BBB95BCFCF4">
+          <End Role="ConstraintContainer" Type="GRASPModel.Store.ConstraintContainer" Multiplicity="1" />
+          <End Role="FormField_ConstraintContainer" Type="GRASPModel.Store.FormField_ConstraintContainer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConstraintContainer">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_ConstraintContainer">
+              <PropertyRef Name="constraints_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK623D294B7F468633">
+          <End Role="Roles" Type="GRASPModel.Store.Roles" Multiplicity="0..1" />
+          <End Role="User_Credential" Type="GRASPModel.Store.User_Credential" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User_Credential">
+              <PropertyRef Name="roles_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK7110EE1D882251EE">
+          <End Role="Survey" Type="GRASPModel.Store.Survey" Multiplicity="1" />
+          <End Role="Survey_SurveyElement" Type="GRASPModel.Store.Survey_SurveyElement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Survey">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Survey_SurveyElement">
+              <PropertyRef Name="Survey_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK7110EE1DB3405EA6">
+          <End Role="SurveyElement" Type="GRASPModel.Store.SurveyElement" Multiplicity="1" />
+          <End Role="Survey_SurveyElement" Type="GRASPModel.Store.Survey_SurveyElement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SurveyElement">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Survey_SurveyElement">
+              <PropertyRef Name="values_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK822AE55F3D2C2C41">
+          <End Role="EmailAccount" Type="GRASPModel.Store.EmailAccount" Multiplicity="0..1" />
+          <End Role="keywordaction" Type="GRASPModel.Store.keywordaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAccount">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="keywordaction">
+              <PropertyRef Name="emailAccount_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK822AE55FC5482473">
+          <End Role="Keyword" Type="GRASPModel.Store.Keyword" Multiplicity="1" />
+          <End Role="keywordaction" Type="GRASPModel.Store.keywordaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Keyword">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="keywordaction">
+              <PropertyRef Name="keyword_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK822AE55FDAF23DFD">
+          <End Role="frontline_group" Type="GRASPModel.Store.frontline_group" Multiplicity="0..1" />
+          <End Role="keywordaction" Type="GRASPModel.Store.keywordaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="frontline_group">
+              <PropertyRef Name="path" />
+            </Principal>
+            <Dependent Role="keywordaction">
+              <PropertyRef Name="group_path" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK8325D545D92B32C4">
+          <End Role="Form" Type="GRASPModel.Store.Form" Multiplicity="0..1" />
+          <End Role="FormResponse" Type="GRASPModel.Store.FormResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormResponse">
+              <PropertyRef Name="parentForm_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK891CCCDB1F476EAE">
+          <End Role="Form" Type="GRASPModel.Store.Form" Multiplicity="1" />
+          <End Role="Form_FormField" Type="GRASPModel.Store.Form_FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Form_FormField">
+              <PropertyRef Name="Form_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK891CCCDBF2FF003">
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="1" />
+          <End Role="Form_FormField" Type="GRASPModel.Store.Form_FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Form_FormField">
+              <PropertyRef Name="fields_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK9448937AAACA0E5F">
+          <End Role="Form" Type="GRASPModel.Store.Form" Multiplicity="0..1" />
+          <End Role="Survey" Type="GRASPModel.Store.Survey" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Survey">
+              <PropertyRef Name="owner_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKA24BD3BD32373A6A">
+          <End Role="SmsInternetServiceSettingValue" Type="GRASPModel.Store.SmsInternetServiceSettingValue" Multiplicity="1" />
+          <End Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" Type="GRASPModel.Store.SmsInternetServiceSettings_SmsInternetServiceSettingValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SmsInternetServiceSettingValue">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+              <PropertyRef Name="properties_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKA24BD3BD6E7ADCE1">
+          <End Role="SmsInternetServiceSettings" Type="GRASPModel.Store.SmsInternetServiceSettings" Multiplicity="1" />
+          <End Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" Type="GRASPModel.Store.SmsInternetServiceSettings_SmsInternetServiceSettingValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SmsInternetServiceSettings">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+              <PropertyRef Name="SmsInternetServiceSettings_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKAA958F0A2B00A379">
+          <End Role="message" Type="GRASPModel.Store.message" Multiplicity="1" />
+          <End Role="message_FrontlineMultimediaMessagePart" Type="GRASPModel.Store.message_FrontlineMultimediaMessagePart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="message">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="message_FrontlineMultimediaMessagePart">
+              <PropertyRef Name="message_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKAA958F0AFC9C3E5E">
+          <End Role="FrontlineMultimediaMessagePart" Type="GRASPModel.Store.FrontlineMultimediaMessagePart" Multiplicity="1" />
+          <End Role="message_FrontlineMultimediaMessagePart" Type="GRASPModel.Store.message_FrontlineMultimediaMessagePart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FrontlineMultimediaMessagePart">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="message_FrontlineMultimediaMessagePart">
+              <PropertyRef Name="multimediaParts_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKAFB41BED162222E6">
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="1" />
+          <End Role="FormField_FormField" Type="GRASPModel.Store.FormField_FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormField">
+              <PropertyRef Name="FormField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKAFB41BED1AD43419">
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="1" />
+          <End Role="FormField_FormField" Type="GRASPModel.Store.FormField_FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormField">
+              <PropertyRef Name="repetableFormFields_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKBA9C3F955A18C292">
+          <End Role="Contact" Type="GRASPModel.Store.Contact" Multiplicity="1" />
+          <End Role="GroupMembership" Type="GRASPModel.Store.GroupMembership" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="contact_id" />
+            </Principal>
+            <Dependent Role="GroupMembership">
+              <PropertyRef Name="contact_contact_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKBA9C3F95DAF23DFD">
+          <End Role="frontline_group" Type="GRASPModel.Store.frontline_group" Multiplicity="1" />
+          <End Role="GroupMembership" Type="GRASPModel.Store.GroupMembership" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="frontline_group">
+              <PropertyRef Name="path" />
+            </Principal>
+            <Dependent Role="GroupMembership">
+              <PropertyRef Name="group_path" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKCA47C8161674AB2E">
+          <End Role="FormResponse" Type="GRASPModel.Store.FormResponse" Multiplicity="1" />
+          <End Role="FormResponse_ResponseValue" Type="GRASPModel.Store.FormResponse_ResponseValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormResponse">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormResponse_ResponseValue">
+              <PropertyRef Name="FormResponse_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKCA47C816F8F076C0">
+          <End Role="ResponseValue" Type="GRASPModel.Store.ResponseValue" Multiplicity="1" />
+          <End Role="FormResponse_ResponseValue" Type="GRASPModel.Store.FormResponse_ResponseValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ResponseValue">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormResponse_ResponseValue">
+              <PropertyRef Name="results_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKD3503BC4981CDFEB">
+          <End Role="BindingContainer" Type="GRASPModel.Store.BindingContainer" Multiplicity="0..1" />
+          <End Role="FormFieldAndBinding" Type="GRASPModel.Store.FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BindingContainer">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormFieldAndBinding">
+              <PropertyRef Name="bContainer_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKD3503BC49F9D5488">
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="0..1" />
+          <End Role="FormFieldAndBinding" Type="GRASPModel.Store.FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormFieldAndBinding">
+              <PropertyRef Name="fField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKE116C0723D2C2C41">
+          <End Role="EmailAccount" Type="GRASPModel.Store.EmailAccount" Multiplicity="0..1" />
+          <End Role="reminder" Type="GRASPModel.Store.reminder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAccount">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="reminder">
+              <PropertyRef Name="emailAccount_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKE1EB1E761F476EAE">
+          <End Role="Form" Type="GRASPModel.Store.Form" Multiplicity="0..1" />
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField">
+              <PropertyRef Name="form_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKE1EB1E76882251EE">
+          <End Role="Survey" Type="GRASPModel.Store.Survey" Multiplicity="0..1" />
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Survey">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField">
+              <PropertyRef Name="survey_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKF395D06E162222E6">
+          <End Role="FormField" Type="GRASPModel.Store.FormField" Multiplicity="1" />
+          <End Role="FormField_FormResponse" Type="GRASPModel.Store.FormField_FormResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormResponse">
+              <PropertyRef Name="FormField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKF395D06EBD67FB85">
+          <End Role="FormResponse" Type="GRASPModel.Store.FormResponse" Multiplicity="1" />
+          <End Role="FormField_FormResponse" Type="GRASPModel.Store.FormField_FormResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormResponse">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormResponse">
+              <PropertyRef Name="formResponses_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKFA275C14699E17A8">
+          <End Role="ResponseValue" Type="GRASPModel.Store.ResponseValue" Multiplicity="1" />
+          <End Role="FormResponseCoords_ResponseValue" Type="GRASPModel.Store.FormResponseCoords_ResponseValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ResponseValue">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormResponseCoords_ResponseValue">
+              <PropertyRef Name="formResponses_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GRASPModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="GRASPEntities" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="Contact" EntityType="GRASPModel.Contact" />
+          <EntitySet Name="DataTransfer" EntityType="GRASPModel.DataTransfer" />
+          <EntitySet Name="Email" EntityType="GRASPModel.Email" />
+          <EntitySet Name="EmailAccount" EntityType="GRASPModel.EmailAccount" />
+          <EntitySet Name="Form" EntityType="GRASPModel.Form" />
+          <EntitySet Name="FormResponse" EntityType="GRASPModel.FormResponse" />
+          <EntitySet Name="FormResponseCoords_ResponseValue" EntityType="GRASPModel.FormResponseCoords_ResponseValue" />
+          <EntitySet Name="frontline_group" EntityType="GRASPModel.frontline_group" />
+          <EntitySet Name="FrontlineMultimediaMessagePart" EntityType="GRASPModel.FrontlineMultimediaMessagePart" />
+          <EntitySet Name="GroupMembership" EntityType="GRASPModel.GroupMembership" />
+          <EntitySet Name="Keyword" EntityType="GRASPModel.Keyword" />
+          <EntitySet Name="keywordaction" EntityType="GRASPModel.keywordaction" />
+          <EntitySet Name="message" EntityType="GRASPModel.message" />
+          <EntitySet Name="reminder" EntityType="GRASPModel.reminder" />
+          <EntitySet Name="ResponseValue" EntityType="GRASPModel.ResponseValue" />
+          <EntitySet Name="SmsInternetServiceSettingValue" EntityType="GRASPModel.SmsInternetServiceSettingValue" />
+          <EntitySet Name="StatisticsTable" EntityType="GRASPModel.StatisticsTable" />
+          <EntitySet Name="SurveyElement" EntityType="GRASPModel.SurveyElement" />
+          <AssociationSet Name="FKBA9C3F955A18C292" Association="GRASPModel.FKBA9C3F955A18C292">
+            <End Role="Contact" EntitySet="Contact" />
+            <End Role="GroupMembership" EntitySet="GroupMembership" />
+          </AssociationSet>
+          <AssociationSet Name="FK3FF5B7C77FBC69D" Association="GRASPModel.FK3FF5B7C77FBC69D">
+            <End Role="EmailAccount" EntitySet="EmailAccount" />
+            <End Role="Email" EntitySet="Email" />
+          </AssociationSet>
+          <AssociationSet Name="FK822AE55F3D2C2C41" Association="GRASPModel.FK822AE55F3D2C2C41">
+            <End Role="EmailAccount" EntitySet="EmailAccount" />
+            <End Role="keywordaction" EntitySet="keywordaction" />
+          </AssociationSet>
+          <AssociationSet Name="FKE116C0723D2C2C41" Association="GRASPModel.FKE116C0723D2C2C41">
+            <End Role="EmailAccount" EntitySet="EmailAccount" />
+            <End Role="reminder" EntitySet="reminder" />
+          </AssociationSet>
+          <AssociationSet Name="FK2180E4D3148215" Association="GRASPModel.FK2180E4D3148215">
+            <End Role="frontline_group" EntitySet="frontline_group" />
+            <End Role="Form" EntitySet="Form" />
+          </AssociationSet>
+          <AssociationSet Name="FK8325D545D92B32C4" Association="GRASPModel.FK8325D545D92B32C4">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="FormResponse" EntitySet="FormResponse" />
+          </AssociationSet>
+          <AssociationSet Name="FKFA275C14699E17A8" Association="GRASPModel.FKFA275C14699E17A8">
+            <End Role="ResponseValue" EntitySet="ResponseValue" />
+            <End Role="FormResponseCoords_ResponseValue" EntitySet="FormResponseCoords_ResponseValue" />
+          </AssociationSet>
+          <AssociationSet Name="FK822AE55FDAF23DFD" Association="GRASPModel.FK822AE55FDAF23DFD">
+            <End Role="frontline_group" EntitySet="frontline_group" />
+            <End Role="keywordaction" EntitySet="keywordaction" />
+          </AssociationSet>
+          <AssociationSet Name="FKBA9C3F95DAF23DFD" Association="GRASPModel.FKBA9C3F95DAF23DFD">
+            <End Role="frontline_group" EntitySet="frontline_group" />
+            <End Role="GroupMembership" EntitySet="GroupMembership" />
+          </AssociationSet>
+          <AssociationSet Name="FK822AE55FC5482473" Association="GRASPModel.FK822AE55FC5482473">
+            <End Role="Keyword" EntitySet="Keyword" />
+            <End Role="keywordaction" EntitySet="keywordaction" />
+          </AssociationSet>
+          <AssociationSet Name="FormResponse_ResponseValue" Association="GRASPModel.FormResponse_ResponseValue">
+            <End Role="FormResponse" EntitySet="FormResponse" />
+            <End Role="ResponseValue" EntitySet="ResponseValue" />
+          </AssociationSet>
+          <AssociationSet Name="message_FrontlineMultimediaMessagePart" Association="GRASPModel.message_FrontlineMultimediaMessagePart">
+            <End Role="message" EntitySet="message" />
+            <End Role="FrontlineMultimediaMessagePart" EntitySet="FrontlineMultimediaMessagePart" />
+          </AssociationSet>
+          <AssociationSet Name="ResponseValue_ResponseValue" Association="GRASPModel.ResponseValue_ResponseValue">
+            <End Role="ResponseValue" EntitySet="ResponseValue" />
+            <End Role="ResponseValue1" EntitySet="ResponseValue" />
+          </AssociationSet>
+          <EntitySet Name="FormResponseCoords" EntityType="GRASPModel.FormResponseCoord" />
+          <EntitySet Name="Reports" EntityType="GRASPModel.Report" />
+          <EntitySet Name="Roles" EntityType="GRASPModel.Role" />
+          <EntitySet Name="SmsInternetServiceSettings" EntityType="GRASPModel.SmsInternetServiceSetting" />
+          <EntitySet Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue" EntityType="GRASPModel.SmsInternetServiceSettings_SmsInternetServiceSettingValue" />
+          <EntitySet Name="SmsModemSettings" EntityType="GRASPModel.SmsModemSetting" />
+          <AssociationSet Name="FKA24BD3BD6E7ADCE1" Association="GRASPModel.FKA24BD3BD6E7ADCE1">
+            <End Role="SmsInternetServiceSetting" EntitySet="SmsInternetServiceSettings" />
+            <End Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" EntitySet="SmsInternetServiceSettings_SmsInternetServiceSettingValue" />
+          </AssociationSet>
+          <AssociationSet Name="FKA24BD3BD32373A6A" Association="GRASPModel.FKA24BD3BD32373A6A">
+            <End Role="SmsInternetServiceSettingValue" EntitySet="SmsInternetServiceSettingValue" />
+            <End Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" EntitySet="SmsInternetServiceSettings_SmsInternetServiceSettingValue" />
+          </AssociationSet>
+          <EntitySet Name="FormFieldExport" EntityType="GRASPModel.FormFieldExport" />
+          <EntitySet Name="SurveyListAPI" EntityType="GRASPModel.SurveyListAPI" />
+          <EntitySet Name="ReportFields" EntityType="GRASPModel.ReportField" />
+          <EntitySet Name="User_Credential" EntityType="GRASPModel.User_Credential" />
+          <AssociationSet Name="FK623D294B7F468633" Association="GRASPModel.FK623D294B7F468633">
+            <End Role="Role" EntitySet="Roles" />
+            <End Role="User_Credential" EntitySet="User_Credential" />
+          </AssociationSet>
+          <EntitySet Name="BindingRules" EntityType="GRASPModel.BindingRules" />
+          <EntitySet Name="BindingContainer" EntityType="GRASPModel.BindingContainer" />
+          <EntitySet Name="ConstraintContainer" EntityType="GRASPModel.ConstraintContainer" />
+          <EntitySet Name="FormField" EntityType="GRASPModel.FormField" />
+          <EntitySet Name="FormField_ConstraintContainer" EntityType="GRASPModel.FormField_ConstraintContainer" />
+          <EntitySet Name="FormField_FormFieldAndBinding" EntityType="GRASPModel.FormField_FormFieldAndBinding" />
+          <EntitySet Name="FormFieldAndBinding" EntityType="GRASPModel.FormFieldAndBinding" />
+          <EntitySet Name="Survey" EntityType="GRASPModel.Survey" />
+          <EntitySet Name="Survey_SurveyElement" EntityType="GRASPModel.Survey_SurveyElement" />
+          <AssociationSet Name="FKD3503BC4981CDFEB" Association="GRASPModel.FKD3503BC4981CDFEB">
+            <End Role="BindingContainer" EntitySet="BindingContainer" />
+            <End Role="FormFieldAndBinding" EntitySet="FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FK594E3BBB95BCFCF4" Association="GRASPModel.FK594E3BBB95BCFCF4">
+            <End Role="ConstraintContainer" EntitySet="ConstraintContainer" />
+            <End Role="FormField_ConstraintContainer" EntitySet="FormField_ConstraintContainer" />
+          </AssociationSet>
+          <AssociationSet Name="FK9448937AAACA0E5F" Association="GRASPModel.FK9448937AAACA0E5F">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="Survey" EntitySet="Survey" />
+          </AssociationSet>
+          <AssociationSet Name="FKE1EB1E761F476EAE" Association="GRASPModel.FKE1EB1E761F476EAE">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="FormField" EntitySet="FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FK4210107B162222E6" Association="GRASPModel.FK4210107B162222E6">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField_FormFieldAndBinding" EntitySet="FormField_FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FK594E3BBB162222E6" Association="GRASPModel.FK594E3BBB162222E6">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField_ConstraintContainer" EntitySet="FormField_ConstraintContainer" />
+          </AssociationSet>
+          <AssociationSet Name="FKD3503BC49F9D5488" Association="GRASPModel.FKD3503BC49F9D5488">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormFieldAndBinding" EntitySet="FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FKE1EB1E76882251EE" Association="GRASPModel.FKE1EB1E76882251EE">
+            <End Role="Survey" EntitySet="Survey" />
+            <End Role="FormField" EntitySet="FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FK4210107B66ACF65C" Association="GRASPModel.FK4210107B66ACF65C">
+            <End Role="FormFieldAndBinding" EntitySet="FormFieldAndBinding" />
+            <End Role="FormField_FormFieldAndBinding" EntitySet="FormField_FormFieldAndBinding" />
+          </AssociationSet>
+          <AssociationSet Name="FK7110EE1D882251EE" Association="GRASPModel.FK7110EE1D882251EE">
+            <End Role="Survey" EntitySet="Survey" />
+            <End Role="Survey_SurveyElement" EntitySet="Survey_SurveyElement" />
+          </AssociationSet>
+          <AssociationSet Name="FK7110EE1DB3405EA6" Association="GRASPModel.FK7110EE1DB3405EA6">
+            <End Role="SurveyElement" EntitySet="SurveyElement" />
+            <End Role="Survey_SurveyElement" EntitySet="Survey_SurveyElement" />
+          </AssociationSet>
+          <AssociationSet Name="Form_FormField" Association="GRASPModel.Form_FormField">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="FormField" EntitySet="FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FormField_FormField" Association="GRASPModel.FormField_FormField">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormField1" EntitySet="FormField" />
+          </AssociationSet>
+          <AssociationSet Name="FormField_FormResponse" Association="GRASPModel.FormField_FormResponse">
+            <End Role="FormField" EntitySet="FormField" />
+            <End Role="FormResponse" EntitySet="FormResponse" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="contact_id" />
+          </Key>
+          <Property Name="contact_id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="active" Type="Byte" Nullable="false" />
+          <Property Name="emailAddress" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="name" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="notes" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="otherPhoneNumber" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="phoneNumber" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="pushed" Type="Byte" />
+          <NavigationProperty Name="GroupMembership" Relationship="GRASPModel.FKBA9C3F955A18C292" FromRole="Contact" ToRole="GroupMembership" />
+        </EntityType>
+        <EntityType Name="DataTransfer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="dbname" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="dbpassword" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="dbusername" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="manual" Type="Byte" />
+          <Property Name="scheduled" Type="Byte" />
+          <Property Name="scheduledtime" Type="DateTime" Precision="3" />
+          <Property Name="servername" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="serverport" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="sharable" Type="Byte" />
+        </EntityType>
+        <EntityType Name="Email">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="content" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="date" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="recipients" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="subject" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="sender_id" Type="Decimal" Precision="19" Scale="0" />
+          <NavigationProperty Name="EmailAccount" Relationship="GRASPModel.FK3FF5B7C77FBC69D" FromRole="Email" ToRole="EmailAccount" />
+        </EntityType>
+        <EntityType Name="EmailAccount">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="accountName" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="accountPassword" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="accountServer" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="accountServerPort" Type="Int32" />
+          <Property Name="enabled" Type="Byte" />
+          <Property Name="isForReceiving" Type="Byte" />
+          <Property Name="lastCheck" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="protocol" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="useSsl" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="Email" Relationship="GRASPModel.FK3FF5B7C77FBC69D" FromRole="EmailAccount" ToRole="Email" />
+          <NavigationProperty Name="keywordaction" Relationship="GRASPModel.FK822AE55F3D2C2C41" FromRole="EmailAccount" ToRole="keywordaction" />
+          <NavigationProperty Name="reminder" Relationship="GRASPModel.FKE116C0723D2C2C41" FromRole="EmailAccount" ToRole="reminder" />
+        </EntityType>
+        <EntityType Name="Form">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Code_Form" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="bindingsPolicy" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="designerVersion" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="finalised" Type="Byte" Nullable="false" />
+          <Property Name="id_flsmsId" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="name" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="owner" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="pushed" Type="Byte" Nullable="false" />
+          <Property Name="permittedGroup_path" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="FormCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="isHidden" Type="Int32" />
+          <NavigationProperty Name="frontline_group" Relationship="GRASPModel.FK2180E4D3148215" FromRole="Form" ToRole="frontline_group" />
+          <NavigationProperty Name="FormResponse" Relationship="GRASPModel.FK8325D545D92B32C4" FromRole="Form" ToRole="FormResponse" />
+          <NavigationProperty Name="Survey" Relationship="GRASPModel.FK9448937AAACA0E5F" FromRole="Form" ToRole="Survey" />
+          <NavigationProperty Name="FormField" Relationship="GRASPModel.FKE1EB1E761F476EAE" FromRole="Form" ToRole="FormField" />
+          <NavigationProperty Name="FormField1" Relationship="GRASPModel.Form_FormField" FromRole="Form" ToRole="FormField" />
+          </EntityType>
+        <EntityType Name="FormResponse">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="clientVersion" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="id_flsmsId" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="pushed" Type="Byte" Nullable="false" />
+          <Property Name="senderMsisdn" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="parentForm_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="Code_Form" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="fromDataEntry" Type="Byte" />
+          <Property Name="FRCreateDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Form" Relationship="GRASPModel.FK8325D545D92B32C4" FromRole="FormResponse" ToRole="Form" />
+          <NavigationProperty Name="ResponseValue" Relationship="GRASPModel.FormResponse_ResponseValue" FromRole="FormResponse" ToRole="ResponseValue" />
+          <NavigationProperty Name="FormField" Relationship="GRASPModel.FormField_FormResponse" FromRole="FormResponse" ToRole="FormField" />
+        </EntityType>
+        <EntityType Name="FormResponseCoords_ResponseValue">
+          <Key>
+            <PropertyRef Name="FormResponseCoords_FRCoordID" />
+            <PropertyRef Name="formResponses_id" />
+          </Key>
+          <Property Name="FormResponseCoords_FRCoordID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="formResponses_id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <NavigationProperty Name="ResponseValue" Relationship="GRASPModel.FKFA275C14699E17A8" FromRole="FormResponseCoords_ResponseValue" ToRole="ResponseValue" />
+        </EntityType>
+        <EntityType Name="frontline_group">
+          <Key>
+            <PropertyRef Name="path" />
+          </Key>
+          <Property Name="path" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="id_flsmsId" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="parentPath" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="pushed" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="Form" Relationship="GRASPModel.FK2180E4D3148215" FromRole="frontline_group" ToRole="Form" />
+          <NavigationProperty Name="keywordaction" Relationship="GRASPModel.FK822AE55FDAF23DFD" FromRole="frontline_group" ToRole="keywordaction" />
+          <NavigationProperty Name="GroupMembership" Relationship="GRASPModel.FKBA9C3F95DAF23DFD" FromRole="frontline_group" ToRole="GroupMembership" />
+        </EntityType>
+        <EntityType Name="FrontlineMultimediaMessagePart">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="binaryData" Type="Byte" />
+          <Property Name="content" Type="String" MaxLength="4096" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="message" Relationship="GRASPModel.message_FrontlineMultimediaMessagePart" FromRole="FrontlineMultimediaMessagePart" ToRole="message" />
+        </EntityType>
+        <EntityType Name="GroupMembership">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="pushed" Type="Byte" />
+          <Property Name="contact_contact_id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="group_path" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Contact" Relationship="GRASPModel.FKBA9C3F955A18C292" FromRole="GroupMembership" ToRole="Contact" />
+          <NavigationProperty Name="frontline_group" Relationship="GRASPModel.FKBA9C3F95DAF23DFD" FromRole="GroupMembership" ToRole="frontline_group" />
+        </EntityType>
+        <EntityType Name="Keyword">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="keyword1" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="keywordaction" Relationship="GRASPModel.FK822AE55FC5482473" FromRole="Keyword" ToRole="keywordaction" />
+        </EntityType>
+        <EntityType Name="keywordaction">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="commandInteger" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="commandString" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="counter" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="emailRecipients" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="emailSubject" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="endDate" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="externalCommand" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="externalCommandResponseActionType" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="externalCommandResponseType" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="externalCommandType" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="startDate" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="type" Type="Decimal" Precision="11" Scale="0" />
+          <Property Name="emailAccount_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="group_path" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="keyword_id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <NavigationProperty Name="EmailAccount" Relationship="GRASPModel.FK822AE55F3D2C2C41" FromRole="keywordaction" ToRole="EmailAccount" />
+          <NavigationProperty Name="frontline_group" Relationship="GRASPModel.FK822AE55FDAF23DFD" FromRole="keywordaction" ToRole="frontline_group" />
+          <NavigationProperty Name="Keyword" Relationship="GRASPModel.FK822AE55FC5482473" FromRole="keywordaction" ToRole="Keyword" />
+        </EntityType>
+        <EntityType Name="message">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="binaryMessageContent" Type="Binary" MaxLength="255" FixedLength="false" />
+          <Property Name="date" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="dtype" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="recipientMsisdn" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="recipientSmsPort" Type="Int32" Nullable="false" />
+          <Property Name="retriesRemaining" Type="Int32" Nullable="false" />
+          <Property Name="senderMsisdn" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="smsPartsCount" Type="Int32" Nullable="false" />
+          <Property Name="smscReference" Type="Int32" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="textContent" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="type" Type="Int32" />
+          <Property Name="subject" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="FrontlineMultimediaMessagePart" Relationship="GRASPModel.message_FrontlineMultimediaMessagePart" FromRole="message" ToRole="FrontlineMultimediaMessagePart" />
+        </EntityType>
+        <EntityType Name="reminder">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="occurrence" Type="String" Nullable="false" MaxLength="31" Unicode="true" FixedLength="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="content" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="enddate" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="recipients" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="startdate" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="status" Type="Int32" />
+          <Property Name="subject" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="type" Type="Int32" />
+          <Property Name="emailAccount_id" Type="Decimal" Precision="19" Scale="0" />
+          <NavigationProperty Name="EmailAccount" Relationship="GRASPModel.FKE116C0723D2C2C41" FromRole="reminder" ToRole="EmailAccount" />
+        </EntityType>
+        <EntityType Name="ResponseValue">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="id_flsmsId" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="pushed" Type="Byte" Nullable="false" />
+          <Property Name="value" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="RVRepeatCount" Type="Int32" />
+          <Property Name="FormResponseID" Type="Int32" />
+          <Property Name="RVCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="formFieldId" Type="Int32" />
+          <Property Name="positionIndex" Type="Int32" />
+          <NavigationProperty Name="FormResponseCoords_ResponseValue" Relationship="GRASPModel.FKFA275C14699E17A8" FromRole="ResponseValue" ToRole="FormResponseCoords_ResponseValue" />
+          <NavigationProperty Name="FormResponse" Relationship="GRASPModel.FormResponse_ResponseValue" FromRole="ResponseValue" ToRole="FormResponse" />
+          <NavigationProperty Name="ResponseValue1" Relationship="GRASPModel.ResponseValue_ResponseValue" FromRole="ResponseValue" ToRole="ResponseValue1" />
+          <NavigationProperty Name="ResponseValue2" Relationship="GRASPModel.ResponseValue_ResponseValue" FromRole="ResponseValue1" ToRole="ResponseValue" />
+        </EntityType>
+        <EntityType Name="SmsInternetServiceSettingValue">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="value" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue" Relationship="GRASPModel.FKA24BD3BD32373A6A" FromRole="SmsInternetServiceSettingValue" ToRole="SmsInternetServiceSettings_SmsInternetServiceSettingValue" />
+        </EntityType>
+        <EntityType Name="StatisticsTable">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="chartType" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="form_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="query" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="title" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="SurveyElement">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="position" Type="Int32" />
+          <Property Name="survey" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="positionIndex" Type="Int32" />
+          <Property Name="value" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="defaultValue" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="Survey_SurveyElement" Relationship="GRASPModel.FK7110EE1DB3405EA6" FromRole="SurveyElement" ToRole="Survey_SurveyElement" />
+        </EntityType>
+        <Association Name="FKBA9C3F955A18C292">
+          <End Role="Contact" Type="GRASPModel.Contact" Multiplicity="1" />
+          <End Role="GroupMembership" Type="GRASPModel.GroupMembership" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="contact_id" />
+            </Principal>
+            <Dependent Role="GroupMembership">
+              <PropertyRef Name="contact_contact_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK3FF5B7C77FBC69D">
+          <End Role="EmailAccount" Type="GRASPModel.EmailAccount" Multiplicity="0..1" />
+          <End Role="Email" Type="GRASPModel.Email" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAccount">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Email">
+              <PropertyRef Name="sender_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK822AE55F3D2C2C41">
+          <End Role="EmailAccount" Type="GRASPModel.EmailAccount" Multiplicity="0..1" />
+          <End Role="keywordaction" Type="GRASPModel.keywordaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAccount">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="keywordaction">
+              <PropertyRef Name="emailAccount_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKE116C0723D2C2C41">
+          <End Role="EmailAccount" Type="GRASPModel.EmailAccount" Multiplicity="0..1" />
+          <End Role="reminder" Type="GRASPModel.reminder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmailAccount">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="reminder">
+              <PropertyRef Name="emailAccount_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK2180E4D3148215">
+          <End Role="frontline_group" Type="GRASPModel.frontline_group" Multiplicity="0..1" />
+          <End Role="Form" Type="GRASPModel.Form" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="frontline_group">
+              <PropertyRef Name="path" />
+            </Principal>
+            <Dependent Role="Form">
+              <PropertyRef Name="permittedGroup_path" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK8325D545D92B32C4">
+          <End Role="Form" Type="GRASPModel.Form" Multiplicity="0..1" />
+          <End Role="FormResponse" Type="GRASPModel.FormResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormResponse">
+              <PropertyRef Name="parentForm_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKFA275C14699E17A8">
+          <End Role="ResponseValue" Type="GRASPModel.ResponseValue" Multiplicity="1" />
+          <End Role="FormResponseCoords_ResponseValue" Type="GRASPModel.FormResponseCoords_ResponseValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ResponseValue">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormResponseCoords_ResponseValue">
+              <PropertyRef Name="formResponses_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK822AE55FDAF23DFD">
+          <End Role="frontline_group" Type="GRASPModel.frontline_group" Multiplicity="0..1" />
+          <End Role="keywordaction" Type="GRASPModel.keywordaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="frontline_group">
+              <PropertyRef Name="path" />
+            </Principal>
+            <Dependent Role="keywordaction">
+              <PropertyRef Name="group_path" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKBA9C3F95DAF23DFD">
+          <End Role="frontline_group" Type="GRASPModel.frontline_group" Multiplicity="1" />
+          <End Role="GroupMembership" Type="GRASPModel.GroupMembership" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="frontline_group">
+              <PropertyRef Name="path" />
+            </Principal>
+            <Dependent Role="GroupMembership">
+              <PropertyRef Name="group_path" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK822AE55FC5482473">
+          <End Role="Keyword" Type="GRASPModel.Keyword" Multiplicity="1" />
+          <End Role="keywordaction" Type="GRASPModel.keywordaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Keyword">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="keywordaction">
+              <PropertyRef Name="keyword_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FormResponse_ResponseValue">
+          <End Role="FormResponse" Type="GRASPModel.FormResponse" Multiplicity="*" />
+          <End Role="ResponseValue" Type="GRASPModel.ResponseValue" Multiplicity="*" />
+        </Association>
+        <Association Name="message_FrontlineMultimediaMessagePart">
+          <End Role="message" Type="GRASPModel.message" Multiplicity="*" />
+          <End Role="FrontlineMultimediaMessagePart" Type="GRASPModel.FrontlineMultimediaMessagePart" Multiplicity="*" />
+        </Association>
+        <Association Name="ResponseValue_ResponseValue">
+          <End Role="ResponseValue" Type="GRASPModel.ResponseValue" Multiplicity="*" />
+          <End Role="ResponseValue1" Type="GRASPModel.ResponseValue" Multiplicity="*" />
+        </Association>
+        <EntityType Name="FormResponseCoord">
+          <Key>
+            <PropertyRef Name="FRCoordID" />
+          </Key>
+          <Property Type="Int32" Name="FRCoordID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="FormResponseID" />
+          <Property Type="String" Name="FRCoordText" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Geography" Name="FRCoordGeo" />
+          <Property Type="String" Name="frXCoordText" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Geometry" Name="FRCoordGeometry" />
+        </EntityType>
+        <EntityType Name="Report">
+          <Key>
+            <PropertyRef Name="ReportID" />
+          </Key>
+          <Property Type="Int32" Name="ReportID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="ReportName" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ReportDescription" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="FormID" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="DateTime" Name="ReportCreateDate" Precision="3" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="description" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User_Credential" Relationship="GRASPModel.FK623D294B7F468633" FromRole="Role" ToRole="User_Credential" />
+        </EntityType>
+        <EntityType Name="SmsInternetServiceSetting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="serviceClassName" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue" Relationship="GRASPModel.FKA24BD3BD6E7ADCE1" FromRole="SmsInternetServiceSetting" ToRole="SmsInternetServiceSettings_SmsInternetServiceSettingValue" />
+        </EntityType>
+        <EntityType Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+          <Key>
+            <PropertyRef Name="SmsInternetServiceSettings_id" />
+            <PropertyRef Name="mapkey" />
+          </Key>
+          <Property Type="Decimal" Name="SmsInternetServiceSettings_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="properties_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="String" Name="mapkey" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SmsInternetServiceSetting" Relationship="GRASPModel.FKA24BD3BD6E7ADCE1" FromRole="SmsInternetServiceSettings_SmsInternetServiceSettingValue" ToRole="SmsInternetServiceSetting" />
+          <NavigationProperty Name="SmsInternetServiceSettingValue" Relationship="GRASPModel.FKA24BD3BD32373A6A" FromRole="SmsInternetServiceSettings_SmsInternetServiceSettingValue" ToRole="SmsInternetServiceSettingValue" />
+        </EntityType>
+        <EntityType Name="SmsModemSetting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Byte" Name="deleteMessagesAfterReceiving" Nullable="false" />
+          <Property Type="String" Name="manufacturer" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="model" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="serial" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="simPin" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="smscNumber" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Byte" Name="supportingReceive" />
+          <Property Type="Byte" Name="useDeliveryReports" Nullable="false" />
+          <Property Type="Byte" Name="useForReceiving" Nullable="false" />
+          <Property Type="Byte" Name="useForSending" Nullable="false" />
+        </EntityType>
+        <Association Name="FKA24BD3BD6E7ADCE1">
+          <End Type="GRASPModel.SmsInternetServiceSetting" Role="SmsInternetServiceSetting" Multiplicity="1" />
+          <End Type="GRASPModel.SmsInternetServiceSettings_SmsInternetServiceSettingValue" Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SmsInternetServiceSetting">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+              <PropertyRef Name="SmsInternetServiceSettings_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKA24BD3BD32373A6A">
+          <End Type="GRASPModel.SmsInternetServiceSettingValue" Role="SmsInternetServiceSettingValue" Multiplicity="1" />
+          <End Type="GRASPModel.SmsInternetServiceSettings_SmsInternetServiceSettingValue" Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SmsInternetServiceSettingValue">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+              <PropertyRef Name="properties_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="FormFieldExport">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="String" Name="label" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="positionIndex" Nullable="false" />
+          <Property Type="Byte" Name="required" />
+          <Property Type="String" Name="type" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="x_form" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="form_id" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="survey_id" Precision="19" Scale="0" />
+          <Property Type="Byte" Name="isReadOnly" />
+          <Property Type="Int32" Name="numberOfRep" />
+          <Property Type="DateTime" Name="FFCreateDate" Precision="3" />
+          <Property Type="Decimal" Name="FormFieldParentID" Precision="19" Scale="0" />
+          <Property Type="Byte" Name="calculated" />
+          <Property Type="String" Name="formula" MaxLength="255" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SurveyListAPI">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="String" Name="name" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="value" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ReportField">
+          <Key>
+            <PropertyRef Name="ReportFieldID" />
+          </Key>
+          <Property Type="Int32" Name="ReportFieldID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ReportID" Nullable="false" />
+          <Property Type="String" Name="ReportFieldLabel" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="FormFieldID" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="DateTime" Name="ReportFieldCreateDate" Precision="3" />
+          <Property Type="String" Name="ChartType" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ReportFieldValueLabel" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="ValueFormFieldID" Precision="19" Scale="0" />
+          <Property Type="String" Name="ReportFieldAggregate" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ReportFieldLegend" />
+          <Property Type="Int32" Name="ReportFieldTableData" />
+        </EntityType>
+        <EntityType Name="User_Credential">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Type="Int32" Name="user_id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="email" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="frontlinesms_id" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="password" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="phone_number" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Byte" Name="pushed" />
+          <Property Type="String" Name="supervisor" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="surname" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="username" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="roles_id" />
+          <Property Type="DateTime" Name="UserDeleteDate" Precision="3" />
+          <NavigationProperty Name="Roles" Relationship="GRASPModel.FK623D294B7F468633" FromRole="User_Credential" ToRole="Role" />
+        </EntityType>
+        <Association Name="FK623D294B7F468633">
+          <End Type="GRASPModel.Role" Role="Role" Multiplicity="0..1" />
+          <End Type="GRASPModel.User_Credential" Role="User_Credential" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="User_Credential">
+              <PropertyRef Name="roles_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="BindingRules">
+          <Key>
+            <PropertyRef Name="FormField_id" />
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+            <PropertyRef Name="Expr1" />
+          </Key>
+          <Property Type="Decimal" Name="FormField_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="String" Name="bType" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="value" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="label" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="positionIndex" Nullable="false" />
+          <Property Type="String" Name="type" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="x_form" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="form_id" Precision="19" Scale="0" />
+          <Property Type="String" Name="bindingsPolicy" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="Expr1" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Byte" Name="required" />
+          <Property Type="Byte" Name="calculated" />
+          <Property Type="String" Name="formula" MaxLength="255" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="BindingContainer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="bType" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="maxRange" />
+          <Property Type="Int32" Name="minRange" />
+          <Property Type="Byte" Name="pushed" />
+          <Property Type="String" Name="value" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="FormFieldAndBinding" Relationship="GRASPModel.FKD3503BC4981CDFEB" FromRole="BindingContainer" ToRole="FormFieldAndBinding" />
+        </EntityType>
+        <EntityType Name="ConstraintContainer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="cType" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="maxRange" Nullable="false" />
+          <Property Type="Int32" Name="minRange" Nullable="false" />
+          <Property Type="Byte" Name="pushed" />
+          <Property Type="String" Name="value" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="cNumber" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="FormField_ConstraintContainer" Relationship="GRASPModel.FK594E3BBB95BCFCF4" FromRole="ConstraintContainer" ToRole="FormField_ConstraintContainer" />
+        </EntityType>
+        <EntityType Name="FormField">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="id_flsmsId" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="label" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="name" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="positionIndex" Nullable="false" />
+          <Property Type="Byte" Name="pushed" />
+          <Property Type="Byte" Name="required" />
+          <Property Type="String" Name="type" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="x_form" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="form_id" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="survey_id" Precision="19" Scale="0" />
+          <Property Type="String" Name="bindingsPolicy" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Byte" Name="calculated" />
+          <Property Type="String" Name="constraintPolicy" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="formula" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Byte" Name="isReadOnly" />
+          <Property Type="Int32" Name="numberOfRep" />
+          <Property Type="DateTime" Name="FFCreateDate" Precision="3" />
+          <NavigationProperty Name="Form" Relationship="GRASPModel.FKE1EB1E761F476EAE" FromRole="FormField" ToRole="Form" />
+          <NavigationProperty Name="FormField_FormFieldAndBinding" Relationship="GRASPModel.FK4210107B162222E6" FromRole="FormField" ToRole="FormField_FormFieldAndBinding" />
+          <NavigationProperty Name="FormField_ConstraintContainer" Relationship="GRASPModel.FK594E3BBB162222E6" FromRole="FormField" ToRole="FormField_ConstraintContainer" />
+          <NavigationProperty Name="FormFieldAndBinding" Relationship="GRASPModel.FKD3503BC49F9D5488" FromRole="FormField" ToRole="FormFieldAndBinding" />
+          <NavigationProperty Name="Survey" Relationship="GRASPModel.FKE1EB1E76882251EE" FromRole="FormField" ToRole="Survey" />
+          <NavigationProperty Name="Form1" Relationship="GRASPModel.Form_FormField" FromRole="FormField" ToRole="Form" />
+          <NavigationProperty Name="FormField1" Relationship="GRASPModel.FormField_FormField" FromRole="FormField" ToRole="FormField1" />
+          <NavigationProperty Name="FormField2" Relationship="GRASPModel.FormField_FormField" FromRole="FormField1" ToRole="FormField" />
+          <NavigationProperty Name="FormResponse" Relationship="GRASPModel.FormField_FormResponse" FromRole="FormField" ToRole="FormResponse" />
+        </EntityType>
+        <EntityType Name="FormField_ConstraintContainer">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="FormField_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="constraints_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="ConstraintContainer" Relationship="GRASPModel.FK594E3BBB95BCFCF4" FromRole="FormField_ConstraintContainer" ToRole="ConstraintContainer" />
+          <NavigationProperty Name="FormField" Relationship="GRASPModel.FK594E3BBB162222E6" FromRole="FormField_ConstraintContainer" ToRole="FormField" />
+        </EntityType>
+        <EntityType Name="FormField_FormFieldAndBinding">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="FormField_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="bindingCouples_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="FormField" Relationship="GRASPModel.FK4210107B162222E6" FromRole="FormField_FormFieldAndBinding" ToRole="FormField" />
+          <NavigationProperty Name="FormFieldAndBinding" Relationship="GRASPModel.FK4210107B66ACF65C" FromRole="FormField_FormFieldAndBinding" ToRole="FormFieldAndBinding" />
+        </EntityType>
+        <EntityType Name="FormFieldAndBinding">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Byte" Name="pushed" />
+          <Property Type="Decimal" Name="bContainer_id" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="fField_id" Precision="19" Scale="0" />
+          <NavigationProperty Name="BindingContainer" Relationship="GRASPModel.FKD3503BC4981CDFEB" FromRole="FormFieldAndBinding" ToRole="BindingContainer" />
+          <NavigationProperty Name="FormField" Relationship="GRASPModel.FKD3503BC49F9D5488" FromRole="FormFieldAndBinding" ToRole="FormField" />
+          <NavigationProperty Name="FormField_FormFieldAndBinding" Relationship="GRASPModel.FK4210107B66ACF65C" FromRole="FormFieldAndBinding" ToRole="FormField_FormFieldAndBinding" />
+        </EntityType>
+        <EntityType Name="Survey">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="id" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="name" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="owner_id" Precision="19" Scale="0" />
+          <NavigationProperty Name="Form" Relationship="GRASPModel.FK9448937AAACA0E5F" FromRole="Survey" ToRole="Form" />
+          <NavigationProperty Name="FormField" Relationship="GRASPModel.FKE1EB1E76882251EE" FromRole="Survey" ToRole="FormField" />
+          <NavigationProperty Name="Survey_SurveyElement" Relationship="GRASPModel.FK7110EE1D882251EE" FromRole="Survey" ToRole="Survey_SurveyElement" />
+        </EntityType>
+        <EntityType Name="Survey_SurveyElement">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Type="Decimal" Name="Survey_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Decimal" Name="values_id" Nullable="false" Precision="19" Scale="0" />
+          <Property Type="Int32" Name="id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Survey" Relationship="GRASPModel.FK7110EE1D882251EE" FromRole="Survey_SurveyElement" ToRole="Survey" />
+          <NavigationProperty Name="SurveyElement" Relationship="GRASPModel.FK7110EE1DB3405EA6" FromRole="Survey_SurveyElement" ToRole="SurveyElement" />
+        </EntityType>
+        <Association Name="FKD3503BC4981CDFEB">
+          <End Type="GRASPModel.BindingContainer" Role="BindingContainer" Multiplicity="0..1" />
+          <End Type="GRASPModel.FormFieldAndBinding" Role="FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BindingContainer">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormFieldAndBinding">
+              <PropertyRef Name="bContainer_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK594E3BBB95BCFCF4">
+          <End Type="GRASPModel.ConstraintContainer" Role="ConstraintContainer" Multiplicity="1" />
+          <End Type="GRASPModel.FormField_ConstraintContainer" Role="FormField_ConstraintContainer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConstraintContainer">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_ConstraintContainer">
+              <PropertyRef Name="constraints_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK9448937AAACA0E5F">
+          <End Type="GRASPModel.Form" Role="Form" Multiplicity="0..1" />
+          <End Type="GRASPModel.Survey" Role="Survey" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Survey">
+              <PropertyRef Name="owner_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKE1EB1E761F476EAE">
+          <End Type="GRASPModel.Form" Role="Form" Multiplicity="0..1" />
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField">
+              <PropertyRef Name="form_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK4210107B162222E6">
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="1" />
+          <End Type="GRASPModel.FormField_FormFieldAndBinding" Role="FormField_FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormFieldAndBinding">
+              <PropertyRef Name="FormField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK594E3BBB162222E6">
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="1" />
+          <End Type="GRASPModel.FormField_ConstraintContainer" Role="FormField_ConstraintContainer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_ConstraintContainer">
+              <PropertyRef Name="FormField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKD3503BC49F9D5488">
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="0..1" />
+          <End Type="GRASPModel.FormFieldAndBinding" Role="FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormField">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormFieldAndBinding">
+              <PropertyRef Name="fField_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FKE1EB1E76882251EE">
+          <End Type="GRASPModel.Survey" Role="Survey" Multiplicity="0..1" />
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Survey">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField">
+              <PropertyRef Name="survey_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK4210107B66ACF65C">
+          <End Type="GRASPModel.FormFieldAndBinding" Role="FormFieldAndBinding" Multiplicity="1" />
+          <End Type="GRASPModel.FormField_FormFieldAndBinding" Role="FormField_FormFieldAndBinding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FormFieldAndBinding">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="FormField_FormFieldAndBinding">
+              <PropertyRef Name="bindingCouples_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK7110EE1D882251EE">
+          <End Type="GRASPModel.Survey" Role="Survey" Multiplicity="1" />
+          <End Type="GRASPModel.Survey_SurveyElement" Role="Survey_SurveyElement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Survey">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Survey_SurveyElement">
+              <PropertyRef Name="Survey_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK7110EE1DB3405EA6">
+          <End Type="GRASPModel.SurveyElement" Role="SurveyElement" Multiplicity="1" />
+          <End Type="GRASPModel.Survey_SurveyElement" Role="Survey_SurveyElement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SurveyElement">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Survey_SurveyElement">
+              <PropertyRef Name="values_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Form_FormField">
+          <End Type="GRASPModel.Form" Role="Form" Multiplicity="*" />
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="*" />
+        </Association>
+        <Association Name="FormField_FormField">
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="*" />
+          <End Type="GRASPModel.FormField" Role="FormField1" Multiplicity="*" />
+        </Association>
+        <Association Name="FormField_FormResponse">
+          <End Type="GRASPModel.FormField" Role="FormField" Multiplicity="*" />
+          <End Type="GRASPModel.FormResponse" Role="FormResponse" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="GRASPModelStoreContainer" CdmEntityContainer="GRASPEntities">
+          <EntitySetMapping Name="Contact">
+            <EntityTypeMapping TypeName="GRASPModel.Contact">
+              <MappingFragment StoreEntitySet="Contact">
+                <ScalarProperty Name="contact_id" ColumnName="contact_id" />
+                <ScalarProperty Name="active" ColumnName="active" />
+                <ScalarProperty Name="emailAddress" ColumnName="emailAddress" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="notes" ColumnName="notes" />
+                <ScalarProperty Name="otherPhoneNumber" ColumnName="otherPhoneNumber" />
+                <ScalarProperty Name="phoneNumber" ColumnName="phoneNumber" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DataTransfer">
+            <EntityTypeMapping TypeName="GRASPModel.DataTransfer">
+              <MappingFragment StoreEntitySet="DataTransfer">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="dbname" ColumnName="dbname" />
+                <ScalarProperty Name="dbpassword" ColumnName="dbpassword" />
+                <ScalarProperty Name="dbusername" ColumnName="dbusername" />
+                <ScalarProperty Name="manual" ColumnName="manual" />
+                <ScalarProperty Name="scheduled" ColumnName="scheduled" />
+                <ScalarProperty Name="scheduledtime" ColumnName="scheduledtime" />
+                <ScalarProperty Name="servername" ColumnName="servername" />
+                <ScalarProperty Name="serverport" ColumnName="serverport" />
+                <ScalarProperty Name="sharable" ColumnName="sharable" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Email">
+            <EntityTypeMapping TypeName="GRASPModel.Email">
+              <MappingFragment StoreEntitySet="Email">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="content" ColumnName="content" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="recipients" ColumnName="recipients" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="subject" ColumnName="subject" />
+                <ScalarProperty Name="sender_id" ColumnName="sender_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmailAccount">
+            <EntityTypeMapping TypeName="GRASPModel.EmailAccount">
+              <MappingFragment StoreEntitySet="EmailAccount">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="accountName" ColumnName="accountName" />
+                <ScalarProperty Name="accountPassword" ColumnName="accountPassword" />
+                <ScalarProperty Name="accountServer" ColumnName="accountServer" />
+                <ScalarProperty Name="accountServerPort" ColumnName="accountServerPort" />
+                <ScalarProperty Name="enabled" ColumnName="enabled" />
+                <ScalarProperty Name="isForReceiving" ColumnName="isForReceiving" />
+                <ScalarProperty Name="lastCheck" ColumnName="lastCheck" />
+                <ScalarProperty Name="protocol" ColumnName="protocol" />
+                <ScalarProperty Name="useSsl" ColumnName="useSsl" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Form">
+            <EntityTypeMapping TypeName="GRASPModel.Form">
+              <MappingFragment StoreEntitySet="Form">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Code_Form" ColumnName="Code_Form" />
+                <ScalarProperty Name="bindingsPolicy" ColumnName="bindingsPolicy" />
+                <ScalarProperty Name="designerVersion" ColumnName="designerVersion" />
+                <ScalarProperty Name="finalised" ColumnName="finalised" />
+                <ScalarProperty Name="id_flsmsId" ColumnName="id_flsmsId" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="owner" ColumnName="owner" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="permittedGroup_path" ColumnName="permittedGroup_path" />
+                <ScalarProperty Name="FormCreateDate" ColumnName="FormCreateDate" />
+                <ScalarProperty Name="isHidden" ColumnName="isHidden" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormResponse">
+            <EntityTypeMapping TypeName="GRASPModel.FormResponse">
+              <MappingFragment StoreEntitySet="FormResponse">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="clientVersion" ColumnName="clientVersion" />
+                <ScalarProperty Name="id_flsmsId" ColumnName="id_flsmsId" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="senderMsisdn" ColumnName="senderMsisdn" />
+                <ScalarProperty Name="parentForm_id" ColumnName="parentForm_id" />
+                <ScalarProperty Name="Code_Form" ColumnName="Code_Form" />
+                <ScalarProperty Name="fromDataEntry" ColumnName="fromDataEntry" />
+                <ScalarProperty Name="FRCreateDate" ColumnName="FRCreateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormResponseCoords_ResponseValue">
+            <EntityTypeMapping TypeName="GRASPModel.FormResponseCoords_ResponseValue">
+              <MappingFragment StoreEntitySet="FormResponseCoords_ResponseValue">
+                <ScalarProperty Name="FormResponseCoords_FRCoordID" ColumnName="FormResponseCoords_FRCoordID" />
+                <ScalarProperty Name="formResponses_id" ColumnName="formResponses_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="frontline_group">
+            <EntityTypeMapping TypeName="GRASPModel.frontline_group">
+              <MappingFragment StoreEntitySet="frontline_group">
+                <ScalarProperty Name="path" ColumnName="path" />
+                <ScalarProperty Name="id_flsmsId" ColumnName="id_flsmsId" />
+                <ScalarProperty Name="parentPath" ColumnName="parentPath" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FrontlineMultimediaMessagePart">
+            <EntityTypeMapping TypeName="GRASPModel.FrontlineMultimediaMessagePart">
+              <MappingFragment StoreEntitySet="FrontlineMultimediaMessagePart">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="binaryData" ColumnName="binaryData" />
+                <ScalarProperty Name="content" ColumnName="content" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupMembership">
+            <EntityTypeMapping TypeName="GRASPModel.GroupMembership">
+              <MappingFragment StoreEntitySet="GroupMembership">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="contact_contact_id" ColumnName="contact_contact_id" />
+                <ScalarProperty Name="group_path" ColumnName="group_path" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Keyword">
+            <EntityTypeMapping TypeName="GRASPModel.Keyword">
+              <MappingFragment StoreEntitySet="Keyword">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="keyword1" ColumnName="keyword" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="keywordaction">
+            <EntityTypeMapping TypeName="GRASPModel.keywordaction">
+              <MappingFragment StoreEntitySet="keywordaction">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="commandInteger" ColumnName="commandInteger" />
+                <ScalarProperty Name="commandString" ColumnName="commandString" />
+                <ScalarProperty Name="counter" ColumnName="counter" />
+                <ScalarProperty Name="emailRecipients" ColumnName="emailRecipients" />
+                <ScalarProperty Name="emailSubject" ColumnName="emailSubject" />
+                <ScalarProperty Name="endDate" ColumnName="endDate" />
+                <ScalarProperty Name="externalCommand" ColumnName="externalCommand" />
+                <ScalarProperty Name="externalCommandResponseActionType" ColumnName="externalCommandResponseActionType" />
+                <ScalarProperty Name="externalCommandResponseType" ColumnName="externalCommandResponseType" />
+                <ScalarProperty Name="externalCommandType" ColumnName="externalCommandType" />
+                <ScalarProperty Name="startDate" ColumnName="startDate" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="emailAccount_id" ColumnName="emailAccount_id" />
+                <ScalarProperty Name="group_path" ColumnName="group_path" />
+                <ScalarProperty Name="keyword_id" ColumnName="keyword_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="message">
+            <EntityTypeMapping TypeName="GRASPModel.message">
+              <MappingFragment StoreEntitySet="message">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="binaryMessageContent" ColumnName="binaryMessageContent" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="dtype" ColumnName="dtype" />
+                <ScalarProperty Name="recipientMsisdn" ColumnName="recipientMsisdn" />
+                <ScalarProperty Name="recipientSmsPort" ColumnName="recipientSmsPort" />
+                <ScalarProperty Name="retriesRemaining" ColumnName="retriesRemaining" />
+                <ScalarProperty Name="senderMsisdn" ColumnName="senderMsisdn" />
+                <ScalarProperty Name="smsPartsCount" ColumnName="smsPartsCount" />
+                <ScalarProperty Name="smscReference" ColumnName="smscReference" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="textContent" ColumnName="textContent" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="subject" ColumnName="subject" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="reminder">
+            <EntityTypeMapping TypeName="GRASPModel.reminder">
+              <MappingFragment StoreEntitySet="reminder">
+                <ScalarProperty Name="occurrence" ColumnName="occurrence" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="content" ColumnName="content" />
+                <ScalarProperty Name="enddate" ColumnName="enddate" />
+                <ScalarProperty Name="recipients" ColumnName="recipients" />
+                <ScalarProperty Name="startdate" ColumnName="startdate" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="subject" ColumnName="subject" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="emailAccount_id" ColumnName="emailAccount_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ResponseValue">
+            <EntityTypeMapping TypeName="GRASPModel.ResponseValue">
+              <MappingFragment StoreEntitySet="ResponseValue">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="id_flsmsId" ColumnName="id_flsmsId" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="RVRepeatCount" ColumnName="RVRepeatCount" />
+                <ScalarProperty Name="FormResponseID" ColumnName="FormResponseID" />
+                <ScalarProperty Name="RVCreateDate" ColumnName="RVCreateDate" />
+                <ScalarProperty Name="formFieldId" ColumnName="formFieldId" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SmsInternetServiceSettingValue">
+            <EntityTypeMapping TypeName="GRASPModel.SmsInternetServiceSettingValue">
+              <MappingFragment StoreEntitySet="SmsInternetServiceSettingValue">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="value" ColumnName="value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StatisticsTable">
+            <EntityTypeMapping TypeName="GRASPModel.StatisticsTable">
+              <MappingFragment StoreEntitySet="StatisticsTable">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="chartType" ColumnName="chartType" />
+                <ScalarProperty Name="form_id" ColumnName="form_id" />
+                <ScalarProperty Name="query" ColumnName="query" />
+                <ScalarProperty Name="title" ColumnName="title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SurveyElement">
+            <EntityTypeMapping TypeName="GRASPModel.SurveyElement">
+              <MappingFragment StoreEntitySet="SurveyElement">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="position" ColumnName="position" />
+                <ScalarProperty Name="survey" ColumnName="survey" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="defaultValue" ColumnName="defaultValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FormResponse_ResponseValue" TypeName="GRASPModel.FormResponse_ResponseValue" StoreEntitySet="FormResponse_ResponseValue">
+            <EndProperty Name="FormResponse">
+              <ScalarProperty Name="id" ColumnName="FormResponse_id" />
+            </EndProperty>
+            <EndProperty Name="ResponseValue">
+              <ScalarProperty Name="id" ColumnName="results_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="message_FrontlineMultimediaMessagePart" TypeName="GRASPModel.message_FrontlineMultimediaMessagePart" StoreEntitySet="message_FrontlineMultimediaMessagePart">
+            <EndProperty Name="message">
+              <ScalarProperty Name="id" ColumnName="message_id" />
+            </EndProperty>
+            <EndProperty Name="FrontlineMultimediaMessagePart">
+              <ScalarProperty Name="id" ColumnName="multimediaParts_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="ResponseValue_ResponseValue" TypeName="GRASPModel.ResponseValue_ResponseValue" StoreEntitySet="ResponseValue_ResponseValue">
+            <EndProperty Name="ResponseValue">
+              <ScalarProperty Name="id" ColumnName="repetableResponseValues_id" />
+            </EndProperty>
+            <EndProperty Name="ResponseValue1">
+              <ScalarProperty Name="id" ColumnName="ResponseValue_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="FormResponseCoords">
+            <EntityTypeMapping TypeName="GRASPModel.FormResponseCoord">
+              <MappingFragment StoreEntitySet="FormResponseCoords">
+                <ScalarProperty Name="FRCoordGeometry" ColumnName="FRCoordGeometry" />
+                <ScalarProperty Name="frXCoordText" ColumnName="frXCoordText" />
+                <ScalarProperty Name="FRCoordGeo" ColumnName="FRCoordGeo" />
+                <ScalarProperty Name="FRCoordText" ColumnName="FRCoordText" />
+                <ScalarProperty Name="FormResponseID" ColumnName="FormResponseID" />
+                <ScalarProperty Name="FRCoordID" ColumnName="FRCoordID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reports">
+            <EntityTypeMapping TypeName="GRASPModel.Report">
+              <MappingFragment StoreEntitySet="Reports">
+                <ScalarProperty Name="ReportCreateDate" ColumnName="ReportCreateDate" />
+                <ScalarProperty Name="FormID" ColumnName="FormID" />
+                <ScalarProperty Name="ReportDescription" ColumnName="ReportDescription" />
+                <ScalarProperty Name="ReportName" ColumnName="ReportName" />
+                <ScalarProperty Name="ReportID" ColumnName="ReportID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Roles">
+            <EntityTypeMapping TypeName="GRASPModel.Role">
+              <MappingFragment StoreEntitySet="Roles">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SmsInternetServiceSettings">
+            <EntityTypeMapping TypeName="GRASPModel.SmsInternetServiceSetting">
+              <MappingFragment StoreEntitySet="SmsInternetServiceSettings">
+                <ScalarProperty Name="serviceClassName" ColumnName="serviceClassName" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+            <EntityTypeMapping TypeName="GRASPModel.SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+              <MappingFragment StoreEntitySet="SmsInternetServiceSettings_SmsInternetServiceSettingValue">
+                <ScalarProperty Name="mapkey" ColumnName="mapkey" />
+                <ScalarProperty Name="properties_id" ColumnName="properties_id" />
+                <ScalarProperty Name="SmsInternetServiceSettings_id" ColumnName="SmsInternetServiceSettings_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SmsModemSettings">
+            <EntityTypeMapping TypeName="GRASPModel.SmsModemSetting">
+              <MappingFragment StoreEntitySet="SmsModemSettings">
+                <ScalarProperty Name="useForSending" ColumnName="useForSending" />
+                <ScalarProperty Name="useForReceiving" ColumnName="useForReceiving" />
+                <ScalarProperty Name="useDeliveryReports" ColumnName="useDeliveryReports" />
+                <ScalarProperty Name="supportingReceive" ColumnName="supportingReceive" />
+                <ScalarProperty Name="smscNumber" ColumnName="smscNumber" />
+                <ScalarProperty Name="simPin" ColumnName="simPin" />
+                <ScalarProperty Name="serial" ColumnName="serial" />
+                <ScalarProperty Name="model" ColumnName="model" />
+                <ScalarProperty Name="manufacturer" ColumnName="manufacturer" />
+                <ScalarProperty Name="deleteMessagesAfterReceiving" ColumnName="deleteMessagesAfterReceiving" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormFieldExport">
+            <EntityTypeMapping TypeName="GRASPModel.FormFieldExport">
+              <MappingFragment StoreEntitySet="FormFieldExport">
+                <ScalarProperty Name="formula" ColumnName="formula" />
+                <ScalarProperty Name="calculated" ColumnName="calculated" />
+                <ScalarProperty Name="FormFieldParentID" ColumnName="FormFieldParentID" />
+                <ScalarProperty Name="FFCreateDate" ColumnName="FFCreateDate" />
+                <ScalarProperty Name="numberOfRep" ColumnName="numberOfRep" />
+                <ScalarProperty Name="isReadOnly" ColumnName="isReadOnly" />
+                <ScalarProperty Name="survey_id" ColumnName="survey_id" />
+                <ScalarProperty Name="form_id" ColumnName="form_id" />
+                <ScalarProperty Name="x_form" ColumnName="x_form" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="required" ColumnName="required" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="label" ColumnName="label" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SurveyListAPI">
+            <EntityTypeMapping TypeName="GRASPModel.SurveyListAPI">
+              <MappingFragment StoreEntitySet="SurveyListAPI">
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReportFields">
+            <EntityTypeMapping TypeName="GRASPModel.ReportField">
+              <MappingFragment StoreEntitySet="ReportFields">
+                <ScalarProperty Name="ReportFieldTableData" ColumnName="ReportFieldTableData" />
+                <ScalarProperty Name="ReportFieldLegend" ColumnName="ReportFieldLegend" />
+                <ScalarProperty Name="ReportFieldAggregate" ColumnName="ReportFieldAggregate" />
+                <ScalarProperty Name="ValueFormFieldID" ColumnName="ValueFormFieldID" />
+                <ScalarProperty Name="ReportFieldValueLabel" ColumnName="ReportFieldValueLabel" />
+                <ScalarProperty Name="ChartType" ColumnName="ChartType" />
+                <ScalarProperty Name="ReportFieldCreateDate" ColumnName="ReportFieldCreateDate" />
+                <ScalarProperty Name="FormFieldID" ColumnName="FormFieldID" />
+                <ScalarProperty Name="ReportFieldLabel" ColumnName="ReportFieldLabel" />
+                <ScalarProperty Name="ReportID" ColumnName="ReportID" />
+                <ScalarProperty Name="ReportFieldID" ColumnName="ReportFieldID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User_Credential">
+            <EntityTypeMapping TypeName="GRASPModel.User_Credential">
+              <MappingFragment StoreEntitySet="User_Credential">
+                <ScalarProperty Name="UserDeleteDate" ColumnName="UserDeleteDate" />
+                <ScalarProperty Name="roles_id" ColumnName="roles_id" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="surname" ColumnName="surname" />
+                <ScalarProperty Name="supervisor" ColumnName="supervisor" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="phone_number" ColumnName="phone_number" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="frontlinesms_id" ColumnName="frontlinesms_id" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BindingRules">
+            <EntityTypeMapping TypeName="GRASPModel.BindingRules">
+              <MappingFragment StoreEntitySet="BindingRules">
+                <ScalarProperty Name="formula" ColumnName="formula" />
+                <ScalarProperty Name="calculated" ColumnName="calculated" />
+                <ScalarProperty Name="required" ColumnName="required" />
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="bindingsPolicy" ColumnName="bindingsPolicy" />
+                <ScalarProperty Name="form_id" ColumnName="form_id" />
+                <ScalarProperty Name="x_form" ColumnName="x_form" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="label" ColumnName="label" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="bType" ColumnName="bType" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="FormField_id" ColumnName="FormField_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BindingContainer">
+            <EntityTypeMapping TypeName="GRASPModel.BindingContainer">
+              <MappingFragment StoreEntitySet="BindingContainer">
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="minRange" ColumnName="minRange" />
+                <ScalarProperty Name="maxRange" ColumnName="maxRange" />
+                <ScalarProperty Name="bType" ColumnName="bType" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConstraintContainer">
+            <EntityTypeMapping TypeName="GRASPModel.ConstraintContainer">
+              <MappingFragment StoreEntitySet="ConstraintContainer">
+                <ScalarProperty Name="cNumber" ColumnName="cNumber" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="minRange" ColumnName="minRange" />
+                <ScalarProperty Name="maxRange" ColumnName="maxRange" />
+                <ScalarProperty Name="cType" ColumnName="cType" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormField">
+            <EntityTypeMapping TypeName="GRASPModel.FormField">
+              <MappingFragment StoreEntitySet="FormField">
+                <ScalarProperty Name="FFCreateDate" ColumnName="FFCreateDate" />
+                <ScalarProperty Name="numberOfRep" ColumnName="numberOfRep" />
+                <ScalarProperty Name="isReadOnly" ColumnName="isReadOnly" />
+                <ScalarProperty Name="formula" ColumnName="formula" />
+                <ScalarProperty Name="constraintPolicy" ColumnName="constraintPolicy" />
+                <ScalarProperty Name="calculated" ColumnName="calculated" />
+                <ScalarProperty Name="bindingsPolicy" ColumnName="bindingsPolicy" />
+                <ScalarProperty Name="survey_id" ColumnName="survey_id" />
+                <ScalarProperty Name="form_id" ColumnName="form_id" />
+                <ScalarProperty Name="x_form" ColumnName="x_form" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="required" ColumnName="required" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="label" ColumnName="label" />
+                <ScalarProperty Name="id_flsmsId" ColumnName="id_flsmsId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormField_ConstraintContainer">
+            <EntityTypeMapping TypeName="GRASPModel.FormField_ConstraintContainer">
+              <MappingFragment StoreEntitySet="FormField_ConstraintContainer">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="constraints_id" ColumnName="constraints_id" />
+                <ScalarProperty Name="FormField_id" ColumnName="FormField_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormField_FormFieldAndBinding">
+            <EntityTypeMapping TypeName="GRASPModel.FormField_FormFieldAndBinding">
+              <MappingFragment StoreEntitySet="FormField_FormFieldAndBinding">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="bindingCouples_id" ColumnName="bindingCouples_id" />
+                <ScalarProperty Name="FormField_id" ColumnName="FormField_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormFieldAndBinding">
+            <EntityTypeMapping TypeName="GRASPModel.FormFieldAndBinding">
+              <MappingFragment StoreEntitySet="FormFieldAndBinding">
+                <ScalarProperty Name="fField_id" ColumnName="fField_id" />
+                <ScalarProperty Name="bContainer_id" ColumnName="bContainer_id" />
+                <ScalarProperty Name="pushed" ColumnName="pushed" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Survey">
+            <EntityTypeMapping TypeName="GRASPModel.Survey">
+              <MappingFragment StoreEntitySet="Survey">
+                <ScalarProperty Name="owner_id" ColumnName="owner_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Survey_SurveyElement">
+            <EntityTypeMapping TypeName="GRASPModel.Survey_SurveyElement">
+              <MappingFragment StoreEntitySet="Survey_SurveyElement">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="values_id" ColumnName="values_id" />
+                <ScalarProperty Name="Survey_id" ColumnName="Survey_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Form_FormField" TypeName="GRASPModel.Form_FormField" StoreEntitySet="Form_FormField">
+            <EndProperty Name="FormField">
+              <ScalarProperty Name="id" ColumnName="fields_id" />
+            </EndProperty>
+            <EndProperty Name="Form">
+              <ScalarProperty Name="id" ColumnName="Form_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FormField_FormField" TypeName="GRASPModel.FormField_FormField" StoreEntitySet="FormField_FormField">
+            <EndProperty Name="FormField1">
+              <ScalarProperty Name="id" ColumnName="repetableFormFields_id" />
+            </EndProperty>
+            <EndProperty Name="FormField">
+              <ScalarProperty Name="id" ColumnName="FormField_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FormField_FormResponse" TypeName="GRASPModel.FormField_FormResponse" StoreEntitySet="FormField_FormResponse">
+            <EndProperty Name="FormResponse">
+              <ScalarProperty Name="id" ColumnName="formResponses_id" />
+            </EndProperty>
+            <EndProperty Name="FormField">
+              <ScalarProperty Name="id" ColumnName="FormField_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

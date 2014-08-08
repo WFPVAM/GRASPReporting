@@ -1,0 +1,106 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Admin.master.cs" Inherits="_master_Admin" %>
+
+<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="../_css/bootstrap.css" rel="stylesheet">
+    <link href="../_css/sb-admin.css" rel="stylesheet">
+    <link rel="stylesheet" href="../_css/font-awesome/css/font-awesome.min.css">
+
+    <script src="../_js/jquery.min.js"></script>
+    <script src="../_js/bootstrap.js"></script>
+
+    <script type="text/javascript">
+        var urlWithoutQS = window.location.pathname;
+        $(document).ready(function () {
+            var countCurrentPage = urlWithoutQS.split('/').length;
+            var currentPage = urlWithoutQS.split('/')[countCurrentPage - 1].split('.')[0];
+            console.log(currentPage);
+            var elemArray = document.getElementsByClassName("line-bottom");
+            for (var i = 0; i < elemArray.length; i++) {
+                if(elemArray[i].textContent.indexOf(' ') >= 0)
+                {
+                    if (currentPage.indexOf('_') >= 0 && currentPage.indexOf(elemArray[i].textContent.split(' ')[0]) >= 0) {
+                        elemArray[i].className += " active";
+                    }
+                }
+                else if (elemArray[i].textContent == currentPage) {
+                    elemArray[i].className += " active";
+                }
+            }
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <telerik:RadScriptManager ID="RadScriptManager1" runat="server">
+        </telerik:RadScriptManager>
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!--<div style="width: 160px; float:left">-->
+                    <a href="Home_Page.aspx">
+                        <img style="padding-left: 25px; padding-top: 8px" src="../_images/logo_wfp.png" height="70px" alt="World Food Programme" /></a>
+                    <span style="color: #fff">Version: <asp:Literal ID="lblVersion" runat="server"></asp:Literal></span><!--</div>-->
+                    <!--<div style="color: #f00;text-align: center;margin: 0 auto;width: 160px;padding-top: 8px;">PROVA</div>-->
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav side-nav line-bottom">
+                        <li class="line-bottom"><a href="Home_Page.aspx"><i class="fa fa-home"></i>Home Page</a></li>
+                        <li class="line-bottom"><a href="Surveys.aspx"><i class="fa fa-check-square-o"></i>Surveys</a></li>
+                        <li id="reports" runat="server" class="line-bottom"><a href="Reports.aspx"><i class="fa fa-bar-chart-o"></i>Reports</a></li>
+                        <li id="maps" runat="server" class="line-bottom"><a href="Maps.aspx"><i class="fa fa-map-marker"></i>Maps</a></li>
+                        <li class="line-bottom"><a href="Data_Entry.aspx"><i class="fa fa-pencil"></i>Data Entry</a></li>
+                        <li id="users" runat="server" class="line-bottom"><a href="Users.aspx"><i class="fa fa-users"></i>Users</a></li>
+                        <li id="settings" runat="server" class="line-bottom"><a href="Settings.aspx"><i class="fa fa-cogs"></i>Settings</a></li>
+                        <li>
+                            <asp:LinkButton ID="exit" runat="server" OnClick="exit_Click"><i class="fa fa-power-off"></i>Exit</asp:LinkButton></li>
+                    </ul>
+
+
+
+                    <ul class="nav navbar-nav navbar-right navbar-user">
+                        <li class="dropdown user-dropdown"><i class="fa fa-user"></i> Welcome <b><%= LoggedUser %></b>
+                            <a class="logo" href="http://www.wfp.org/">
+                        <img src="../_images/logo_wfp.gif" height="60px" alt="World Food Programme" /></a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </nav>
+
+            <div id="page-wrapper">
+                <asp:ContentPlaceHolder ID="cphBody1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+            <!-- /#page-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->
+    </form>
+</body>
+</html>
