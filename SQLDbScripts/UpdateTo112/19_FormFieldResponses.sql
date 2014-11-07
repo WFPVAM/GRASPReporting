@@ -1,15 +1,15 @@
-USE [GRASP_UNDP4]
+USE [GRASP]
 GO
 
-/****** Object:  View [dbo].[FormFieldResponses]    Script Date: 11/07/2014 18:46:38 ******/
+/****** Object:  View [dbo].[FormFieldResponses]    Script Date: 11/07/2014 19:08:20 ******/
 IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[dbo].[FormFieldResponses]'))
 DROP VIEW [dbo].[FormFieldResponses]
 GO
 
-USE [GRASP_UNDP4]
+USE [GRASP]
 GO
 
-/****** Object:  View [dbo].[FormFieldResponses]    Script Date: 11/07/2014 18:46:38 ******/
+/****** Object:  View [dbo].[FormFieldResponses]    Script Date: 11/07/2014 19:08:20 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -17,16 +17,23 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 CREATE VIEW [dbo].[FormFieldResponses]
 AS
 SELECT     dbo.ResponseValue.id, dbo.ResponseValue.value, dbo.ResponseValue.RVRepeatCount, dbo.ResponseValue.FormResponseID, dbo.ResponseValue.RVCreateDate, 
                       dbo.ResponseValue.formFieldId, dbo.FormResponse.parentForm_id, dbo.FormField.label, dbo.FormField.name, dbo.FormField.type, dbo.FormField.survey_id, 
-                      dbo.FormField.positionIndex
+                      dbo.FormField.positionIndex, dbo.FormResponse.senderMsisdn, dbo.FormResponse.FRCreateDate, FormResponse.ResponseStatusID, 
+                      dbo.ResponseValue.nvalue, dbo.ResponseValue.dvalue
 FROM         dbo.ResponseValue INNER JOIN
                       dbo.FormField ON dbo.ResponseValue.formFieldId = dbo.FormField.id INNER JOIN
-                      dbo.FormResponse ON dbo.ResponseValue.FormResponseID = dbo.FormResponse.id
-
+                      dbo.FormResponse ON dbo.ResponseValue.FormResponseID = dbo.FormResponse.id 
+UNION
+SELECT     respValueExtID AS id, CAST(nvalue AS nvarchar(255)) AS value, 0 AS rvRepeatCount, FormResponseID AS FormResponseID, NULL AS RVCreateDate, 
+                      ResponseValueExt.formfieldID AS formFieldId, formID AS ParentForm_ID, FormFieldExtLabel AS label, FormFieldExtName AS name, 
+                      'SERVERSIDE-CALCULATED' AS type, NULL AS survey_id, ResponseValueExt.positionindex, senderMSISDN, FRCreateDate, FormResponse.ResponseStatusID, 
+                      nvalue AS nvalue, NULL AS dvalue
+FROM         ResponseValueExt INNER JOIN
+                      FormFieldExt ON ResponseValueExt.FormFieldExtID = FormFieldExt.FormFieldExtID INNER JOIN
+                      FormResponse ON ResponseValueExt.FormResponseID = FormResponse.id
 
 
 GO
@@ -36,7 +43,7 @@ Begin DesignProperties =
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+         Configuration = "(H (1[20] 4[42] 2[20] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -48,7 +55,7 @@ Begin DesignProperties =
       End
       Begin PaneConfiguration = 3
          NumPanes = 3
-         Configuration = "(H (4 [30] 2 [40] 3))"
+         Configuration = "(H (4[30] 2[41] 3) )"
       End
       Begin PaneConfiguration = 4
          NumPanes = 2
@@ -94,44 +101,15 @@ Begin DesignProperties =
          NumPanes = 1
          Configuration = "(V (2))"
       End
-      ActivePaneConfig = 0
+      ActivePaneConfig = 3
    End
    Begin DiagramPane = 
+      PaneHidden = 
       Begin Origin = 
          Top = 0
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "ResponseValue"
-            Begin Extent = 
-               Top = 6
-               Left = 38
-               Bottom = 216
-               Right = 200
-            End
-            DisplayFlags = 280
-            TopColumn = 0
-         End
-         Begin Table = "FormField"
-            Begin Extent = 
-               Top = 6
-               Left = 238
-               Bottom = 205
-               Right = 393
-            End
-            DisplayFlags = 280
-            TopColumn = 4
-         End
-         Begin Table = "FormResponse"
-            Begin Extent = 
-               Top = 6
-               Left = 431
-               Bottom = 193
-               Right = 582
-            End
-            DisplayFlags = 280
-            TopColumn = 0
-         End
       End
    End
    Begin SQLPane = 

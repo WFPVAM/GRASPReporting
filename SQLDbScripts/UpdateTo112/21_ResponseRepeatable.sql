@@ -1,15 +1,15 @@
-USE [GRASP_UNDP4]
+USE [GRASP]
 GO
 
-/****** Object:  View [dbo].[ResponseRepeatable]    Script Date: 11/07/2014 18:48:35 ******/
+/****** Object:  View [dbo].[ResponseRepeatable]    Script Date: 11/07/2014 19:08:46 ******/
 IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[dbo].[ResponseRepeatable]'))
 DROP VIEW [dbo].[ResponseRepeatable]
 GO
 
-USE [GRASP_UNDP4]
+USE [GRASP]
 GO
 
-/****** Object:  View [dbo].[ResponseRepeatable]    Script Date: 11/07/2014 18:48:35 ******/
+/****** Object:  View [dbo].[ResponseRepeatable]    Script Date: 11/07/2014 19:08:47 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -22,7 +22,8 @@ AS
 SELECT     TOP (100) PERCENT dbo.FormFieldResponses.id, dbo.FormFieldResponses.value, dbo.FormFieldResponses.FormResponseID, 
                       dbo.FormFieldResponses.RVRepeatCount, dbo.FormFieldResponses.formFieldId, dbo.FormField_FormField.FormField_id AS ParentFormFieldID, 
                       dbo.FormFieldResponses.parentForm_id, dbo.FormFieldResponses.label, dbo.FormFieldResponses.name, dbo.FormFieldResponses.survey_id, 
-                      dbo.FormFieldResponses.positionIndex, dbo.SurveyElement.positionIndex AS SurveyElementIndex
+                      dbo.FormFieldResponses.positionIndex, dbo.SurveyElement.positionIndex AS SurveyElementIndex, dbo.FormFieldResponses.type, 
+                      dbo.FormFieldResponses.ResponseStatusID, dbo.FormFieldResponses.nvalue, dbo.FormFieldResponses.dvalue
 FROM         dbo.Survey_SurveyElement INNER JOIN
                       dbo.Survey ON dbo.Survey_SurveyElement.Survey_id = dbo.Survey.id INNER JOIN
                       dbo.SurveyElement ON dbo.Survey_SurveyElement.values_id = dbo.SurveyElement.id RIGHT OUTER JOIN
@@ -39,7 +40,7 @@ Begin DesignProperties =
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[45] 4[18] 2[18] 3) )"
+         Configuration = "(H (1[46] 4[18] 2[22] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -143,7 +144,7 @@ Begin DesignProperties =
                Right = 778
             End
             DisplayFlags = 280
-            TopColumn = 0
+            TopColumn = 6
          End
          Begin Table = "FormField_FormField"
             Begin Extent = 
