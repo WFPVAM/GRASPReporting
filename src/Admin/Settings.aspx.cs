@@ -36,16 +36,24 @@ public partial class Settings : System.Web.UI.Page
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        if(Utility.VerifyAccess(Request))
         {
-            string pathFileInfo = Server.MapPath("../Public/InfoHP.txt");
-            if (File.Exists(pathFileInfo))
+            if(!IsPostBack)
             {
-                using (StreamReader sr = new StreamReader(pathFileInfo))
+                string pathFileInfo = Server.MapPath("../Public/InfoHP.txt");
+                if(File.Exists(pathFileInfo))
                 {
-                    RadEditor1.Content = sr.ReadToEnd();
+                    using(StreamReader sr = new StreamReader(pathFileInfo))
+                    {
+                        RadEditor1.Content = sr.ReadToEnd();
+                    }
                 }
             }
+        }
+        else
+        {
+            Response.Write("<h3>Access Denied</h3>");
+            Response.End();
         }
 
     }
@@ -58,7 +66,7 @@ public partial class Settings : System.Web.UI.Page
     {
         StringBuilder sb = new StringBuilder();
         sb.Append(RadEditor1.Content);
-        using (StreamWriter outfile = new StreamWriter(Server.MapPath("../Public/InfoHP.txt")))
+        using(StreamWriter outfile = new StreamWriter(Server.MapPath("../Public/InfoHP.txt")))
         {
             outfile.Write(sb.ToString());
         }

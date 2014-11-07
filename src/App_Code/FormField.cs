@@ -1,20 +1,4 @@
-﻿/*
- *GRASP(Geo-referential Real-time Acquisition Statistics Platform) Reporting Tool <http://www.brainsen.com>
- * Developed by Brains Engineering s.r.l (marco.giorgi@brainsen.com)
- * This file is part of GRASP Reporting Tool.  
- *  GRASP Reporting Tool is free software: you can redistribute it and/or modify it
- *  under the terms of the GNU Lesser General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or (at
- *  your option) any later version.  
- *  GRASP Reporting Tool is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser  General Public License for more details.  
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with GRASP Reporting Tool. 
- *  If not, see <http://www.gnu.org/licenses/>
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,13 +24,43 @@ public partial class FormField
                     where ff.form_id == formID
                     select ff;
 
-        foreach (var i in items)
+        foreach(var i in items)
         {
-            if (i.type != "WRAPPED_TEXT" && i.type != "TRUNCATED_TEXT")
+            if(i.type != "WRAPPED_TEXT" && i.type != "TRUNCATED_TEXT")
                 ffields.Add(i.name, (int)i.id);
         }
 
         return ffields;
+    }
+
+    public static string[,] getFormFieldTypeMap(int formID)
+    {
+        GRASPEntities db = new GRASPEntities();
+
+        List<FormField> ffs = (from ff in db.FormField
+                    where ff.form_id == formID && ff.type != "WRAPPED_TEXT" && ff.type != "TRUNCATED_TEXT"
+                    select ff).ToList();
+        if(ffs.Count() > 0)
+        {
+            string[,] items = new string[ffs.Count(), 4];
+            int i = 0;
+            foreach(FormField ff in ffs)
+            {
+                items[i, 0] = ff.name;
+                items[i, 1] = ff.id.ToString();
+                items[i, 2] = ff.type;
+                items[i, 3] = ff.positionIndex.ToString();
+                i++;
+            }
+            db.Dispose();
+            return items;
+        }
+        else
+        {
+            db.Dispose();
+            return null;
+        }
+        
     }
     /// <summary>
     /// Queries the DB to obtain the type of the formfield
@@ -61,11 +75,40 @@ public partial class FormField
                     where ff.id == formFieldID
                     select ff).FirstOrDefault();
 
-        if (item.type == "REPEATABLES" || item.type == "REPEATABLES_BASIC")
+        if(item.type == "REPEATABLES" || item.type == "REPEATABLES_BASIC")
             return -1;
         else
             return 0;
     }
+
+    public static int isImage(int formFieldID)
+    {
+        GRASPEntities db = new GRASPEntities();
+
+        var item = (from ff in db.FormFieldExport
+                    where ff.id == formFieldID
+                    select ff).FirstOrDefault();
+
+        if(item.type == "IMAGE")
+            return -1;
+        else
+            return 0;
+    }
+
+    public static int isGEOLocation(int formFieldID)
+    {
+        GRASPEntities db = new GRASPEntities();
+
+        var item = (from ff in db.FormFieldExport
+                    where ff.id == formFieldID
+                    select ff).FirstOrDefault();
+
+        if(item.type == "GEOLOCATION")
+            return -1;
+        else
+            return 0;
+    }
+
     /// <summary>
     /// Queries the DB to obtain information about a specific formfield
     /// </summary>
@@ -80,7 +123,7 @@ public partial class FormField
                     where ff.name == name && ff.form_id == formID
                     select ff).FirstOrDefault();
 
-        if (item != null)
+        if(item != null)
             return Convert.ToInt32(item.id);
         else return 0;
     }
@@ -110,13 +153,13 @@ public partial class FormField
                     where ff.form_id == formID && ff.FormFieldParentID == null
                     select ff.x_form;
 
-        if (items != null)
+        if(items != null)
         {
             sb.Append("<form>");
-            foreach (var item in items)
+            foreach(var item in items)
             {
 
-                if (item.Contains("<des_version_2/>"))
+                if(item.Contains("<des_version_2/>"))
                 {
                     sb.Append(item.Replace("<des_version_2/>", "<des_version_2>0.0.30</des_version_2>").Replace("&", "&amp;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("<", "&lt;").Replace(">", "&gt;"));
                 }
@@ -134,9 +177,9 @@ public partial class FormField
 
         var formField = new FormField();
 
-        if (element.fieldType != FormFieldType.SEPARATOR)
+        if(element.fieldType != FormFieldType.SEPARATOR)
         {
-            if (!element.isRepItem)
+            if(!element.isRepItem)
             {
                 element = cutIndexFromName(element);
             }
@@ -148,7 +191,7 @@ public partial class FormField
             formField.constraintPolicy = element.constraintPolicy;
             formField.isReadOnly = element.bindReference.readOnly ? (byte)1 : (byte)0;
 
-            if (element.calculated != null)
+            if(element.calculated != null)
             {
                 formField.calculated = 1;
                 formField.formula = element.calculated;
@@ -162,30 +205,30 @@ public partial class FormField
             formField.name = element.name;
             formField.required = 0;
         }
-        if ((element.fieldType == FormFieldType.DROP_DOWN_LIST) || (element.fieldType == FormFieldType.RADIO_BUTTON))
+        if((element.fieldType == FormFieldType.DROP_DOWN_LIST) || (element.fieldType == FormFieldType.RADIO_BUTTON))
         {
             Survey s = Survey.createSurvey(element, id, "select1");
             formField.survey_id = s.id;
         }
-        if (element.fieldType == FormFieldType.REPEATABLES_BASIC)
+        if(element.fieldType == FormFieldType.REPEATABLES_BASIC)
         {
             formField.type = element.fieldType.ToString();
             formField.label = element.label;
             formField.name = element.name;
             formField.required = 0;
-            foreach (ImportingElement reps in element.repElements)
+            foreach(ImportingElement reps in element.repElements)
             {
                 createFormField(reps, id);
             }
             formField.numberOfRep = element.numberOfReps;
         }
-        if (element.fieldType == FormFieldType.REPEATABLES)
+        if(element.fieldType == FormFieldType.REPEATABLES)
         {
             formField.type = element.fieldType.ToString();
             formField.label = element.label;
             formField.name = element.name;
             formField.required = 0;
-            foreach (ImportingElement reps in element.repElements)
+            foreach(ImportingElement reps in element.repElements)
             {
                 createFormField(reps, id);
             }
@@ -204,15 +247,15 @@ public partial class FormField
 
     private static ImportingElement cutIndexFromName(ImportingElement element)
     {
-        for (int i = element.name.Length - 1; i >= 0; i--)
+        for(int i = element.name.Length - 1; i >= 0; i--)
         {
-            if (element.name[i] == '_')
+            if(element.name[i] == '_')
             {
                 try
                 {
                     element.positionIndex = Convert.ToInt32(element.name.Substring(i + 1));
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     break;
                 }

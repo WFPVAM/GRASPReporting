@@ -20,6 +20,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Telerik.Web.UI;
 /// <summary>
 /// Corresponds to the menu item Users
 /// </summary>
@@ -27,7 +28,15 @@ public partial class Admin_Users : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-
+        
+        if(Utility.VerifyAccess(Request))
+        {
+        }
+        else
+        {
+            Response.Write("<h3>Access Denied</h3>");
+            Response.End();
+        }
     }
     /// <summary>
     /// Fills the grid with the users with specified roles: SuperAdministrator, Supervisor, DataEntryOperator, Analyst
@@ -39,9 +48,26 @@ public partial class Admin_Users : System.Web.UI.Page
         GRASPEntities db = new GRASPEntities();
 
         var roles = from r in db.Roles
-                    where r.id == 3 || r.id == 4 || r.id == 7 || r.id == 8
+                    where r.id == 3 || r.id == 4 || r.id == 7 || r.id >= 8
                     select r;
 
         e.Result = roles;
+    }
+    protected void rgUser_ItemCommand(object sender, Telerik.Web.UI.GridCommandEventArgs e)
+    {
+        foreach(GridColumn col in rgUser.Columns)
+        {
+            if(col.UniqueName == "email" || col.UniqueName == "password" || col.UniqueName == "phone_number")
+            {
+                if(e.CommandName == RadGrid.EditCommandName)
+                {
+                    col.Visible = true;
+                }
+                else
+                {
+                    col.Visible = false;
+                }
+            }
+        }  
     }
 }

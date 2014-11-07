@@ -693,7 +693,7 @@ using System.Web.Configuration;
             bool isValid = false;
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand("SELECT * FROM User_Credential " +
-                            " WHERE username = @username", conn);
+                            " WHERE username = @username AND UserDeleteDate IS NULL", conn);
             cmd.Parameters.Add("@username", SqlDbType.NVarChar, 50).Value = username;
             SqlDataReader reader = null;
             string pwd = "";

@@ -2,19 +2,15 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <style type="text/css">
-        body, html {
-            height: 100%;
-            min-height: 100%;
-        }
+        body, html { height: 100%; min-height: 100%; }
 
-        #map-canvas {
-            margin-left: 15px;
-            height: 700px;
-        }
+        #map-canvas { margin-left: 15px; height: 700px; }
     </style>
+
     <script type="text/javascript"
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOxs7GZioFnyECcG_2Uj1RXa1pSWSCQQ8&sensor=true&language=en">
     </script>
+
     <script type="text/javascript">
 
         var neighborhoods = [ <%= geoCoordinates %>];
@@ -51,7 +47,8 @@
                 // Browser doesn't support Geolocation
                 handleNoGeolocation(false);
             }
-            for (var i = 0; i < neighborhoods.length; i++) {
+            var elems = neighborhoods.length;
+            for (var i = 0; i < 50; i++) {
                 setTimeout(function () {
                     addMarker();
                 }, i * 500);
@@ -60,24 +57,26 @@
 
         function addMarker() {
             var place = neighborhoods[iterator];
-            var myLatLng = new google.maps.LatLng(place[0], place[1]);
-            var URL = "ViewForm.aspx?id=" + place[2];
-            var marker = new google.maps.Marker({
-                position: myLatLng,
-                map: map,
-                draggable: false,
-                animation: google.maps.Animation.DROP,
-                url: URL
-            });
-            iterator++;
+            if (place[0] != 0 && place[1] != 0) {
+                var myLatLng = new google.maps.LatLng(place[0], place[1]);
+                var URL = "ViewForm.aspx?id=" + place[2];
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    map: map,
+                    draggable: false,
+                    //animation: google.maps.Animation.DROP,
+                    url: URL
+                });
+                iterator++;
 
-            markers.push(marker);
-            google.maps.event.addListener(marker, 'click', function () {
-            window.open(this.url, '_blank');
-        });
+                markers.push(marker);
+                google.maps.event.addListener(marker, 'click', function () {
+                    window.open(this.url, '_blank');
+                });
+            }
         }
 
-        
+
 
         function handleNoGeolocation(errorFlag) {
             if (errorFlag) {
@@ -97,13 +96,14 @@
         }
         google.maps.event.addDomListener(window, 'load', initialize);
     </script>
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphBody1" runat="Server">
     <div class="row">
         <div class="col-lg-12">
             <h1>Maps</h1>
             <ol class="breadcrumb">
-                <li><i class="fa fa-home"></i><a href="Home_Page.aspx" >Home</a></li>
+                <li><i class="fa fa-home"></i><a href="Home_Page.aspx">Home</a></li>
                 <li class="current"><i class="fa fa-check-square-o"></i>Maps</li>
             </ol>
         </div>

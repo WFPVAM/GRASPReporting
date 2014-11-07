@@ -17,6 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.Security;
 
@@ -42,6 +44,7 @@ public partial class FormResponse
         response.Code_Form = Form.getFormName(parentFormID);
         response.senderMsisdn = m.Comment;
         response.FRCreateDate = DateTime.Now;
+        response.ResponseStatusID = 1;  //default status ToBeReviewed
         response.pushed = 0;
 
         db.FormResponse.Add(response);
@@ -60,7 +63,7 @@ public partial class FormResponse
     {
         GRASPEntities db = new GRASPEntities();
         string fName = Form.getFormName(parentFormID);
-        if (fName != "")
+        if(fName != "")
         {
             var response = new FormResponse();
             response.clientVersion = clientVersion;
@@ -69,6 +72,7 @@ public partial class FormResponse
             response.Code_Form = fName;
             response.senderMsisdn = sender;
             response.FRCreateDate = DateTime.Now;
+            response.ResponseStatusID = 1;  //default status ToBeReviewed
             response.pushed = 0;
 
             db.FormResponse.Add(response);
@@ -90,7 +94,7 @@ public partial class FormResponse
         var item = (from f in db.Form
                     where f.id_flsmsId == formName
                     select f).FirstOrDefault();
-        if (item != null)
+        if(item != null)
             return Convert.ToInt32(item.id);
         else return 0;
     }
@@ -121,7 +125,7 @@ public partial class FormResponse
                     where rv.id == formResponseID
                     select rv).FirstOrDefault();
 
-        if (item != null)
+        if(item != null)
         {
             db.FormResponse.Remove(item);
             db.SaveChanges();
@@ -139,7 +143,7 @@ public partial class FormResponse
         var item = (from f in db.FormResponse
                     where (int)f.id == formResponseID
                     select f).FirstOrDefault();
-        if (item != null)
+        if(item != null)
             return true;
         else return false;
     }
@@ -154,9 +158,9 @@ public partial class FormResponse
         var item = (from f in db.FormResponse
                     where (int)f.id == formResponseID
                     select f).FirstOrDefault();
-        if (item != null)
+        if(item != null)
         {
-            if (!item.clientVersion.Contains("_CSVImport"))
+            if(!item.clientVersion.Contains("_CSVImport"))
             {
                 item.clientVersion += "_CSVImport";
             }
@@ -171,10 +175,200 @@ public partial class FormResponse
         var item = (from f in db.FormResponse
                     where (int)f.id == formResponseID
                     select f).FirstOrDefault();
-        if (item != null)
+        if(item != null)
         {
             item.clientVersion = clientVersion;
             db.SaveChanges();
         }
+    }
+
+    /// <summary>
+    /// Update the status of the form response, returning the previous status.
+    /// </summary>
+    /// <param name="formResponseID"></param>
+    /// <param name="statusID"></param>
+    /// <returns>The previous formResponseStatusID</returns>
+    public static int UpdateStatus(int formResponseID, int statusID)
+    {
+        using(GRASPEntities db = new GRASPEntities())
+        {
+
+            var item = (from f in db.FormResponse
+                        where (int)f.id == formResponseID
+                        select f).FirstOrDefault();
+            if(item != null)
+            {
+                int prevStatusID = item.ResponseStatusID;
+                item.ResponseStatusID = statusID;
+                db.SaveChanges();
+                return prevStatusID;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+    public static string GetStatus(int formResponseID)
+    {
+        using(GRASPEntities db = new GRASPEntities())
+        {
+            string statusName = (from f in db.FormResponse
+                                 from fs in db.FormResponseStatus
+                                 where (int)f.id == formResponseID && f.ResponseStatusID == fs.ResponseStatusID
+                                 select fs.ResponseStatusName).FirstOrDefault();
+            if(statusName != null)
+            {
+                return statusName;
+            }
+            else
+            {
+                return "";
+            }
+        }
+    }
+
+    public static string GetAsJson(int formResponseID)
+    {
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sbRep = new StringBuilder();
+        string jsonOutput = "";
+
+        Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+
+        using(GRASPEntities db = new GRASPEntities())
+        {
+            var responses = from r in db.FormFieldResponses
+                            where r.RVRepeatCount == 0                 //Exclude repeatables vals
+                                && r.type != "SERVERSIDE-CALCULATED"   //Exclude server-side calculated fields
+                                && r.FormResponseID==formResponseID
+                            select new { r.name, r.type, r.value,r.nvalue };
+            foreach(var r in responses)
+            {
+                switch(r.type)
+                {
+                    case "TEXT_FIELD":
+                    case "TEXT_AREA":
+                    case "DATE_FIELD":
+                    case "RADIO_BUTTON":
+                    case "PHONE_NUMBER_FIELD":
+                    case "CHECK_BOX":
+                    case "GEOLOCATION":
+                    case "EMAIL_FIELD":
+                        if(r.value.Length != 0)
+                        {
+                            sb.AppendLine("\"" + r.name + "\": \"" + r.value.Replace("\\", "") + "\",");
+                        }
+                        break;
+                    case "DROP_DOWN_LIST":
+                        if(r.value.Length != 0)
+                        {
+                            sb.AppendLine("\"" + r.name + "\": {\"value\":\"" + r.value + "\"},");
+                        }
+                        break;
+                    case "NUMERIC_TEXT_FIELD":
+                        if(r.value.Length>0 && r.nvalue != null)
+                        {
+                            sb.AppendLine("\"" + r.name + "\": " + r.nvalue + ",");
+                        }
+                        break;
+                    case "CURRENCY_FIELD":
+                        if(r.value.Length != 0)
+                        {
+                            sb.AppendLine("\"" + r.name + "\": " + r.value + ",");
+                        }
+                        break;
+                }
+            }
+
+            var repeatableResponses = (from r in db.ResponseRepeatable
+                                       where r.FormResponseID == formResponseID
+                                       select r).ToList();
+            
+            foreach(var rep in repeatableResponses.Where(w => w.RVRepeatCount == -1))
+            {
+                string repFields = "";
+
+                if(sbRep.Length != 0)
+                {
+                    sbRep.Append(",");
+                }
+                sbRep.AppendLine("\"" + rep.name + "\": [");
+
+                int repCount=0;
+                foreach(var r in repeatableResponses.Where(w => w.RVRepeatCount > 0 && w.ParentFormFieldID == rep.formFieldId).OrderBy(o => o.RVRepeatCount))
+                {
+                    if(r.RVRepeatCount != repCount)
+                    {
+                        if(repCount == 0)
+                        {
+                            repFields = "{"; //first cycle, only open
+                        }
+                        else
+                        {
+                            //string tmp = sbRep.ToString();
+                            //tmp = tmp.Substring(0, tmp.Length - 2);
+                            //sbRep.Clear();
+                            //sbRep.Append(tmp);
+                            repFields = repFields.Substring(0, repFields.Length - 1); //remove last comma
+                            repFields = repFields + ("},{"); //close previous and open new one
+                        }
+                    }
+                    else
+                    {
+                        //sbRep.Append(",");
+                    }
+                    switch(r.type)
+                    {
+                        case "TEXT_FIELD":
+                        case "TEXT_AREA":
+                        case "DATE_FIELD":
+                        case "RADIO_BUTTON":
+                        case "PHONE_NUMBER_FIELD":
+                        case "CHECK_BOX":
+                        case "GEOLOCATION":
+                        case "EMAIL_FIELD":
+                            if(r.value.Length != 0)
+                            {
+                                repFields = repFields + ("\"" + r.name + "\": \"" + r.value + "\",");
+                            }
+                            break;
+                        case "DROP_DOWN_LIST":
+                            if(r.value.Length != 0)
+                            {
+                                repFields = repFields + ("\"" + r.name + "\": {\"value\":\"" + r.value + "\"},");
+                            }
+                            break;
+                        case "NUMERIC_TEXT_FIELD":
+                            if(r.nvalue != null)
+                            {
+                                repFields = repFields + ("\"" + r.name + "\": " + r.nvalue + ",");
+                            }
+                            break;
+                        case "CURRENCY_FIELD":
+                            if(r.nvalue != null)
+                            {
+                                repFields = repFields + ("\"" + r.name + "\": " + r.nvalue + ",");
+                            }
+                            break;
+                    }
+                    repCount = r.RVRepeatCount.Value;
+                }
+                //cycle on repeatable fields finished. Close the Repeatable.
+                repFields = repFields.Substring(0, repFields.Length - 1); //remove comma
+                sbRep.AppendLine(repFields + "}]");                
+            }
+        }
+        if(sbRep.Length == 0)
+        {
+            jsonOutput = sb.ToString(); //There is no repeatable 
+            jsonOutput = jsonOutput.Substring(0, jsonOutput.Length - 3);  //remove last comma
+        }
+        else
+        {
+            jsonOutput = sb.ToString() + sbRep.ToString();
+        }
+
+        return jsonOutput;
     }
 }

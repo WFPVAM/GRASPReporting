@@ -14,16 +14,19 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-using Ionic.Zip;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Ionic.Zip;
 /// <summary>
 /// Used for the exporting of a form when CSV method is selected
 /// </summary>
@@ -43,488 +46,458 @@ public partial class CSVExport : System.Web.UI.Page
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
-
-
-        csvPath = HttpContext.Current.Server.MapPath("~/Temp/");
-        if(!Directory.Exists(csvPath))
+        if(Request["FormID"] != null || Request["FormID"] != "")
         {
-            Directory.CreateDirectory(csvPath);
+            int formID = Convert.ToInt32(Request["FormID"]);
+            string separator = Request.QueryString["separator"];
+            int startFormResponseID = 0;
+            string filterCount = "";
+            string filter = "";
+
+            if(Request["startFRID"] != null || Request["startFRID"] != "")
+            {
+                Int32.TryParse(Request["startFRID"].ToString(), out startFormResponseID);
+            }
+
+            if(Request["fc"] != null && Request["fc"] != "")
+            {
+                filterCount = Request["fc"].ToString();
+            } if(Request["f"] != null && Request["f"] != "")
+            {
+                filter = Server.UrlDecode(Request["f"].ToString());
+            }
+
+
+
+            //Create Filename and Path
+            string folderPath = HttpContext.Current.Server.MapPath("~/Temp/");
+            if(!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            string folderName = DateTime.Now.ToString("MMddHHmmss") + "_" + formID;
+            folderPath = folderPath + folderName;
+            string url = "../temp/" + folderName;
+            Directory.CreateDirectory(folderPath);
+
+            ExportRepeatables(formID, startFormResponseID, null, "", folderPath, separator, filter, filterCount);
+            ExportSurveys(formID, folderPath, separator);
+            ExportData(formID, startFormResponseID, null, "", folderPath, separator,filter,filterCount);
+            ExportFieldMapping(formID, folderPath, separator);
+            createZip(folderPath, "Export_Form" + formID.ToString() + "_" + DateTime.Now.ToString("MMddHHmmss"));
         }
+
+        try
+        {
+
+        }
+        catch(Exception ex)
+        {
+            //Utility.writeErrorLog(ex.Message);
+            //System.IO.DirectoryInfo tempDir = new DirectoryInfo(Server.MapPath("~/Temp/"));
+
+            //foreach (FileInfo file in tempDir.GetFiles())
+            //{
+            //    file.Delete();
+            //}
+        }
+
+
+    }
+    public void ExportData(int formID, int startFormResponseID, DateTime? fromDate, string senderMsisdn, 
+        string filePath, string separator,string filter, string filterCount)
+    {
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sbColHeader = new StringBuilder();
+        //Build columnList using PIVOT
+
+        GRASPEntities db = new GRASPEntities();
+        string sqlCmd = "";
+        sqlCmd = "SELECT STUFF((SELECT distinct ',' + QUOTENAME( cast( (1000 + positionIndex) as varchar(10) ) + '_' + name " +
+                    " + CAST(ROW_NUMBER() OVER(PARTITION BY FormResponseID, formFieldId, value ORDER BY (1000 + positionIndex)) AS VARCHAR(5))) " +
+                    "from FormFieldResponses " +
+                    "WHERE type!='SEPARATOR' AND type!='TRUNCATED_TEXT' AND type!='WRAPPED_TEXT' AND type!='REPEATABLES_BASIC' AND type!='REPEATABLES' AND " +
+                    "      RVRepeatCount=0 AND parentForm_id=" + formID +
+                    " order by 1 " +
+                    "FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)') ,1,1,'')";
+
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
+        string columnList = "";// db.Database.SqlQuery<string>(sqlCmd).FirstOrDefault();
+
+        var fieldList = (from ff in db.FormFieldExport
+                        where ff.form_id == formID && ff.type != "SEPARATOR" && ff.type != "TRUNCATED_TEXT" &&
+                           ff.type != "WRAPPED_TEXT" && ff.type != "REPEATABLES_BASIC" && ff.type != "REPEATABLES" &&
+                           ff.FormFieldParentID == null
+                         select new { ff.name, ff.positionIndex }).Union(
+                                       from fe in db.FormFieldExt
+                                       where fe.FormID == formID
+                                       select new { name = fe.FormFieldExtName,positionIndex = fe.PositionIndex.Value });
+
+        foreach(var f in fieldList.OrderBy(o=>o.positionIndex))
+        {
+            sb.Append("[" + (1000+ f.positionIndex).ToString() + "_" + f.name + "1],");
+            sbColHeader.Append(f.name + separator);
+        }
+        columnList = sb.ToString();
+        columnList = columnList.Substring(0, columnList.Length - 1);
+        sb.Clear();
+
+        TimeSpan ts = stopWatch.Elapsed;
+        // Format and display the TimeSpan value.
+        string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+            ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+        Debug.WriteLine("1: " + elapsedTime);
+
+        db.Dispose();
+
+        //Build ColumnHeader to use in the CSV file.
+        string columnHeader = sbColHeader.ToString();
+
+        //columnHeader = columnHeader.Substring(0, columnHeader.Length - 1);
+        //string[] colList = columnList.Split(',');
+        //for(int i = 0; i < colList.Length; i++)
+        //{
+        //    columnHeader += colList[i].Substring(6, colList[i].Length - 8) + separator;
+        //}
+        columnHeader = "FormResponseID" + separator + "FRCreateDate" + separator + "senderMsisdn" + separator + 
+            columnHeader.Substring(0, columnHeader.Length - 1);
+
+
+
+
+        //Export Responses Data
+
+        sqlCmd = "SELECT * FROM (SELECT FormResponseID,CONVERT(char, FRCreateDate,126) AS FRCreateDate,senderMsisdn," + columnList + " FROM " +
+             "(SELECT FormResponseID,value,FRCreateDate,senderMsisdn, ( (cast( (1000 + positionIndex) as varchar(10) ) + '_' + name " +
+             "+ CAST( ROW_NUMBER() OVER(PARTITION BY FormResponseID, formFieldId, value ORDER BY (1000 + positionIndex)) AS VARCHAR(5)))" +
+             ") fn FROM FormFieldResponses " +
+             "WHERE type != 'SEPARATOR' AND type != 'TRUNCATED_TEXT' AND type!='WRAPPED_TEXT' AND type!='REPEATABLES_BASIC' AND type!='REPEATABLES' AND " +
+             "      RVRepeatCount=0 AND parentForm_id=" + formID + " AND FormResponseID>" + startFormResponseID + " " +
+             ") x pivot ( max(value) for fn in (" + columnList + ") ) p) AS X";
+
+        //var result = db.Database.SqlQuery<IEnumerable<string>>(sqlCmd).ToList();
+
+
+        SqlConnection sqlConnection1 = new SqlConnection(System.Configuration.ConfigurationManager.
+                                                        ConnectionStrings["GRASP_MemberShip"].ConnectionString);
+        SqlCommand cmd = new SqlCommand();
+        SqlDataReader reader;
+
+        cmd.CommandText = sqlCmd;
+        cmd.CommandType = CommandType.Text;
+        cmd.Connection = sqlConnection1;
+
+        sqlConnection1.Open();
+
+        reader = cmd.ExecuteReader();
         
-        if (Request["FormID"] != null && Request["FormName"] != null)
+        // Data is accessible through the DataReader object here.
+        if(filter.Length != 0)
         {
-            if (Request["separator"] != "")
-                SeparatorChar = Request["separator"];
-            if (Request["linear"] == "on")
-                linearTable = true;
-            FormID = Convert.ToInt32(Request["FormID"]);
-            formName = Request["FormName"];
-            try
+            using(db = new GRASPEntities())
             {
-                ExportCSV();
-            }
-            catch (Exception ex)
-            {
-                Utility.writeErrorLog(ex.Message);
-                System.IO.DirectoryInfo tempDir = new DirectoryInfo(Server.MapPath("~/Temp/"));
+                int fc = Convert.ToInt32(filterCount);
+                var respUnion = (from r in db.ResponseValue
+                                 from fr in db.FormResponse
+                                 where fr.id == r.FormResponseID && fr.parentForm_id == 1
+                                 select new { FormResponseID = r.FormResponseID.Value, Value = r.value, nvalue = r.nvalue.Value, formFieldID = r.formFieldId.Value }).Union(
+                 from re in db.ResponseValueExt
+                 from fr in db.FormResponse
+                 where fr.id == re.FormResponseID && fr.parentForm_id == 1
+                 select new { FormResponseID = re.FormResponseID, Value = "", nvalue = re.nvalue.Value, formFieldID = re.FormFieldID.Value });
 
-                foreach (FileInfo file in tempDir.GetFiles())
+                var filteredResponseIDs = (from r in respUnion.Where(filter)
+                                           group r by r.FormResponseID into grp
+                                           where grp.Count() == fc
+                                           select grp.Key).ToList();
+
+                while(reader.Read())
                 {
-                    file.Delete();
-                }
-            }
-        }
-
-    }
-    /// <summary>
-    /// Populates the list which forms the header of the main csv file.
-    /// When it encounters a roster or a table creates its csv files.
-    /// </summary>
-    /// <returns>A list of strings representing the header</returns>
-    protected List<string> getLabelForCSVHeader()
-    {
-        List<string> labels = new List<string>();
-        List<string> response;
-        string roasterCsv = "";
-        int r = 0;
-        int t = 0;
-
-        labels.Add("\"ResponseID\"");
-        labels.Add("\"Sender\"");
-
-        GRASPEntities db = new GRASPEntities();
-
-        var formFieldsLabels = from ff in db.FormFieldExport
-                               where ff.form_id == FormID && ff.FormFieldParentID == null &&
-                               ff.type != "SEPARATOR" && ff.type != "TRUNCATED_TEXT" && ff.type != "WRAPPED_TEXT"
-                               orderby ff.positionIndex ascending
-                               select ff;
-
-        foreach (FormFieldExport lbl in formFieldsLabels)
-        {
-            if (lbl.type == "REPEATABLES_BASIC" || lbl.type == "REPEATABLES")
-            {
-                if (lbl.type == "REPEATABLES_BASIC")
-                {
-                    labels.Add("\"" + lbl.label + " (R" + ++r + ")\"");
-                    csvPath = HttpContext.Current.Server.MapPath("~/Temp/");
-                    roasterCsv = csvPath + formName + "_R" + r + ".csv";
-
-                    if (File.Exists(roasterCsv))
-                        File.Delete(roasterCsv);
-                    using (var wr = new StreamWriter(roasterCsv, true))
+                    int respID = reader.GetInt32(0);
+                    if(filteredResponseIDs.Contains(respID))
                     {
-                        wr.WriteLine(formatCSVLine(getLabelForRoasterHeader((int)lbl.id)));
-
-                        foreach (FormResponse res in getCompiledForms())
-                        {
-                            response = new List<string>();
-                            response.Add(res.id.ToString());
-                            int formResID = Convert.ToInt32(res.id);
-                            int repeatCount = 1;
-                            IEnumerable<ResponseValue> results = getResponseValuesForRoasters(formResID, (int)lbl.id);
-                            foreach (ResponseValue resVal in results)
-                            {
-                                if (repeatCount == resVal.RVRepeatCount)
-                                {
-                                    if (!Utility.isNumeric(resVal.value))
-                                        response.Add("\"" + resVal.value + "\"");
-                                    else response.Add(resVal.value);
-                                    repeatCount = (int)resVal.RVRepeatCount;
-                                }
-                                else
-                                {
-                                    wr.WriteLine(formatCSVLine(response));
-                                    Debug.WriteLine(formatCSVLine(response));
-                                    response = new List<string>();
-                                    response.Add(res.id.ToString());
-                                    if (!Utility.isNumeric(resVal.value))
-                                        response.Add("\"" + resVal.value + "\"");
-                                    else response.Add(resVal.value);
-                                    repeatCount = (int)resVal.RVRepeatCount;
-                                }
-                            }
-                            //write a single ResponseValue to file
-                            if (results.Count() > 0)
-                            {
-                                wr.WriteLine(formatCSVLine(response));
-                                Debug.WriteLine(formatCSVLine(response));
-                            }
-                        }
-                        filesToZip.Add(roasterCsv);
-                    }
-                }
-                if (lbl.type == "REPEATABLES")
-                {
-                    labels.Add("\"" + lbl.label + " (T" + ++t + ")\"");
-                    csvPath = HttpContext.Current.Server.MapPath("~/Temp/");
-                    roasterCsv = csvPath + formName + "_T" + t + ".csv";
-
-                    if (File.Exists(roasterCsv))
-                        File.Delete(roasterCsv);
-                    using (var wr = new StreamWriter(roasterCsv, true))
-                    {
-                        wr.WriteLine(formatCSVLine(getLabelForTableHeader((int)lbl.id)));
-
-                        if (linearTable == true)
-                        {
-                            foreach (FormResponse res in getCompiledForms())
-                            {
-                                response = new List<string>();
-                                response.Add(res.id.ToString());
-                                int formResID = Convert.ToInt32(res.id);
-                                int repeatCount = 1;
-
-                                List<string> surveys = new List<string>();
-                                var surEl = (from s in db.Survey
-                                             join ff in db.FormField on s.id equals ff.survey_id
-                                             join rv in db.ResponseValue on ff.id equals (int)rv.formFieldId
-                                             where s.id == (int)lbl.survey_id
-                                             select s).FirstOrDefault();
-                                foreach (var el in FormFieldExport.getSurveyListElements((int)surEl.id))
-                                {
-                                    surveys.Add(el.value);
-                                }
-                                int surveysCount = 0;
-                                response.Add(surveys[surveysCount++]);
-
-                                IEnumerable<ResponseValue> results = getResponseValuesForRoasters(formResID, (int)lbl.id);
-                                foreach (ResponseValue resVal in results)
-                                {
-                                    if (repeatCount == resVal.RVRepeatCount)
-                                    {
-                                        if (!Utility.isNumeric(resVal.value))
-                                            response.Add("\"" + resVal.value + "\"");
-                                        else response.Add(resVal.value);
-                                        repeatCount = (int)resVal.RVRepeatCount;
-                                    }
-                                    else
-                                    {
-                                        response.Add(surveys[surveysCount++]);
-                                        if (!Utility.isNumeric(resVal.value))
-                                            response.Add("\"" + resVal.value + "\"");
-                                        else response.Add(resVal.value);
-                                        repeatCount = (int)resVal.RVRepeatCount;
-                                    }
-                                }
-                                //wr.WriteLine(formatCSVLine(response));
-                                //write a single ResponseValue to file
-                                if (results.Count() > 0)
-                                {
-                                    wr.WriteLine(formatCSVLine(response));
-                                    Debug.WriteLine(formatCSVLine(response));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            foreach (FormResponse res in getCompiledForms())
-                            {
-                                response = new List<string>();
-                                response.Add(res.id.ToString());
-                                int formResID = Convert.ToInt32(res.id);
-                                int repeatCount = 1;
-
-                                List<string> surveys = new List<string>();
-                                var surEl = (from s in db.Survey
-                                             join ff in db.FormField on s.id equals ff.survey_id
-                                             join rv in db.ResponseValue on ff.id equals (int)rv.formFieldId
-                                             where s.id == (int)lbl.survey_id
-                                             select s).FirstOrDefault();
-                                foreach (var el in FormFieldExport.getSurveyListElements((int)surEl.id))
-                                {
-                                    surveys.Add(el.value);
-                                }
-                                int surveysCount = 0;
-                                response.Add(surveys[surveysCount++]);
-
-                                IEnumerable<ResponseValue> results = getResponseValuesForRoasters(formResID, (int)lbl.id);
-                                foreach (ResponseValue resVal in results)
-                                {
-                                    if (repeatCount == resVal.RVRepeatCount)
-                                    {
-                                        if (!Utility.isNumeric(resVal.value))
-                                            response.Add("\"" + resVal.value + "\"");
-                                        else response.Add(resVal.value);
-                                        repeatCount = (int)resVal.RVRepeatCount;
-                                    }
-                                    else
-                                    {
-                                        wr.WriteLine(formatCSVLine(response));
-                                        Debug.WriteLine(formatCSVLine(response));
-                                        response = new List<string>();
-                                        response.Add(res.id.ToString());
-                                        response.Add(surveys[surveysCount++]);
-                                        if (!Utility.isNumeric(resVal.value))
-                                            response.Add("\"" + resVal.value + "\"");
-                                        else response.Add(resVal.value);
-                                        repeatCount = (int)resVal.RVRepeatCount;
-                                    }
-                                }
-                                //write a single ResponseValue to file
-                                if (results.Count() > 0)
-                                {
-                                    wr.WriteLine(formatCSVLine(response));
-                                    Debug.WriteLine(formatCSVLine(response));
-                                }
-                            }
-                        }
-                        filesToZip.Add(roasterCsv);
+                        sb.Append(ReadSingleRow((IDataRecord)reader, separator));
                     }
                 }
             }
-            else labels.Add("\"" + lbl.label + "\"");
-        }
-
-        return labels;
-    }
-    /// <summary>
-    /// Populates the list which forms the header of a csv file with all the children
-    /// of the table whose id is FormFieldParentID.
-    /// </summary>
-    /// <param name="FormFieldParentID">The id of the table field</param>
-    /// <returns>A list of strings representing the header</returns>
-    private List<string> getLabelForTableHeader(int FormFieldParentID)
-    {
-        int surveyID = 0;
-        List<string> labels = new List<string>();
-        labels.Add("\"ResponseID\"");
-
-
-        GRASPEntities db = new GRASPEntities();
-
-        var roasters = from ff in db.FormFieldExport
-                       where ff.FormFieldParentID == FormFieldParentID
-                       orderby ff.positionIndex ascending
-                       select ff;
-
-        var surveyid = (from ffe in db.FormFieldExport
-                        where ffe.id == FormFieldParentID
-                        select ffe.survey_id).FirstOrDefault();
-
-
-
-        if (linearTable == true)
-        {
-            try
-            {
-                surveyID = Convert.ToInt32(surveyid);
-            }
-            catch (Exception ex)
-            {
-                //surveyID == 0 if query is null
-            }
-            var count = (from s in db.SurveyListAPI
-                         where s.id == surveyID
-                         select s).Count();
-            for (int i = 0; i < count; i++)
-            {
-                labels.Add("\"ListValue\"");
-                foreach (FormFieldExport lbl in roasters)
-                {
-                    labels.Add("\"" + lbl.label + "\"");
-                }
-            }
-
         }
         else
         {
-            labels.Add("\"ListValue\"");
-            foreach (FormFieldExport lbl in roasters)
+            while(reader.Read())
             {
-                labels.Add("\"" + lbl.label + "\"");
+                sb.Append(ReadSingleRow((IDataRecord)reader, separator));
             }
         }
-        return labels;
-    }
-    /// <summary>
-    /// Populates the list which forms the header of a csv file with all the children
-    /// of the roster whose id is FormFieldParentID.
-    /// </summary>
-    /// <param name="FormFieldParentID">The id of the roster field</param>
-    /// <returns>A list of strings representing the header</returns>
-    protected List<string> getLabelForRoasterHeader(int FormFieldParentID)
-    {
-        List<string> labels = new List<string>();
-        labels.Add("\"ResponseID\"");
 
-        GRASPEntities db = new GRASPEntities();
-
-        var roasters = from ff in db.FormFieldExport
-                       where ff.FormFieldParentID == FormFieldParentID
-                       orderby ff.positionIndex ascending
-                       select ff;
-
-        foreach (FormFieldExport lbl in roasters)
+        string fileName = "\\" + DateTime.Now.ToString("yyyyMMdd-HHmm") + "_Form-" + formID.ToString() + ".csv";
+        using(System.IO.StreamWriter file = new System.IO.StreamWriter(filePath + fileName, true, Encoding.UTF8))
         {
-            labels.Add("\"" + lbl.label + "\"");
+            file.WriteLine(columnHeader + ("\r\n" + sb.ToString()));
         }
 
-        return labels;
+        //Explicit obj close&destroy
+        reader.Close();
+        reader.Dispose();
+        sqlConnection1.Close();
+        sqlConnection1.Dispose();
+
     }
-    /// <summary>
-    /// </summary>
-    /// <returns>A list representing all the FormResponse for the choosen form</returns>
-    protected IEnumerable<FormResponse> getCompiledForms()
+
+    private void ExportSurveys(int formID, string filePath, string separator)
     {
+        //Export Survey
+        string surveyFilePath = "";
+        string fileContent = "";
+        int sid = 0;
+
         GRASPEntities db = new GRASPEntities();
 
-        var formResponse = from fr in db.FormResponse
-                           where fr.parentForm_id == FormID
-                           select fr;
-        return formResponse;
-    }
-    /// <summary>
-    /// </summary>
-    /// <param name="ffID">The id representing a field of the choosen form</param>
-    /// <param name="FormResponseID">The id representing a FormResponse of the choosen form</param>
-    /// <returns>The ResponseValue for that field</returns>
-    protected ResponseValue getResponseValues(int ffID, int FormResponseID)
-    {
-        GRASPEntities db = new GRASPEntities();
+        var surveyList = (from sl in db.SurveyListAPI
+                          from ff in db.FormField
+                          where ff.survey_id != null && sl.id == ff.survey_id && ff.form_id == formID
+                          orderby sl.id, sl.positionIndex
+                          select sl).Select(surveylist => new
+                          {
+                              id = (int)surveylist.id,
+                              name = surveylist.name,
+                              value = surveylist.value,
+                              positionIndex = surveylist.positionIndex
+                          }).Distinct().OrderBy(s => s.id).ThenBy(s => s.positionIndex);
 
-        var responseValue = (from rv in db.ResponseValue
-                             where rv.FormResponseID == FormResponseID && rv.formFieldId == ffID
-                             select rv).FirstOrDefault();
-
-        return responseValue;
-    }
-    /// <summary>
-    /// </summary>
-    /// <param name="FormResponseID">The id representing a FormResponse of the choosen form</param>
-    /// <param name="formFieldParentID">The id representing the roster field</param>
-    /// <returns>A list representing all the ResponseValues for that roster</returns>
-    protected IEnumerable<ResponseValue> getResponseValuesForRoasters(int FormResponseID, int formFieldParentID)
-    {
-        GRASPEntities db = new GRASPEntities();
-
-        var responseValue = from rv in db.ResponseValue
-                            join ffe in db.FormFieldExport on rv.formFieldId equals (int)ffe.id
-                            where rv.FormResponseID == FormResponseID && ffe.FormFieldParentID == formFieldParentID &&
-                            rv.formFieldId != null && rv.RVRepeatCount > 0
-                            orderby rv.RVRepeatCount, rv.positionIndex ascending
-                            select rv;
-
-        return responseValue;
-    }
-    /// <summary>
-    /// Creates the main CSV file with all the FormResponses for the choosen form
-    /// </summary>
-    protected void ExportCSV()
-    {
-        GRASPEntities db = new GRASPEntities();
-        filesToZip = new List<string>();
-        string mainCSV = csvPath + formName + ".csv";
-        List<string> response;
-
-        if (File.Exists(mainCSV))
-            File.Delete(mainCSV);
-        //Initialise stream object with file
-        using (var wr = new StreamWriter(mainCSV, true))
+        foreach(var s in surveyList)
         {
-            //write header to file
-            List<string> headerLabels = getLabelForCSVHeader();
-            wr.WriteLine(formatCSVLine(headerLabels));
-
-            foreach (FormResponse res in getCompiledForms())
+            if(sid != (int)s.id)
             {
-                response = new List<string>();
-                response.Add(res.id.ToString());
-                response.Add("\"" + res.senderMsisdn + "\"");
-                int formResID = Convert.ToInt32(res.id);
-
-                var ffields = from ff in db.FormFieldExport
-                              where ff.form_id == FormID && ff.FormFieldParentID == null &&
-                              ff.type != "SEPARATOR" && ff.type != "TRUNCATED_TEXT" && ff.type != "WRAPPED_TEXT"
-                              orderby ff.positionIndex ascending
-                              select ff;
-                //foreach (ResponseValue resVal in getResponseValues(formResID))
-                //{
-                foreach (var ff in ffields)
+                //new list
+                if(fileContent.Length > 0)
                 {
-                    ResponseValue resVal = getResponseValues((int)ff.id, formResID);
-                    if (resVal != null)
-                    {
-                        if (resVal.RVRepeatCount == -1)
-                        {
-                            string val = checkRoaster((int)resVal.formFieldId);
-                            if (val != "")
-                            {
-                                response.Add("\"" + val + "\"");
-                            }
-                            else response.Add(resVal.value);
-                        }
-                        else if (!Utility.isNumeric(resVal.value))
-                            response.Add("\"" + resVal.value + "\"");
-                        else response.Add(resVal.value);
-                    }
-                    else response.Add("");
-
+                    WriteTextFile(fileContent, surveyFilePath);
                 }
-                //write a single ResponseValue to file
-                wr.WriteLine(formatCSVLine(response));
+                fileContent = "";
             }
-            filesToZip.Add(mainCSV);
+            sid = (int)s.id;
+            surveyFilePath = filePath + "\\Survey-" + sid.ToString() + ".csv";
+            fileContent += s.positionIndex.ToString() + separator + s.value + "\r\n";
         }
-        createZip();
-        foreach (string f in filesToZip)
+        if(fileContent.Length > 0)
         {
-            File.Delete(f);
+            WriteTextFile(fileContent, surveyFilePath);
         }
-
     }
-    /// <summary>
-    /// Checks if a field is a roster
-    /// </summary>
-    /// <param name="formFieldID">The id representing the roster field</param>
-    /// <returns>A string with the roster name, or an empty string if the field is not a roster</returns>
-    private string checkRoaster(int formFieldID)
+    private void ExportFieldMapping(int formID, string filePath, string separator)
     {
-        string res = "";
-        if (formFieldID != null)
+        StringBuilder sb = new StringBuilder();
+        GRASPEntities db = new GRASPEntities();
+        int prevID = 0;
+
+        var repeatables = (from r in db.ResponseRepeatable
+                           where r.parentForm_id == formID && r.RVRepeatCount == 1
+                           select new {r.ParentFormFieldID, r.name, r.label,r.positionIndex }).Distinct().OrderBy(o=>o.positionIndex);
+        foreach(var r in repeatables)
         {
-            int surveyID = FormFieldExport.getSurveyID(formFieldID);
-            GRASPEntities db = new GRASPEntities();
-            var surElID = (from s in db.Survey
-                           where s.id == surveyID
-                           select s).FirstOrDefault();
-            if (surElID != null)
-                res = surElID.name;
+            if(prevID != 0 && prevID != (int)r.ParentFormFieldID && sb.Length > 0)
+            {
+                WriteTextFile(sb.ToString(), filePath + "\\FieldsMapping-Repeatable" + prevID.ToString() + ".csv");
+                sb.Clear();
+            }
+            sb.Append(r.name + separator + r.label + "\r\n");
+            prevID = (int)r.ParentFormFieldID;
         }
-        return res;
+        if(prevID != 0 && sb.Length > 0)
+        {
+            WriteTextFile(sb.ToString(), filePath + "\\FieldsMapping-Repeatable" + prevID.ToString() + ".csv");
+        }
+        sb.Clear();
+
+        var fields = (from f in db.FormField
+                      where f.type != "SEPARATOR" && f.type != "TRUNCATED_TEXT" && f.type != "WRAPPED_TEXT" &&
+                      f.type != "REPEATABLES_BASIC" && f.type != "REPEATABLES" && f.form_id == formID &&
+                      !(from ffff in db.FormField_FormField
+                        select ffff.repetableFormFields_id).Contains(f.id)
+                      select new { f.name, f.label, f.positionIndex }).Distinct().Union(
+                                       from fe in db.FormFieldExt
+                                       where fe.FormID == formID
+                                       orderby fe.PositionIndex
+                                       select new { name = fe.FormFieldExtName, label = fe.FormFieldExtLabel, positionIndex= fe.PositionIndex.Value }); ;
+
+        foreach(var f in fields.OrderBy(o => o.positionIndex))
+        {
+            sb.Append(f.name + separator + f.label + "\r\n");
+        }
+        WriteTextFile(sb.ToString(), filePath + "\\FieldsMapping-Form" + formID.ToString() + ".csv");
+        db.Dispose();
+
     }
-    /// <summary>
-    /// Formats a line with the specified separator
-    /// </summary>
-    /// <param name="row">A list of values that will form the line</param>
-    /// <returns>The line well formatted</returns>
-    protected string formatCSVLine(List<string> row)
+    private void ExportRepeatables(int formID, int startFormResponseID, DateTime? fromDate,
+        string senderMsisdn, string filePath, string separator, string filter, string filterCount)
     {
-        var sb = new StringBuilder();
+        //Export Roster
+        int rc = 1;
+        bool newRow = true;
+        string fileContent = "";
+        string repFilePathName = "";
+        int pffid = 0;
+        int rid = 0;
+        string LRM = ((char)0x200E).ToString();  // This is a LRM
+        List<ResponseRepeatable> repeatables = new List<ResponseRepeatable>();
 
-        foreach (string value in row)
+        GRASPEntities db = new GRASPEntities();
+
+        if(filter.Length != 0)
         {
-            if (sb.Length > 0)
-                sb.Append(SeparatorChar);
-            if (value == null)
-                sb.Append("");
-            else sb.Append(value.Replace((string)SeparatorChar, " ").Replace("\r\n", " ").Replace("\n", " "));
+
+            int fc = Convert.ToInt32(filterCount);
+            var respUnion = (from r in db.ResponseValue
+                             from fr in db.FormResponse
+                             where fr.id == r.FormResponseID && fr.parentForm_id == 1
+                             select new { FormResponseID = r.FormResponseID.Value, Value = r.value, nvalue = r.nvalue.Value, formFieldID = r.formFieldId.Value }).Union(
+             from re in db.ResponseValueExt
+             from fr in db.FormResponse
+             where fr.id == re.FormResponseID && fr.parentForm_id == 1
+             select new { FormResponseID = re.FormResponseID, Value = "", nvalue = re.nvalue.Value, formFieldID = re.FormFieldID.Value });
+
+            var filteredResponseIDs = from r in respUnion.Where(filter)
+                                      group r by r.FormResponseID into grp
+                                      where grp.Count() == fc
+                                      select new { formResponseID = grp.Key };
+
+            repeatables = (from r in db.ResponseRepeatable
+                           from fr in filteredResponseIDs
+                            where fr.formResponseID==r.FormResponseID && r.parentForm_id == formID && r.RVRepeatCount > 0 && r.FormResponseID > startFormResponseID
+                            orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId 
+                            select r).ToList();
+        }
+        else
+        {
+            repeatables = (from r in db.ResponseRepeatable
+                                                    where r.parentForm_id == formID && r.RVRepeatCount > 0 && r.FormResponseID > startFormResponseID
+                                                    orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId 
+                                                    select r).ToList();
+        }
+        string columnHeader = "";
+        var columnList = (from r in repeatables
+                          where r.RVRepeatCount == 1
+                          select new { r.name, r.ParentFormFieldID, r.formFieldId, r.label }).Distinct();
+
+        foreach(var ch in columnList)
+        {
+            if(columnHeader.Length > 1 && pffid != ch.ParentFormFieldID)
+            {
+                repFilePathName = filePath + "\\Repeatable-" + pffid + ".csv";
+                WriteTextFile("ResponseID|" + columnHeader.Substring(0, columnHeader.Length - 1) + "\r\n", repFilePathName);
+                columnHeader = "";
+            }
+            columnHeader += ch.name + separator;
+
+            pffid = (int)ch.ParentFormFieldID;
+        }
+        //Write the last element of the foreach cycle
+        if(columnHeader.Length > 1 && pffid != 0)
+        {
+            repFilePathName = filePath + "\\Repeatable-" + pffid + ".csv";
+            WriteTextFile("ResponseID" + separator + columnHeader.Substring(0, columnHeader.Length - 1) + "\r\n", repFilePathName);
+            columnHeader = "";
+        }
+        pffid = 0; //reset var for next cycle
+
+        foreach(ResponseRepeatable r in repeatables)
+        {
+            //WriteTextFile(r.FormResponseID.ToString() + "," + r.RVRepeatCount.ToString() + "," + r.ParentFormFieldID.ToString() + "," + r.formFieldId + "\r\n", filePath + "\\temp.txt");
+            //if(r.ParentFormFieldID == null || (r.ParentFormFieldID != null && pffid != 0 && pffid != r.ParentFormFieldID))
+            if(pffid != 0 && (pffid != r.ParentFormFieldID || rid != r.FormResponseID || rc != r.RVRepeatCount))
+            {
+                //Repeatable is finished
+                if(fileContent.Length > 0)
+                {
+                    //fileContent = fileContent.Replace(LRM, "");
+                    repFilePathName = filePath + "\\Repeatable-" + pffid + ".csv";
+                    WriteTextFile(fileContent.Substring(0, fileContent.Length - 1) + "\r\n", repFilePathName);
+                    fileContent = "";
+                    newRow = true;
+                }
+            }
+            if(rid != r.FormResponseID) //New Response.
+            {
+                //fileContent += "\r\n";
+                newRow = true;
+            }
+
+            if(rc != r.RVRepeatCount && r.RVRepeatCount > 0)  //New repetition > goto new line and start a new row.
+            {
+                newRow = true;
+            }
+            else if(fileContent.Length > 0) //still in the same repetition, looping through the responses.
+            {
+                //fileContent += ",";
+                newRow = false;
+            }
+
+            if(newRow)
+            {
+                fileContent += r.FormResponseID + separator + r.value.Replace("\n", " ") + separator;
+            }
+            else
+            {
+                fileContent += r.value.Replace("\n", " ") + separator;
+            }
+
+            pffid = (int)r.ParentFormFieldID;
+
+            //update control variables
+            rid = (int)r.FormResponseID;
+            rc = (int)r.RVRepeatCount;
+        }
+        //Write the last element of the foreach cycle
+        if(fileContent.Length > 1 && pffid != 0)
+        {
+            repFilePathName = filePath + "\\Repeatable-" + pffid + ".csv";
+            WriteTextFile(fileContent.Substring(0, fileContent.Length - 1) + "\r\n", repFilePathName);
+        }
+    }
+
+    private string ReadSingleRow(IDataRecord record, string separator)
+    {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < record.FieldCount; i++)
+        {
+            sb.Append(record[i].ToString().Replace("\n", " ") + separator);
         }
 
-        return sb.ToString();
+        return sb.ToString().Substring(0, sb.ToString().Length - 1) + "\r\n";
     }
+
     /// <summary>
     /// Creates the zip file with all the CSV files and then downloads it.
     /// </summary>
-    protected void createZip()
+    protected void createZip(string folderName, string fileName)
     {
         Response.ContentType = "application/zip";
-        Response.AddHeader("Content-Disposition", string.Format("attachment; filename = \"{0}\"", System.IO.Path.GetFileName(formName + ".zip")));
+        Response.AddHeader("Content-Disposition", string.Format("attachment; filename = \"{0}\"", System.IO.Path.GetFileName(fileName + ".zip")));
         //Response.AppendHeader("content-disposition", "attachment; filename=" + formName + ".zip");
-        using (ZipFile zip = new ZipFile())
+        using(ZipFile zip = new ZipFile())
         {
-            zip.AddDirectory(csvPath);
+            zip.AddDirectory(folderName);
             zip.Save(Response.OutputStream);
         }
+    }
+
+    private void WriteTextFile(string content, string path)
+    {
+        using(System.IO.StreamWriter file = new System.IO.StreamWriter(new FileStream(path,
+               FileMode.Append,
+               FileAccess.Write), Encoding.UTF8))
+        {
+            file.Write(content);
+        }
+
+        //FileStream writeStream = new FileStream(path, FileMode.Append, FileAccess.Write);
+        //BinaryWriter writeBinay = new BinaryWriter(writeStream);
+        //writeBinay.Write(content);
+
+        //writeStream.Close();
+        //writeStream.Dispose();
+        //writeBinay.Close();
+        //writeBinay.Dispose();
     }
 }

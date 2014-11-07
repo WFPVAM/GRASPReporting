@@ -40,16 +40,20 @@ public partial class Admin_Maps : System.Web.UI.Page
 
         foreach (decimal ffID in FormField.getFormFieldFromType("GEOLOCATION"))
         {
-            var coordinates = from rv in db.ResponseValue
+            var coordinates = (from rv in db.ResponseValue
                               where rv.formFieldId == ffID
-                              select rv;
+                              orderby rv.FormResponseID descending
+                              select rv).Take(100);
 
             foreach(var coord in coordinates)
             {
                 if (!string.IsNullOrEmpty(coord.value))
                 {
                     string[] ltnlng = coord.value.Split(' ');
-                    geoTmp += "[" + ltnlng[0] + ", " + ltnlng[1] + ", " + coord.FormResponseID + "],";
+                    if(ltnlng[0] != "0" && ltnlng[1] != "0")
+                    {
+                        geoTmp += "[" + ltnlng[1] + ", " + ltnlng[0] + ", " + coord.FormResponseID + "],";
+                    }
                 }
             }
         }

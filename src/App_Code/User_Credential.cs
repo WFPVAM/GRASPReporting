@@ -170,4 +170,18 @@ public partial class User_Credential
 
         return user;
     }
+
+    public static User_Credential UpdateUserResponseFilter(int user_id, string filter)
+    {
+        GRASPEntities db = new GRASPEntities();
+
+        var user = (from u in db.User_Credential
+                    where u.user_id == user_id
+                    select u).FirstOrDefault();
+        user.UserResponseFilter = filter;
+        db.SaveChanges();
+
+        return user;
+    }
+
 }

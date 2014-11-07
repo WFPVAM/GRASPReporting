@@ -1,20 +1,4 @@
-﻿/*
- *GRASP(Geo-referential Real-time Acquisition Statistics Platform) Reporting Tool <http://www.brainsen.com>
- * Developed by Brains Engineering s.r.l (marco.giorgi@brainsen.com)
- * This file is part of GRASP Reporting Tool.  
- *  GRASP Reporting Tool is free software: you can redistribute it and/or modify it
- *  under the terms of the GNU Lesser General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or (at
- *  your option) any later version.  
- *  GRASP Reporting Tool is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser  General Public License for more details.  
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with GRASP Reporting Tool. 
- *  If not, see <http://www.gnu.org/licenses/>
- */
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -29,11 +13,14 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
+using System.Net;
+using System.Configuration;
 /// <summary>
 /// Used to show the model of the selected form in Data_Entry
 /// </summary>
 public partial class DataEntry : System.Web.UI.Page
 {
+    List<FieldConstraintRel> fieldConstraintRel = new List<FieldConstraintRel>();
     string formula = "";
     string model = "currForm.";
     Dictionary<int, string> relevant;
@@ -62,13 +49,19 @@ public partial class DataEntry : System.Web.UI.Page
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
+        if(!Utility.VerifyAccess(Request))
+        {
+            Response.Write("<h3>Access Denied</h3>");
+            Response.End();
+        }
 
-        if (Request["save"] == "true")
+
+        if(Request["save"] == "true")
         {
             success.Visible = true;
             error.Visible = false;
         }
-        else if (Request["save"] == "false")
+        else if(Request["save"] == "false")
         {
             success.Visible = false;
             error.Visible = true;
@@ -83,8 +76,9 @@ public partial class DataEntry : System.Web.UI.Page
 
 
 
-        if (!string.IsNullOrEmpty(Request["formID"]))
+        if(!string.IsNullOrEmpty(Request["formID"]))
         {
+            //Sometimes it gets this: http://192.115.229.17/grasp/Admin/DataEntryWebForm.aspx?save=false&formID=undefined 
             formID = Convert.ToInt32(Request["formID"]);
 
             ltlScript.Text = "<script>var app = angular.module('angularjs-starter', []);" +
@@ -114,12 +108,12 @@ public partial class DataEntry : System.Web.UI.Page
                                                         orderby i.positionIndex ascending
                                                         select i;
 
-            foreach (FormFieldExport i in fields)
+            foreach(FormFieldExport i in fields)
             {
-                if (i.type == "REPEATABLES_BASIC" || i.type == "REPEATABLES")
+                if(i.type == "REPEATABLES_BASIC" || i.type == "REPEATABLES")
                 {
                     switchDataEntry(i);
-                    foreach (FormFieldExport f in rosterFields.Where(x => x.FormFieldParentID == i.id))
+                    foreach(FormFieldExport f in rosterFields.Where(x => x.FormFieldParentID == i.id))
                     {
                         switchDataEntry(f);
                     }
@@ -130,10 +124,10 @@ public partial class DataEntry : System.Web.UI.Page
                 }
             }
         }
-        if (prevFieldID != 0)
+        if(prevFieldID != 0)
         {
             angJSForm.Text += "</li></ul></div>\n";
-            if (closeRosterRelevant == 1)
+            if(closeRosterRelevant == 1)
             {
                 angJSForm.Text += "</div>\n";
                 closeRosterRelevant = 0;
@@ -144,6 +138,19 @@ public partial class DataEntry : System.Web.UI.Page
         Literal1.Text = "";
 
     }
+
+    private string getFieldBody(string label, string input)
+    {
+        return " <div class=\"col-sm-9 form-group\">\n" +
+                 "                <label class=\"col-sm-3 control-label no-padding-right\">" + label + " </label>\n" +
+                 "                <div class=\"col-sm-9\">\n" +
+                 "                    " + input +
+                 "                </div>\n" +
+                 "            </div>" +
+                 "<div class=\"space-4\"></div>";
+
+
+    }
     /// <summary>
     /// Creates the HTML structure of the field passed in input.
     /// Each field is created using AngularJS directives.
@@ -151,279 +158,321 @@ public partial class DataEntry : System.Web.UI.Page
     /// <param name="FormF">FormField to analyze</param>
     private void switchDataEntry(FormFieldExport FormF)
     {
-        switch (FormF.type)
+
+        string filedLabe = "";
+        string filedBody = "";
+        switch(FormF.type)
         {
             case "DATE_FIELD":
-                if (prevFieldID != 0 && (int)FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"text\" ng-model=\"" + model + FormF.name + "\"";
-                    if (FormF.isReadOnly == 1)
+                    filedLabe = FormF.label;
+                    filedBody = "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+                    if(FormF.isReadOnly == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
                         }
-                        else angJSForm.Text += " required jqdatepicker />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required jqdatepicker />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
+                    else filedBody += "/>\n";
+
+
+
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
+                    filedLabe = FormF.label;
+
+                    filedBody += "<input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1)
+                    if(FormF.isReadOnly == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
                         }
-                        else angJSForm.Text += " required jqdatepicker />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required jqdatepicker />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
+                    else filedBody += "/>\n";
+
                 }
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
 
-
-                if (outVal != null && outVal != "")
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
+
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "PHONE_NUMBER_FIELD":
             case "BARCODE":
             case "TEXT_FIELD":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
+
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"text\" ng-model=\"" + model + FormF.name + "\"";
-                    if (FormF.isReadOnly == 1)
+
+                    filedLabe = FormF.label;
+
+
+                    filedBody += "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+                    if(FormF.isReadOnly == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
+                    else filedBody += "/>\n";
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
-                    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1)
-                    {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
-                    }
-                    if (FormF.required == 1)
-                    {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
-                        {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
-                        }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
-                    }
-                    else angJSForm.Text += "/></div>\n";
-                }
 
-                if (outVal != null && outVal != "")
+                    filedLabe = FormF.label;
+
+
+
+                    filedBody += "  <input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\" ";
+                    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+                    if(FormF.isReadOnly == 1)
+                    {
+                        filedBody += " ng-readonly=\"1\" ";
+                    }
+                    if(FormF.required == 1)
+                    {
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
+                        {
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                        }
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                    }
+                    else filedBody += "/>\n";
+
+                }
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "TEXT_AREA":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <textarea rows=\"2\" ng-model=\"" + model + FormF.name + "\"";
-                    if (FormF.isReadOnly == 1)
+
+                    filedLabe = FormF.label;
+                    filedBody += "<textarea rows=\"2\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+                    if(FormF.isReadOnly == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
                         }
-                        else angJSForm.Text += " required ></textarea>\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required ></textarea>\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
                     }
-                    else angJSForm.Text += "></textarea></div>\n";
+                    else filedBody += "></textarea> \n";
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <textarea rows=\"2\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
+
+
+                    filedLabe = FormF.label;
+                    filedBody += "<textarea rows=\"2\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1)
+                    if(FormF.isReadOnly == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
                         }
-                        else angJSForm.Text += " required ></textarea>\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required ></textarea>\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> </div>\n";
                     }
-                    else angJSForm.Text += "></textarea></div>\n";
+                    else filedBody += "></textarea> </div>\n";
+
+
+
                 }
 
-                if (outVal != null && outVal != "")
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "CURRENCY_FIELD":
             case "NUMERIC_TEXT_FIELD":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
-
+                    filedLabe = FormF.label;
                     ngModelName.Add(FormF.name);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"number\" ng-model=\"" + model + FormF.name + "\"";
-                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    filedBody += "<input type=\"number\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    List<FieldConstraintRel> currFieldConstraints = (from fc in fieldConstraintRel
+                                                                     where fc.FormFieldID == (int)FormF.id
+                                                                     select fc).ToList();
+                    foreach(FieldConstraintRel fcr in currFieldConstraints)
                     {
-                        angJSForm.Text += constr;
+                        if(constraint.TryGetValue(fcr.ConstraintID, out constr))
+                        {
+                            filedBody += constr;
+                        }
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
+                        filedBody += " name=\"r_" + FormF.name + "\"";
                         //constr = "";
                         //if (constraint.TryGetValue((int)FormF.id, out constr))
                         //{
                         //    angJSForm.Text += constr;
                         //}
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
                             ltlScript.Text += "$scope." + model + FormF.name + " = 0;";
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        if (constr != null && constr != "")
+                        else filedBody += " required />\n";
+                        if(constr != null && constr != "")
                         {
-                            angJSForm.Text += "<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
+                            filedBody += "<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                         }
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
-                        angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
+                        filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else if (constr != null && constr != "")
+                    else if(constr != null && constr != "")
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        angJSForm.Text += "/>\n<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span></div>\n";
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        filedBody += "/>\n<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
-                    if (FormF.calculated == 1)
+                    else filedBody += "/>\n";
+                    if(FormF.calculated == 1)
                     {
-                        if (FormF.formula != null)
+                        if(FormF.formula != null)
                         {
                             bool isInModel = false;
-                            foreach (string i in ngModelName)
+                            foreach(string i in ngModelName)
                             {
-                                if (FormF.formula.Contains(i))
+                                if(FormF.formula.Contains(i))
                                 {
                                     isInModel = true;
                                 }
                             }
-                            if (isInModel)
+                            if(isInModel)
                             {
                                 ltlScript.Text += "$scope.$watch('" + getFormula(FormF.formula) + "', function (value) {  $scope." + model + FormF.name + "= value;}, true);";
                             }
@@ -438,76 +487,79 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"number\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
+                    filedLabe = FormF.label;
+                    filedBody += "<input type=\"number\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
                     ngModelCalculatedOutofModel.Add(FormF.name, "currForm." + repVal);
-                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    if(constraint.TryGetValue((int)FormF.id, out constr))
                     {
-                        angJSForm.Text += constr;
+                        filedBody += constr;
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
+                        filedBody += " name=\"r_" + FormF.name + "\"";
                         //constr = "";
                         //if (constraint.TryGetValue((int)FormF.id, out constr))
                         //{
                         //    angJSForm.Text += constr;
                         //}
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        if (constr != null && constr != "")
+                        else filedBody += " required />\n";
+                        if(constr != null && constr != "")
                         {
-                            angJSForm.Text += "<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
+                            filedBody += "<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                         }
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
-                        angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
+                        filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else if (constr != null && constr != "")
+                    else if(constr != null && constr != "")
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        angJSForm.Text += "/>\n<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span></div>\n";
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        filedBody += "/>\n<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
-                    if (FormF.calculated == 1)
+                    else filedBody += "/>\n";
+                    if(FormF.calculated == 1)
                     {
-                        if (FormF.formula != null)
+                        if(FormF.formula != null)
                         {
                             ltlScript.Text += "$scope.$watch('currForm." + repVal + "', function (value) { var i = 0;for(i = 0; i < value.length; i++) value[i]." + FormF.name + " = " + getFormula(FormF.formula, repVal) + ";}, true);";
                         }
                     }
                 }
-
-                if (outVal != null && outVal != "")
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
+
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "DROP_DOWN_LIST":
-                if (prevFieldID != 0 && (int)FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
-                if (!ltlScript.Text.Contains("$scope.options" + (int)FormF.survey_id + "="))
+                if(!ltlScript.Text.Contains("$scope.options" + (int)FormF.survey_id + "="))
                 {
                     script = "";
                     script += "$scope.options" + (int)FormF.survey_id + "= [";
-                    foreach (SurveyElement se in getOptions((int)FormF.survey_id))
+                    foreach(SurveyElement se in getOptions((int)FormF.survey_id))
                     {
                         script += "{value:\"" + se.value.Replace("'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "\"},";
                     }
@@ -517,212 +569,287 @@ public partial class DataEntry : System.Web.UI.Page
 
 
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\">\n";
-                if (FormF.FormFieldParentID == null)
+                filedLabe = FormF.label;
+
+                if(FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
-                    angJSForm.Text += "<select ng-model=\"" + model + FormF.name + "\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
 
-                    if (FormF.required == 1)
+                    filedBody += "<select ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
+
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></select>\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></select>\n";
                         }
-                        else angJSForm.Text += " required ></select>";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required ></select>";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "></select></div>\n";
+                    else filedBody += "></select>\n";
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<select ng-model=\"rb_" + repVal + "." + FormF.name + "\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
+                    filedBody += "<select ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
 
-                    if (!ngModelNameSubForm.ContainsKey(FormF.name))
+                    if(!ngModelNameSubForm.ContainsKey(FormF.name))
                         ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" /></select>\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" /></select>\n";
                         }
-                        else angJSForm.Text += " required /></select>\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required /></select>\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/></div></select>\n";
+                    else filedBody += "/></select>\n";
                 }
 
-
-                if (outVal != null && outVal != "")
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "RADIO_BUTTON":
-                if (prevFieldID != 0 && (int)FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                angJSForm.Text += "<div class=\"left clear\">" + FormF.label + "</div>\n";
-                foreach (SurveyElement se in getOptions((int)FormF.survey_id))
+                filedLabe = FormF.label;
+
+                foreach(SurveyElement se in getOptions((int)FormF.survey_id))
                 {
-                    if (FormF.FormFieldParentID == null)
+
+                    if(FormF.FormFieldParentID == null)
                     {
                         ngModelName.Add(FormF.name);
-                        angJSForm.Text += "<div class=\"right\"><label>" + se.value + "</label><input type=\"radio\" ng-model=\"" + model + FormF.name + "\" value=\"" + se.value + "\"";
-                        if (FormF.required == 1)
+
+                        filedBody += "<label class=\"inline\"><input type=\"radio\" class=\"ace\"  ng-model=\"" + model + FormF.name + "\" value=\"" + se.value + "\"";
+                        if(FormF.required == 1)
                         {
-                            angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                            if (outVal != null && outVal != "")
+                            filedBody += " name=\"r_" + FormF.name + "\"";
+                            if(outVal != null && outVal != "")
                             {
-                                angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                                filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                                filedBody += "<span class=\"lbl\"> " + se.value + "</span></label> \n";
                             }
-                            else angJSForm.Text += " required />\n";
-                            angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                            else
+                            {
+                                filedBody += " required ><span class=\"lbl\"> " + se.value + "</span></label>\n";
+                            }
+                            //  angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
                         }
-                        else angJSForm.Text += "/></div>\n";
+                        else
+                        {
+                            filedBody += " ><span class=\"lbl\"> " + se.value + "</span></label>\n";
+                        }
+
+                        //angJSForm.Text += "<div class=\"right\"><label>" + se.value + "</label><input type=\"radio\" ng-model=\"" + model + FormF.name + "\" value=\"" + se.value + "\"";
+                        //if (FormF.required == 1)
+                        //{
+                        //    angJSForm.Text += " name=\"r_" + FormF.name + "\"";
+                        //    if (outVal != null && outVal != "")
+                        //    {
+                        //        angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                        //    }
+                        //    else angJSForm.Text += " required />\n";
+                        //    angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        //}
+                        //else angJSForm.Text += "/></div>\n";
                     }
                     else
                     {
+                        //repVal = "";
+                        //roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+                        //if (repVal == null)
+                        //    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+                        //angJSForm.Text += "<div class=\"left clear\"><label>" + se.value + "</label></div><div class=\"right\"><input type=\"radio\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" value=\"" + se.value + "\"";
+                        //if (!ngModelNameSubForm.ContainsKey(FormF.name))
+                        //    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+                        //if (FormF.required == 1)
+                        //{
+                        //    angJSForm.Text += " name=\"r_{{$index}}" + FormF.name + "\"";
+                        //    if (outVal != null && outVal != "")
+                        //    {
+                        //        angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                        //    }
+                        //    else angJSForm.Text += " required />\n";
+                        //    angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        //}
+                        //else angJSForm.Text += "/></div>\n";
+
                         repVal = "";
                         roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                        if (repVal == null)
+
+                        if(repVal == null)
                             table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                        angJSForm.Text += "<div class=\"left clear\"><label>" + se.value + "</label></div><div class=\"right\"><input type=\"radio\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" value=\"" + se.value + "\"";
-                        if (!ngModelNameSubForm.ContainsKey(FormF.name))
+
+                        filedBody += "<label class=\"inline\"><input type=\"radio\" class=\"ace\"  ng-model=\"rb_" + repVal + "." + FormF.name + "\" value=\"" + se.value + "\"";
+
+                        if(!ngModelNameSubForm.ContainsKey(FormF.name))
                             ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                        if (FormF.required == 1)
+                        if(FormF.required == 1)
                         {
-                            angJSForm.Text += " name=\"r_{{$index}}" + FormF.name + "\"";
-                            if (outVal != null && outVal != "")
+                            filedBody += " name=\"r_{{$index}}" + FormF.name + "\"";
+                            if(outVal != null && outVal != "")
                             {
-                                angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                                filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                                filedBody += "<span class=\"lbl\"> " + se.value + "</span></label> \n";
                             }
-                            else angJSForm.Text += " required />\n";
-                            angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                            else
+                            {
+                                filedBody += " required ><span class=\"lbl\"> " + se.value + "</span></label>\n";
+                            }
+
                         }
-                        else angJSForm.Text += "/></div>\n";
+                        else
+                        {
+                            filedBody += " ><span class=\"lbl\"> " + se.value + "</span></label> \n";
+                        }
+
                     }
                 }
-
-                if (outVal != null && outVal != "")
+                if(FormF.FormFieldParentID == null)
                 {
-                    angJSForm.Text += "</div>\n";
+                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
                 }
+                else
+                {
+
+                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
+
+                }
+                if(outVal != null && outVal != "")
+                {
+                    filedBody += "</div>\n";
+                }
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+
+
+
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "CHECK_BOX":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
-                    angJSForm.Text += outVal;
+                    filedBody += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
+                    filedLabe = FormF.label;
+
                     ngModelName.Add(FormF.name);
                     ltlScript.Text += "$scope." + model + FormF.name + " = false;";
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"checkbox\" ng-model=\"" + model + FormF.name + "\"";
-                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
+
+                    filedBody += "<input type=\"checkbox\" ng-model=\"" + model + FormF.name + "\"";
+                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    if(constraint.TryGetValue((int)FormF.id, out constr))
                     {
-                        angJSForm.Text += constr;
+                        filedBody += constr;
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
+                        filedBody += " name=\"r_" + FormF.name + "\"";
                         //constr = "";
                         //if (constraint.TryGetValue((int)FormF.id, out constr))
                         //{
                         //    angJSForm.Text += constr;
                         //}
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
+                    else filedBody += "/>\n";
                 }
                 else
                 {
                     repVal = "";
+                    filedLabe = FormF.label;
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"checkbox\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
+                    filedBody += "<input type=\"checkbox\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    if(constraint.TryGetValue((int)FormF.id, out constr))
                     {
-                        angJSForm.Text += constr;
+                        filedBody += constr;
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
+                        filedBody += " name=\"r_" + FormF.name + "\"";
                         //constr = "";
                         //if (constraint.TryGetValue((int)FormF.id, out constr))
                         //{
                         //    angJSForm.Text += constr;
                         //}
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
+                    else filedBody += "/>\n";
                 }
-                if (outVal != null && outVal != "")
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "REPEATABLES_BASIC":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -730,24 +857,25 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 outVal = "";
                 closeRosterRelevant = 0;
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                     closeRosterRelevant = 1;
                 }
+
                 ltlScript.Text += "$scope." + model + FormF.name + " = [];";
                 checkFieldForRoaster((int)FormF.id, FormF.name);
                 roaster.Add((int)FormF.id, FormF.name);
-                angJSForm.Text += "<div class=\"left clear\"><label>Roster " + FormF.label + "</label><br/>\n";
-                angJSForm.Text += "<a ng-click=\"addNew" + FormF.name + "()\"><i class=\"fa fa-plus\"></i> Add New " + FormF.name + "</a></div><div class=\"left clear\"><ul>";
+                angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label>Roster " + FormF.label + "</label><br/>\n";
+                angJSForm.Text += "<a ng-click=\"addNew" + FormF.name + "()\"><i class=\"fa fa-plus\"></i> Add New " + FormF.name + "</a></div><div class=\"col-sm-11 form-group\"><ul>";
                 angJSForm.Text += "<li ng-repeat=\"rb_" + FormF.name + " in " + model + FormF.name + "\" ng-form=\"subForm" + FormF.name + "\">\n<div style=\"overflow: hidden;\">";
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "REPEATABLES":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -755,7 +883,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 outVal = "";
                 closeRosterRelevant = 0;
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                     closeRosterRelevant = 1;
@@ -764,14 +892,14 @@ public partial class DataEntry : System.Web.UI.Page
                 ltlScript.Text += "$scope." + model + FormF.name + " = [";
                 checkFieldForTable((int)FormF.survey_id);
                 table.Add((int)FormF.id, FormF.name);
-                angJSForm.Text += "<div class=\"left clear\"><ul><li ng-repeat=\"rb_" + FormF.name + " in " + model + FormF.name + "\" ng-form=\"subForm" + FormF.name + "\">\n<div style=\"overflow: hidden;\">";
+                angJSForm.Text += "<div class=\"col-sm-9 form-group\"><ul><li ng-repeat=\"rb_" + FormF.name + " in " + model + FormF.name + "\" ng-form=\"subForm" + FormF.name + "\">\n<div style=\"overflow: hidden;\">";
                 angJSForm.Text += "<label>{{rb_" + FormF.name + ".value}}</label><br />";
                 break;
             case "SEPARATOR":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -782,236 +910,330 @@ public partial class DataEntry : System.Web.UI.Page
                 break;
             case "TRUNCATED_TEXT":
             case "WRAPPED_TEXT":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+
+
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
-                    angJSForm.Text += "<div class=\"clear left\"><label style=\"font-weight: bold;\" ng-model=\"" + model + FormF.name + "\">" + FormF.label + "</label></div>\n";
+                    angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label style=\"font-weight: bold;\" ng-model=\"" + model + FormF.name + "\">" + FormF.label + "</label></div>\n";
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"clear left\"><label style=\"font-weight: bold;\" ng-model=\"rb_" + repVal + "." + FormF.name + "\">" + FormF.label + "</label></div>\n";
+                    angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label style=\"font-weight: bold;\" ng-model=\"rb_" + repVal + "." + FormF.name + "\">" + FormF.label + "</label></div>\n";
                 }
 
-                if (outVal != null && outVal != "")
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "GEOLOCATION":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
+
+                    filedLabe = FormF.label;
+
                     ngModelName.Add(FormF.name);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> Lat: <input type=\"number\" min=\"-90\" max=\"90\" ng-model=\"" + model + FormF.name + "LatDE\"";
+                    filedBody += "  <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Lat\" ng-model=\"" + model + FormF.name + "LatDE\"";
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    if(constraint.TryGetValue((int)FormF.id, out constr))
                     {
-                        angJSForm.Text += constr;
+                        filedBody += constr;
                     }
-                    angJSForm.Text += " name=\"r_" + FormF.name + "LatDE\"";
-                    if (FormF.required == 1)
+                    filedBody += " name=\"r_" + FormF.name + "LatDE\"";
+                    if(FormF.required == 1)
                     {
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
                             ltlScript.Text += "$scope." + model + FormF.name + "LatDE = 0;";
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LatDE.$error.required || mainForm.r_" + FormF.name + "LatDE.$error.number\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LatDE.$error.required || mainForm.r_" + FormF.name + "LatDE.$error.number\"><i class=\"fa fa-warning\"></i></span> \n";
                     }
-                    else angJSForm.Text += "/>";
+                    else filedBody += "/>";
 
-                    angJSForm.Text += " Long: <input type=\"number\" min=\"-90\" max=\"90\" ng-model=\"" + model + FormF.name + "LongDE\"";
+                    filedBody += " <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Long\"  ng-model=\"" + model + FormF.name + "LongDE\"";
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    if(constraint.TryGetValue((int)FormF.id, out constr))
                     {
-                        angJSForm.Text += constr;
+                        filedBody += constr;
                     }
-                    angJSForm.Text += " name=\"r_" + FormF.name + "LongDE\"";
-                    if (FormF.required == 1)
+                    filedBody += " name=\"r_" + FormF.name + "LongDE\"";
+                    if(FormF.required == 1)
                     {
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
                             ltlScript.Text += "$scope." + model + FormF.name + "LongDE = 0;";
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
-                        angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.number\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
+                        filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.number\"><i class=\"fa fa-warning\"></i></span> \n";
                     }
-                    else angJSForm.Text += "/>";
-                    angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LatDE.$error.min || mainForm.r_" + FormF.name + "LatDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid Coords!</span>\n";
-                    angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.min || mainForm.r_" + FormF.name + "LongDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid Coords!</span>\n";
-                    angJSForm.Text += "</div>\n";
+                    else filedBody += "/>";
+                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LatDE.$error.min || mainForm.r_" + FormF.name + "LatDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid Coords!</span>\n";
+                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.min || mainForm.r_" + FormF.name + "LongDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid Coords!</span>\n";
+                    filedBody += " \n";
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> Lat: <input type=\"number\" min=\"-90\" max=\"90\" ng-model=\"rb_" + repVal + "." + FormF.name + "LatDE\"";
+
+                    filedLabe = FormF.label;
+
+                    filedBody += "Lat: <input type=\"number\" min=\"-90\" max=\"90\" ng-model=\"rb_" + repVal + "." + FormF.name + "LatDE\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    if(constraint.TryGetValue((int)FormF.id, out constr))
                     {
-                        angJSForm.Text += constr;
+                        filedBody += constr;
                     }
-                    angJSForm.Text += " name=\"r_" + FormF.name + "LatDE\"";
-                    if (FormF.required == 1)
+                    filedBody += " name=\"r_" + FormF.name + "LatDE\"";
+                    if(FormF.required == 1)
                     {
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
-                        angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.number\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
+                        filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/>";
+                    else filedBody += "/>";
 
 
-                    angJSForm.Text += " Long: <input type=\"number\" min=\"-180\" max=\"180\" ng-model=\"rb_" + repVal + "." + FormF.name + "LongDE\"";
+                    filedBody += " Long: <input type=\"number\" min=\"-180\" max=\"180\" ng-model=\"rb_" + repVal + "." + FormF.name + "LongDE\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if (constraint.TryGetValue((int)FormF.id, out constr))
+                    if(constraint.TryGetValue((int)FormF.id, out constr))
                     {
-                        angJSForm.Text += constr;
+                        filedBody += constr;
                     }
-                    angJSForm.Text += " name=\"r_" + FormF.name + "LongDE\"";
-                    if (FormF.required == 1)
+                    filedBody += " name=\"r_" + FormF.name + "LongDE\"";
+                    if(FormF.required == 1)
                     {
-                        if (outVal != null && outVal != "")
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
+                        else filedBody += " required />\n";
 
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
-                        angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.number\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
+                        filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/>";
-                    angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.min || subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid coords!</span>\n";
-                    angJSForm.Text += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.min || subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid coords!</span>\n";
-                    angJSForm.Text += "</div>\n";
+                    else filedBody += "/>";
+                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.min || subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid coords!</span>\n";
+                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.min || subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid coords!</span>\n";
+                    filedBody += "\n";
                 }
-
-                if (outVal != null && outVal != "")
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "EMAIL_FIELD":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if (relevant.TryGetValue((int)FormF.id, out outVal))
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if (FormF.FormFieldParentID == null)
+                if(FormF.FormFieldParentID == null)
                 {
+
+                    filedLabe = FormF.label;
                     ngModelName.Add(FormF.name);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"email\" ng-model=\"" + model + FormF.name + "\"";
-                    if (FormF.isReadOnly == 1)
+                    filedBody += "<input type=\"email\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+                    if(FormF.isReadOnly == 1)
                     {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
+                        filedBody += " ng-readonly=\"1\" ";
                     }
-                    if (FormF.required == 1)
+                    if(FormF.required == 1)
                     {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
                         {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else angJSForm.Text += "/></div>\n";
+                    else filedBody += "/>\n";
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if (repVal == null)
+                    if(repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    angJSForm.Text += "<div class=\"left clear\"><label>" + FormF.label + "</label></div><div class=\"right\"> <input type=\"email\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
-                    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1)
-                    {
-                        angJSForm.Text += " ng-readonly=\"1\" ";
-                    }
-                    if (FormF.required == 1)
-                    {
-                        angJSForm.Text += " name=\"r_" + FormF.name + "\"";
-                        if (outVal != null && outVal != "")
-                        {
-                            angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
-                        }
-                        else angJSForm.Text += " required />\n";
-                        angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
-                    }
-                    else angJSForm.Text += "/></div>\n";
-                }
 
-                if (outVal != null && outVal != "")
+                    filedLabe = FormF.label;
+                    filedBody += "<input type=\"email\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
+                    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+                    if(FormF.isReadOnly == 1)
+                    {
+                        filedBody += " ng-readonly=\"1\" ";
+                    }
+                    if(FormF.required == 1)
+                    {
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
+                        {
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                        }
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                    }
+                    else filedBody += "/> \n";
+                }
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+                if(outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
+
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
-            default:
-                if (prevFieldID != 0 && (int)FormF.FormFieldParentID == null)
+            case "IMAGE":
+
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if (closeRosterRelevant == 1)
+                    if(closeRosterRelevant == 1)
+                    {
+                        angJSForm.Text += "</div>\n";
+                        closeRosterRelevant = 0;
+                    }
+                }
+
+                outVal = "";
+                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                {
+                    angJSForm.Text += outVal;
+                }
+                if(FormF.FormFieldParentID == null)
+                {
+                    ngModelName.Add(FormF.name);
+
+                    filedLabe = FormF.label;
+
+
+
+                    filedBody += "<input type=\"file\" fileread=\"" + model + FormF.name + "\"   accept=\"image/*\" class=\"col-xs-10 col-sm-8\" ";
+                    if(FormF.isReadOnly == 1)
+                    {
+                        filedBody += " ng-readonly=\"1\" ";
+                    }
+                    if(FormF.required == 1)
+                    {
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
+                        {
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                        }
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                    }
+                    else filedBody += "/>\n";
+                }
+                else
+                {
+                    repVal = "";
+                    roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+                    if(repVal == null)
+                        table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+
+                    filedLabe = FormF.label;
+
+                    filedBody += "  <input type=\"file\" fileread=\"rb_" + repVal + "." + FormF.name + "\"   accept=\"image/*\" class=\"col-xs-10 col-sm-8\" ";
+                    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+                    if(FormF.isReadOnly == 1)
+                    {
+                        filedBody += " ng-readonly=\"1\" ";
+                    }
+                    if(FormF.required == 1)
+                    {
+                        filedBody += " name=\"r_" + FormF.name + "\"";
+                        if(outVal != null && outVal != "")
+                        {
+                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                        }
+                        else filedBody += " required />\n";
+                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                    }
+                    else filedBody += "/>\n";
+
+                }
+                angJSForm.Text += getFieldBody(filedLabe, filedBody);
+
+                if(outVal != null && outVal != "")
+                {
+                    angJSForm.Text += "</div>\n";
+                }
+
+                prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+                break;
+
+            default:
+                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                {
+                    angJSForm.Text += "</div></li></ul></div>\n";
+                    if(closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -1035,7 +1257,7 @@ public partial class DataEntry : System.Web.UI.Page
                        where s.id == surID
                        select s).FirstOrDefault();
 
-        foreach (SurveyElement se in FormFieldExport.getSurveyListElements(surID))
+        foreach(SurveyElement se in FormFieldExport.getSurveyListElements(surID))
         {
             script += "{ value: '" + se.value + "'},";
         }
@@ -1059,11 +1281,11 @@ public partial class DataEntry : System.Web.UI.Page
 
         ltlScript.Text += "\n$scope.addNew" + name + " = function () {$scope.currForm." + name + ".push({ ";
         string script = "";
-        foreach (FormFieldExport lbl in roasters)
+        foreach(FormFieldExport lbl in roasters)
         {
-            if (lbl.type != "TRUNCATED_TEXT" && lbl.type != "WRAPPED_TEXT")
+            if(lbl.type != "TRUNCATED_TEXT" && lbl.type != "WRAPPED_TEXT")
             {
-                if (lbl.type == "NUMERIC_TEXT_FIELD" || lbl.type == "CURRENCY_FIELD")
+                if(lbl.type == "NUMERIC_TEXT_FIELD" || lbl.type == "CURRENCY_FIELD")
                 {
                     script += lbl.name + ": 0,";
                 }
@@ -1083,11 +1305,11 @@ public partial class DataEntry : System.Web.UI.Page
     {
         string formula = p;
         MatchCollection formulaFields = splitFormula(formula);
-        foreach (var ff in formulaFields)
+        foreach(var ff in formulaFields)
         {
-            foreach (string i in ngModelName)
+            foreach(string i in ngModelName)
             {
-                if (i.Contains(ff.ToString()))
+                if(i.Contains(ff.ToString()))
                 {
                     formula = formula.Replace(i, "currForm." + i);
                 }
@@ -1104,9 +1326,9 @@ public partial class DataEntry : System.Web.UI.Page
     private string getFormula(string p, string r)
     {
         string formula = p;
-        foreach (var j in ngModelNameSubForm)
+        foreach(var j in ngModelNameSubForm)
         {
-            if (formula.Contains(j.Key))
+            if(formula.Contains(j.Key))
             {
                 formula = formula.Replace(j.Key, "value[i]." + j.Key);
             }
@@ -1123,16 +1345,16 @@ public partial class DataEntry : System.Web.UI.Page
         //string[] formulaFields = formula.Split('+');
         string watchField = "";
         ngModelCalculatedOutofModel.TryGetValue(p, out watchField);
-        if (watchField == null)
+        if(watchField == null)
         {
-            foreach (var ff in formulaFields)
+            foreach(var ff in formulaFields)
             {
                 ngModelCalculatedOutofModel.TryGetValue(ff.ToString(), out watchField);
             }
         }
-        foreach (var j in ngModelCalculatedOutofModel)
+        foreach(var j in ngModelCalculatedOutofModel)
         {
-            if (formula.Contains(j.Key))
+            if(formula.Contains(j.Key))
             {
                 formula = formula.Replace(j.Key, "value[i]." + j.Key);
             }
@@ -1175,31 +1397,31 @@ public partial class DataEntry : System.Web.UI.Page
                     orderby br.FormField_id ascending
                     select br;
 
-        foreach (var i in items)
+        foreach(var i in items)
         {
             var name = "";
-            if (formFid != (int)i.FormField_id)
+            if(formFid != (int)i.FormField_id)
             {
-                if (formFid != 0)
+                if(formFid != 0)
                 {
-                    value += "\">";
-                    scriptFunc += "\",function(){";
+                    value = value + ("\">");
+                    scriptFunc = scriptFunc + ("\",function(){");
                     createWatchReset(scriptFunc, key);
                     relevant.Add(key, value);
                 }
                 key = (int)i.FormField_id;
                 var tmp = i.value;
                 name = i.name;
-                if (i.type == "DROP_DOWN_LIST")
+                if(i.type == "DROP_DOWN_LIST")
                 {
                     name = i.name + ".value";
                 }
-                if (i.type == "CHECK_BOX")
+                if(i.type == "CHECK_BOX")
                 {
                     tmp = "true";
                 }
 
-                if (i.value.Contains("/data/"))
+                if(i.value.Contains("/data/"))
                 {
                     tmp = model + Regex.Match(i.value, @"/data/(.+?)_").Groups[1].Value;
                     value = "<div ng-show=\"" + model + name + getTypeBind(i.bType) + " " + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace("\n", " ") + " ";
@@ -1207,7 +1429,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 else
                 {
-                    if (tmp == "true")
+                    if(tmp == "true")
                     {
                         value = "<div ng-show=\"" + model + name + getTypeBind(i.bType) + " " + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace("\n", " ") + "";
                         scriptFunc = "$scope.$watch(\"" + model + name + getTypeBindNeg(i.bType) + "" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "";
@@ -1224,36 +1446,36 @@ public partial class DataEntry : System.Web.UI.Page
             {
                 name = i.name;
                 string tmp = i.value;
-                if (i.type == "DROP_DOWN_LIST")
+                if(i.type == "DROP_DOWN_LIST")
                 {
                     name = i.name + ".value";
                 }
-                if (i.type == "CHECK_BOX")
+                if(i.type == "CHECK_BOX")
                 {
                     tmp = "true";
                 }
-                if (i.bindingsPolicy == "All")
+                if(i.bindingsPolicy == "All")
                 {
-                    value += " && " + model + name + getTypeBind(i.bType) + "'" + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace("\n", " ") + "'";
-                    scriptFunc += "|| " + model + name + getTypeBindNeg(i.bType) + "'" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "'";
+                    value = value + (" && " + model + name + getTypeBind(i.bType) + "'" + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace("\n", " ") + "'");
+                    scriptFunc = scriptFunc + ("|| " + model + name + getTypeBindNeg(i.bType) + "'" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "'");
                 }
                 else
                 {
-                    if (tmp == "true")
+                    if(tmp == "true")
                     {
                         value = "<div ng-show=\"" + model + name + getTypeBind(i.bType) + " " + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace("\n", " ") + "";
                         scriptFunc = "$scope.$watch(\"" + model + name + getTypeBindNeg(i.bType) + "" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "";
                     }
                     else
                     {
-                        value += " || " + model + name + getTypeBind(i.bType) + "'" + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace(@"\n", " ") + "'";
-                        scriptFunc += " && " + model + name + getTypeBindNeg(i.bType) + "'" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "'";
+                        value = value + (" || " + model + name + getTypeBind(i.bType) + "'" + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace(@"\n", " ") + "'");
+                        scriptFunc = scriptFunc + (" && " + model + name + getTypeBindNeg(i.bType) + "'" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "'");
                     }
                 }
             }
         }
 
-        if (formFid != 0)
+        if(formFid != 0)
         {
             value += "\">";
             scriptFunc += "\",function(){";
@@ -1261,7 +1483,7 @@ public partial class DataEntry : System.Web.UI.Page
             relevant.Add(key, value);
         }
 
-        
+
     }
     /// <summary>
     /// Creates the HTML structure for the min/max constraints to be included in the numeric fields
@@ -1278,17 +1500,22 @@ public partial class DataEntry : System.Web.UI.Page
                      join fc in db.FormField_ConstraintContainer on c.id equals fc.constraints_id
                      select new { c, fc };
 
-        foreach (var c in constr)
+        foreach(var c in constr)
         {
-            if (formFid != (int)c.fc.id)
+            FieldConstraintRel fcr = new FieldConstraintRel();
+            fcr.ConstraintID = (int)c.fc.id;
+            fcr.FormFieldID = (int)c.fc.FormField_id;
+            fieldConstraintRel.Add(fcr);
+
+            if(formFid != (int)c.fc.id)
             {
-                if (formFid != 0)
+                if(formFid != 0)
                 {
                     constraint.Add(key, value);
                 }
                 key = (int)c.fc.id;
-                int v = Convert.ToInt32(c.c.value);
-                switch (c.c.cNumber)
+                double v = Convert.ToDouble(c.c.value);
+                switch(c.c.cNumber)
                 {
                     case "GREATER_THAN":
                         value = "min=\"" + Convert.ToString(v + 1) + "\"";
@@ -1314,7 +1541,7 @@ public partial class DataEntry : System.Web.UI.Page
             else
             {
                 int v = Convert.ToInt32(c.c.value);
-                switch (c.c.cNumber)
+                switch(c.c.cNumber)
                 {
                     case "GREATER_THAN":
                         value += "min=\"" + Convert.ToString(v + 1) + "\"";
@@ -1337,7 +1564,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
             }
         }
-        if (formFid != 0)
+        if(formFid != 0)
         {
             constraint.Add(key, value);
         }
@@ -1349,7 +1576,7 @@ public partial class DataEntry : System.Web.UI.Page
     private string getTypeBindNeg(string p)
     {
         string signal = "";
-        switch (p)
+        switch(p)
         {
             case "GREATER_THAN":
                 signal = "<";
@@ -1387,7 +1614,7 @@ public partial class DataEntry : System.Web.UI.Page
         var formfield = (from ff in db.FormField
                          where ff.id == key
                          select ff).FirstOrDefault();
-        if (formfield != null)
+        if(formfield != null)
         {
             //if (formfield.type == "NUMERIC_TEXT_FIELD" || formfield.type == "CURRENCY_FIELD")
             //{
@@ -1402,12 +1629,16 @@ public partial class DataEntry : System.Web.UI.Page
             //    scriptFunc += " });";
             //}
             //else scriptFunc += " $scope.currForm." + formfield.name + " = \"\";});";
-            if (formfield.type == "REPEATABLES_BASIC" || formfield.type == "REPEATABLES")
+            if(formfield.type == "REPEATABLES_BASIC" || formfield.type == "REPEATABLES")
             {
                 scriptFunc += " $scope.currForm." + formfield.name + " = [];});";
             }
             else scriptFunc += "var key = \"" + formfield.name + "\"; delete $scope.currForm[key];});";
             Literal1.Text += scriptFunc;
+
+
+
+
         }
 
     }
@@ -1418,7 +1649,7 @@ public partial class DataEntry : System.Web.UI.Page
     private string getTypeBind(string p)
     {
         string signal = "";
-        switch (p)
+        switch(p)
         {
             case "GREATER_THAN":
                 signal = ">";
@@ -1458,30 +1689,40 @@ public partial class DataEntry : System.Web.UI.Page
     public static string getJSON(string result, int formID)
     {
         //int formID = Convert.ToInt32(HttpContext.Current.Request["formID"]);
+
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
         int formResponseID = FormResponse.createFormResponse(formID);
         Dictionary<string, Object> values = JsonConvert.DeserializeObject<Dictionary<string, Object>>(result);
         Dictionary<string, int> ffields = FormField.getFormFieldsID(formID);
+        Array fieldTypeMapping = FormField.getFormFieldTypeMap(formID);
+
 
 
         string coords = "";
-        foreach (var v in values)
+        foreach(var v in values)
         {
             int ffID = 0;
             ffields.TryGetValue(v.Key, out ffID);
-            if (ffID == 0 || ffID == null)
+
+
+
+
+            if(ffID == 0 || ffID == null)
             {
                 int ind = v.Key.IndexOf("LatDE");
-                if (ind > 0)
+                if(ind > 0)
                 {
                     coords = v.Value.ToString();
                 }
                 ind = v.Key.IndexOf("LongDE");
-                if (ind > 0)
+                if(ind > 0)
                 {
-                    coords += " " + v.Value.ToString();
+                    coords = v.Value.ToString() + " " + coords;
                     string tmp = v.Key.Substring(0, ind);
                     ffID = FormField.getIdFromName(tmp, formID);
                     coords = coords.Replace(",", ".");
+
                     ResponseValue.createResponseValue(coords, formResponseID, ffID, 0);
                     FormResponseCoord.createFormResponseCoord(coords, formResponseID);
                     coords = "";
@@ -1490,7 +1731,7 @@ public partial class DataEntry : System.Web.UI.Page
             else
             {
                 int count = FormField.isRoster(ffID);
-                if (count == -1)
+                if(count == -1)
                 {
                     bool isEmpty = true;
                     int i = 0;
@@ -1500,18 +1741,39 @@ public partial class DataEntry : System.Web.UI.Page
                         string a = null;
                         rVal = (JArray)values[v.Key];
 
-                        foreach (var r in rVal)
+                        foreach(var r in rVal)
                         {
                             isEmpty = false;
                             createRoster(r.ToString(), ffields, v.Key, formResponseID, ++i);
                         }
                     }
-                    catch (Exception ex)
+                    catch(Exception ex)
                     {
                         isSaved = "false";
                     }
-                    if (!isEmpty)
+                    if(!isEmpty)
                         ResponseValue.createResponseValue(i.ToString(), formResponseID, ffID, -1);
+                }
+                else if(FormField.isImage(ffID) == -1)
+                {
+
+
+                    string folderPath = Utility.GetWEBDAVRoot() + Utility.GetImageFolderName() + "\\WEB\\" + formResponseID;
+                    string value = v.Value.ToString().Substring(v.Value.ToString().IndexOf("base64") + 7);
+                    var bytes = Convert.FromBase64String(value);
+
+                    bool isExists = System.IO.Directory.Exists(folderPath);
+                    if(!isExists)
+                        System.IO.Directory.CreateDirectory(folderPath);
+
+                    using(var imageFile = new FileStream(folderPath + "\\" + v.Key + ".jpg", FileMode.Create))
+                    {
+                        imageFile.Write(bytes, 0, bytes.Length);
+                        imageFile.Flush();
+                    }
+
+                    string imagePthValue = Utility.GetImageFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
+                    ResponseValue.createResponseValue(imagePthValue, formResponseID, ffID, 0);
                 }
                 else
                 {
@@ -1520,7 +1782,7 @@ public partial class DataEntry : System.Web.UI.Page
                         Dictionary<string, Object> ResVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(v.Value.ToString());
                         ResponseValue.createResponseValue(ResVal.FirstOrDefault().Value.ToString(), formResponseID, ffID, 0);
                     }
-                    catch (Exception ex)
+                    catch(Exception ex)
                     {
                         ResponseValue.createResponseValue(v.Value.ToString(), formResponseID, ffID, 0);
                     }
@@ -1528,8 +1790,197 @@ public partial class DataEntry : System.Web.UI.Page
             }
         }
         ResponseValue.setPositionIndex(formResponseID);
+
+
+        stopWatch.Stop();
+        // Get the elapsed time as a TimeSpan value.
+        TimeSpan ts = stopWatch.Elapsed;
+        // Format and display the TimeSpan value.
+        string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+            ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+        Debug.WriteLine("RunTime: " + elapsedTime);
+
+
         return formID.ToString();
     }
+
+    /// <summary>
+    /// Save the form sent as JSON
+    /// </summary>
+    /// <param name="result"></param>
+    /// <param name="formID"></param>
+    /// <returns>If succesfull the ID of the form otherwise the error message</returns>
+    [WebMethod]
+    public static string SaveFormAsJSON(string result, int formID)
+    {
+        //Stopwatch stopWatch = new Stopwatch();
+        //stopWatch.Start();
+
+        //try
+        //{
+            int formResponseID = FormResponse.createFormResponse(formID);
+            Dictionary<string, Object> values = JsonConvert.DeserializeObject<Dictionary<string, Object>>(result);
+            string[,] fieldTypeMapping = FormField.getFormFieldTypeMap(formID); //idx= 0:name;1:id;2:type;3:positionIndex
+            int fIDX = -1;
+            string coords = "";
+
+            GRASPEntities db = new GRASPEntities();
+
+            foreach(var v in values)
+            {
+                //int ffID = 0;
+                //ffields.TryGetValue(v.Key, out ffID);
+                //int tmp22 = fieldTypeMapping.GetLength(0);
+                for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
+                {
+                    if(v.Key == fieldTypeMapping[i, 0])
+                    {
+                        fIDX = i;
+                        break;
+                    }
+                }
+
+
+
+                if(fIDX == -1)
+                {
+                    int ind = v.Key.IndexOf("LatDE");
+                    if(ind > 0)
+                    {
+                        coords = v.Value.ToString();
+                    }
+                    ind = v.Key.IndexOf("LongDE");
+                    if(ind > 0)
+                    {
+                        coords = v.Value.ToString() + " " + coords;
+                        string tmp = v.Key.Substring(0, ind);
+                        int ffID = FormField.getIdFromName(tmp, formID);
+                        coords = coords.Replace(",", ".");
+
+                        ResponseValue.createResponseValue(coords, formResponseID, ffID, 0);
+                        FormResponseCoord.createFormResponseCoord(coords, formResponseID);
+                        coords = "";
+                    }
+                }
+                else
+                {
+                    switch(fieldTypeMapping[fIDX, 2])
+                    {
+                        case "REPEATABLES_BASIC":
+                        case "REPEATABLES":
+                            bool isEmpty = true;
+                            int i = 0;
+                            JArray rVal;
+                            try
+                            {
+                                string a = null;
+                                rVal = (JArray)values[v.Key];
+
+                                foreach(var r in rVal)
+                                {
+                                    isEmpty = false;
+                                    InsertRepeatable(db, r.ToString(), fieldTypeMapping, v.Key, formResponseID, ++i);
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                isSaved = "false";
+                            }
+                            if(!isEmpty)
+                            {
+                                ResponseValue.createResponseValue(db, i.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
+                            }
+
+                            break;
+                        case "IMAGE":
+                            string folderPath = Utility.GetWEBDAVRoot() + Utility.GetImageFolderName() + "\\WEB\\" + formResponseID;
+                            string value = v.Value.ToString().Substring(v.Value.ToString().IndexOf("base64") + 7);
+                            var bytes = Convert.FromBase64String(value);
+
+                            bool isExists = System.IO.Directory.Exists(folderPath);
+                            if(!isExists)
+                                System.IO.Directory.CreateDirectory(folderPath);
+
+                            using(var imageFile = new FileStream(folderPath + "\\" + v.Key + ".jpg", FileMode.Create))
+                            {
+                                imageFile.Write(bytes, 0, bytes.Length);
+                                imageFile.Flush();
+                            }
+
+                            string imagePthValue = Utility.GetImageFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
+                            ResponseValue.createResponseValue(db, imagePthValue, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                            break;
+                        case "DROP_DOWN_LIST":
+                            Dictionary<string, Object> ResVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(v.Value.ToString());
+                            ResponseValue.createResponseValue(db, ResVal.FirstOrDefault().Value.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                            break;
+                        case "NUMERIC_TEXT_FIELD":
+                            ResponseValue.createResponseValue(db, v.Value.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0, "NUMERIC_TEXT_FIELD");
+                            break;
+                        default:
+                            try
+                            {
+                                    ResponseValue.createResponseValue(db, v.Value.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                            }
+                            catch(Exception ex)
+                            {                               
+                                //Dictionary<string, Object> ResValDef = JsonConvert.DeserializeObject<Dictionary<string, Object>>(v.Value.ToString());
+                                //ResponseValue.createResponseValue(db, ResValDef.FirstOrDefault().Value.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+
+                                string fpath = HttpContext.Current.Server.MapPath("~/LogFiles/");
+                                if(!Directory.Exists(fpath))
+                                {
+                                    Directory.CreateDirectory(fpath);
+                                }
+                                string val = "";
+                                if(v.Value != null)
+                                {
+                                    val = " FieldValue : " + v.Value.ToString();
+                                }
+                                if(v.Key != null)
+                                {
+                                    val += " [key:" + v.Key.ToString() + "]\r\n";
+                                }
+                                WriteTextFile("\r\nERROR-1913  Date: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\r\n" + ex.Message + "\r\n" + ex.StackTrace + "\r\n" + result + "\r\n" + val + "\r\n---------------\r\n", fpath + "\\DataEntryWebFormJSON.txt");
+            
+                            } 
+                            break;
+                    }
+                }
+            }
+            db.SaveChanges();
+
+            //stopWatch.Stop();
+            //// Get the elapsed time as a TimeSpan value.
+            //TimeSpan ts = stopWatch.Elapsed;
+            //// Format and display the TimeSpan value.
+            //string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+            //    ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+            //Debug.WriteLine("RunTime: " + elapsedTime);
+
+            Index.GenerateIndexesHASH(formID, formResponseID);
+            ServerSideCalculatedField.GenerateSingle(formID, formResponseID);
+            UserToFormResponses.GenerateAssociationForAllUsers(formID, formResponseID);
+
+            return formID.ToString();
+        //}
+        //catch(Exception ex)
+        //{            
+        //    string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
+        //    if(!Directory.Exists(folderPath))
+        //    {
+        //        Directory.CreateDirectory(folderPath);
+        //    }
+        //    string loggedUser = HttpContext.Current.User.Identity.Name.ToString();
+            
+        //    WriteTextFile("Date: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\r\nUser: " + loggedUser + "\r\n" + ex.Message + "\r\n" + ex.StackTrace + "\r\n",folderPath+"\\DataEntryWebForm.txt");
+        //    return "ERROR: " + ex.Message.ToString();
+        //}
+
+
+
+    }
+
     /// <summary>
     /// Converts the responses in a Dictionary, so for each of its elements a ResponseValue is created.
     /// </summary>
@@ -1542,18 +1993,18 @@ public partial class DataEntry : System.Web.UI.Page
     {
         Dictionary<string, Object> rVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(val);
 
-        foreach (var rv in rVal)
+        foreach(var rv in rVal)
         {
             int ffID = 0;
             ffields.TryGetValue(rv.Key, out ffID);
-            if (ffID != 0 && ffID != null)
+            if(ffID != 0 && ffID != null)
             {
                 try
                 {
                     Dictionary<string, Object> ResVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(rv.Value.ToString());
                     ResponseValue.createResponseValue(ResVal.FirstOrDefault().Value.ToString(), formResponseID, ffID, rc);
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     ResponseValue.createResponseValue(rv.Value.ToString(), formResponseID, ffID, rc);
                 }
@@ -1561,4 +2012,52 @@ public partial class DataEntry : System.Web.UI.Page
 
         }
     }
+    /// <summary>
+    /// Converts the responses in a Dictionary, so for each of its elements a ResponseValue is created.
+    /// </summary>
+    /// <param name="val">A string representing the responses for a roster or a table</param>
+    /// <param name="ffields">The Dictionary representing all the fields for a form (Key = field_name, value = field_id)</param>
+    /// <param name="key">The name of the roster field</param>
+    /// <param name="formResponseID">The id representing the form Response</param>
+    /// <param name="rc">An int representing the repetition count for this roster/table</param>
+    public static void InsertRepeatable(GRASPEntities db, string val, string[,] fieldTypeMapping, string key, int formResponseID, int rc)
+    {
+        Dictionary<string, Object> rVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(val);
+
+        foreach(var rv in rVal)
+        {
+            int fIDX = 0;
+            for(int i = 0; i < fieldTypeMapping.Length; i++)
+            {
+                if(rv.Key == fieldTypeMapping[i, 0])
+                {
+                    fIDX = i;
+                    break;
+                }
+            }
+            if(fIDX != 0)
+            {
+                if(fieldTypeMapping[fIDX, 2] == "DROP_DOWN_LIST")
+                {
+                    Dictionary<string, Object> ResVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(rv.Value.ToString());
+                    ResponseValue.createResponseValue(db, ResVal.FirstOrDefault().Value.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), rc);
+                }
+                else
+                {
+                    ResponseValue.createResponseValue(db, rv.Value.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), rc);
+                }
+            }
+
+        }
+    }
+
+    private static void WriteTextFile(string content, string path)
+    {
+        using(System.IO.StreamWriter file = new System.IO.StreamWriter(new FileStream(path,
+               FileMode.Append,
+               FileAccess.Write), Encoding.UTF8))
+        {
+            file.Write(content);
+        }
+   }
 }

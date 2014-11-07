@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Script.Serialization;
@@ -26,8 +27,7 @@ using System.Web.UI.WebControls;
 /// </summary>
 public partial class _uc_barChart : System.Web.UI.UserControl
 {
-    public int reportFieldID { get; set; }
-    public string labelName { get; set; }
+
 
     public string chartName = "";
     public string jsonData = "";
@@ -38,6 +38,12 @@ public partial class _uc_barChart : System.Web.UI.UserControl
     public string aggregate = "";
     public string firstColumn = "";
     public string secondColumn = "";
+
+    public int reportFieldID { get; set; }
+    public string labelName { get; set; }
+    public int ResponseStatusID { get; set; }
+
+
     /// <summary>
     /// Shows a bar charts on the selected report, taking the data from the DB
     /// and passing them to the javascript as json
@@ -46,12 +52,15 @@ public partial class _uc_barChart : System.Web.UI.UserControl
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
+        
         List<string> categories = new List<string>();
         List<double> data = new List<double>();
         Dictionary<string, double> axisValues = new Dictionary<string, double>();
         Dictionary<string, int> countAverage = new Dictionary<string, int>();
         Dictionary<string, List<double>> stDev = new Dictionary<string, List<double>>();
+
         GRASPEntities db = new GRASPEntities();
+
 
         var ReportData = (from rf in db.ReportFields
                           where rf.ReportFieldID == reportFieldID
@@ -65,12 +74,12 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         firstColumn = ReportData.ReportFieldLabel;
         secondColumn = ReportData.ReportFieldValueLabel;
         chartName = "\"" + ReportData.ReportFieldLabel + " / " + ReportData.ReportFieldValueLabel + "\"";
-        if (ReportData.ReportFieldLegend == 1)
+        if(ReportData.ReportFieldLegend == 1)
             legend = "true";
-        if (ReportData.ReportFieldTableData == 1)
+        if(ReportData.ReportFieldTableData == 1)
             table = "true";
 
-        if (aggregate == "count" || aggregate == "")
+        if(aggregate == "count" || aggregate == "")
         {
             var items = from rv in db.ResponseValue
                         where rv.formFieldId == serieID
@@ -81,92 +90,93 @@ public partial class _uc_barChart : System.Web.UI.UserControl
                             value = g.Count()
                         };
 
-            foreach (var item in items)
+            foreach(var item in items)
             {
                 data.Add(item.value);
                 categories.Add(item.category);
-                axisValues.Add(item.category, item.value); 
+                axisValues.Add(item.category, item.value);
             }
         }
         else
         {
 
-            var resVal = from fr in db.FormResponse
-                         where fr.parentForm_id == formID
-                         select fr.id;
+            var resVal = from ffr in db.FormFieldResponses
+                         where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
+                            && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
+                         select new { ffr.value, ffr.formFieldId, ffr.nvalue };
 
-            foreach (var res in resVal)
+
+            //var formValue = (from rv in db.ResponseValue
+            //                 where  && rv.FormResponseID == res
+            //                 select rv);
+
+            string tmpValueKey = "";
+            foreach(var r in resVal)
             {
-                var formSerie = (from rv in db.ResponseValue
-                                 where (rv.formFieldId == serieID || rv.formFieldId == valueID) && rv.FormResponseID == res
-                                 select rv);
-
-                //var formValue = (from rv in db.ResponseValue
-                //                 where  && rv.FormResponseID == res
-                //                 select rv);
-
-                string tmpValueKey = "";
-                foreach (var r in formSerie)
+                if(r.formFieldId == serieID)
                 {
-                    if (r.formFieldId == serieID)
+                    // Series Field
+                    tmpValueKey = r.value;
+                }
+                else
+                {
+                    // Value Field
+                    try
                     {
-                        tmpValueKey = r.value;
-                    }
-                    else
-                    {
-                        try
+                        double val = axisValues[tmpValueKey];
+                        switch(aggregate)
                         {
-                            double val = axisValues[tmpValueKey];
-                            switch (aggregate)
-                            {
-                                case "average":
-                                    countAverage[tmpValueKey] = countAverage[tmpValueKey] + 1;
-                                    axisValues[tmpValueKey] += Convert.ToDouble(r.value);
-                                    break;
-                                case "sum":
-                                    axisValues[tmpValueKey] += Convert.ToDouble(r.value);
-                                    break;
-                                case "stdev":
-                                    List<double> list;
-                                    if (!stDev.TryGetValue(tmpValueKey, out list))
-                                        stDev.Add(tmpValueKey, list = new List<double>());
-                                    list.Add(Convert.ToDouble(r.value));
-                                    break;
-                                case "min":
-                                    if (Convert.ToDouble(r.value) < val)
-                                        axisValues[tmpValueKey] = Convert.ToDouble(r.value);
-                                    break;
-                                case "max":
-                                    if (Convert.ToDouble(r.value) > val)
-                                        axisValues[tmpValueKey] = Convert.ToDouble(r.value);
-                                    break;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            countAverage.Add(tmpValueKey, 1);
-                            axisValues.Add(tmpValueKey, Convert.ToDouble(r.value));
-                            if (aggregate == "stdev")
-                            {
+                            case "average":
+                                countAverage[tmpValueKey] = countAverage[tmpValueKey] + 1;
+                                axisValues[tmpValueKey] += Convert.ToDouble(r.value);
+                                break;
+                            case "sum":
+                                if(r.nvalue != null)
+                                {
+                                    axisValues[tmpValueKey] += r.nvalue.Value;
+                                }
+                                break;
+                            case "stdev":
                                 List<double> list;
-                                if (!stDev.TryGetValue(tmpValueKey, out list))
+                                if(!stDev.TryGetValue(tmpValueKey, out list))
                                     stDev.Add(tmpValueKey, list = new List<double>());
                                 list.Add(Convert.ToDouble(r.value));
-                            }
+                                break;
+                            case "min":
+                                if(Convert.ToDouble(r.value) < val)
+                                    axisValues[tmpValueKey] = Convert.ToDouble(r.value);
+                                break;
+                            case "max":
+                                if(Convert.ToDouble(r.value) > val)
+                                    axisValues[tmpValueKey] = Convert.ToDouble(r.value);
+                                break;
                         }
                     }
-
-
+                    catch(Exception ex)
+                    {
+                        countAverage.Add(tmpValueKey, 1);
+                        axisValues.Add(tmpValueKey, Convert.ToDouble(r.value));
+                        if(aggregate == "stdev")
+                        {
+                            List<double> list;
+                            if(!stDev.TryGetValue(tmpValueKey, out list))
+                                stDev.Add(tmpValueKey, list = new List<double>());
+                            list.Add(Convert.ToDouble(r.value));
+                        }
+                    }
                 }
+
+
             }
 
-            foreach (var item in axisValues.ToList())
+            
+            foreach(var item in axisValues.ToList())
             {
-                if (aggregate == "average")
+                if(aggregate == "average")
                 {
                     axisValues[item.Key] /= countAverage[item.Key];
                 }
-                else if (aggregate == "stdev")
+                else if(aggregate == "stdev")
                 {
                     double average = stDev[item.Key].Average();
                     double sumOfSquaresOfDifferences = stDev[item.Key].Select(val => (val - average) * (val - average)).Sum();
@@ -176,14 +186,14 @@ public partial class _uc_barChart : System.Web.UI.UserControl
             }
 
 
-            foreach (var item in axisValues)
+            foreach(var item in axisValues)
             {
                 data.Add(item.Value);
-                categories.Add(item.Key);
+                categories.Add(item.Key.Length > 20 ? item.Key.Substring(0, 20) : item.Key);
             }
         }
 
-        if (table == "true")
+        if(table == "true")
         {
             tableData.Visible = true;
             tabularData.DataSource = axisValues;
@@ -192,14 +202,15 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         }
         else tableData.Visible = false;
 
-        if (data.Count() > 0)
+        if(data.Count() > 0)
             maxValueAxis = data.Max().ToString().Replace(",", ".");
         else maxValueAxis = "0";
 
         var serializer = new JavaScriptSerializer();
         jsonData = serializer.Serialize(data);
         jsonCategories = serializer.Serialize(categories);
-        if (jsonCategories == "[]")
+        if(jsonCategories == "[]")
             warning.Visible = true;
+
     }
 }

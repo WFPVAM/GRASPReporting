@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -30,6 +31,23 @@ using System.Xml;
 /// </summary>
 public partial class MobileConnection : System.Web.UI.Page
 {
+
+    private string FixBase64ForImage(string Image)
+    {
+        System.Text.StringBuilder sbText = new System.Text.StringBuilder(Image, Image.Length);
+
+        sbText.Replace("\r\n", String.Empty);
+
+        sbText.Replace(" ", String.Empty);
+
+        sbText.Replace('-', '+');
+
+        sbText.Replace('_', '/');
+
+        sbText.Replace(@"\/", "/");
+
+        return sbText.ToString();
+    }
     protected void Page_Load(object sender, EventArgs e)
     {
 
@@ -50,64 +68,64 @@ public partial class MobileConnection : System.Web.UI.Page
         //    readXML(senderF);
         //}
         //file.WriteLine(text);
+
+        string senderF = "";
+        string data = "";
+        string imei = "";
+
+        System.Collections.Specialized.NameValueCollection postedValues = Request.Form;
+        senderF = postedValues[0];
+        data = Server.HtmlDecode(postedValues[1]);
         try
         {
-            string senderF = "";
-            string data = "";
-            string imei = "";
+            imei = Server.HtmlDecode(postedValues[2]);
+        }
+        catch(Exception ex)
+        {
+        }
 
-            System.Collections.Specialized.NameValueCollection postedValues = Request.Form;
-            senderF = postedValues[0];
-            data = Server.HtmlDecode(postedValues[1]);
-            try
+        if(data == "test")
+        {
+            handleTestRequest(senderF);
+        }
+        else if(Request.QueryString["call"] != null)
+        {
+            string parameter = Request.QueryString["call"].ToString();
+            switch(parameter)
             {
-                imei = Server.HtmlDecode(postedValues[2]);
-            }
-            catch (Exception ex)
-            {
-            }
-
-            if (data == "test")
-            {
-                handleTestRequest(senderF);
-            }
-            else if (Request.QueryString["call"] != null)
-            {
-                string parameter = Request.QueryString["call"].ToString();
-                switch (parameter)
-                {
-                    case "test":
-                        handleTestRequest(senderF);
-                        break;
-                    case "response":
-                        if (senderF == null || senderF == "")
-                        {
-                            Response.Clear();
-                            Response.ContentType = "text/plain";
-                            Response.Write("ERROR:Client phone number not received");
-                            break;
-                        }
-                        handleResponseRequest(data, senderF);
-                        break;
-                    case "sync":
-                        if (senderF == null || senderF == "")
-                        {
-                            Response.Clear();
-                            Response.ContentType = "text/plain";
-                            Response.Write("ERROR:Client phone number not received");
-                            break;
-                        }
-                        handleSyncRequest(data, senderF);
-                        break;
-                    default:
+                case "test":
+                    handleTestRequest(senderF);
+                    break;
+                case "response":
+                    if(senderF == null || senderF == "")
+                    {
                         Response.Clear();
                         Response.ContentType = "text/plain";
-                        Response.Write("Generating a request response generated an error");
+                        Response.Write("ERROR:Client phone number not received");
                         break;
-                }
+                    }
+                    handleResponseRequest(data, senderF);
+                    break;
+                case "sync":
+                    if(senderF == null || senderF == "")
+                    {
+                        Response.Clear();
+                        Response.ContentType = "text/plain";
+                        Response.Write("ERROR:Client phone number not received");
+                        break;
+                    }
+                    handleSyncRequest(data, senderF);
+                    break;
+                default:
+                    Response.Clear();
+                    Response.ContentType = "text/plain";
+                    Response.Write("Generating a request response generated an error");
+                    break;
             }
         }
-        catch (Exception ex)
+        try
+        { }
+        catch(Exception ex)
         {
             Response.Clear();
             Response.ContentType = "text/plain";
@@ -134,7 +152,7 @@ public partial class MobileConnection : System.Web.UI.Page
     {
         data = data.Replace("\n", "").Replace("\r", "").Replace("  ", "");
         XmlDocument xmlData = TryParseXml(data);
-        if (xmlData != null)
+        if(xmlData != null)
         {
             Response.Clear();
             Response.ContentType = "text/plain";
@@ -157,7 +175,7 @@ public partial class MobileConnection : System.Web.UI.Page
             doc.LoadXml(xml);
             return doc;
         }
-        catch (XmlException e)
+        catch(XmlException e)
         {
             return null;
         }
@@ -167,7 +185,7 @@ public partial class MobileConnection : System.Web.UI.Page
     {
         List<string> downloadedForms = new List<string>();
         XmlNodeList elemList = doc.GetElementsByTagName("form");
-        for (int i = 0; i < elemList.Count; i++)
+        for(int i = 0; i < elemList.Count; i++)
         {
             downloadedForms.Add(elemList[i].InnerXml);
         }
@@ -184,10 +202,8 @@ public partial class MobileConnection : System.Web.UI.Page
 
     private bool CreateZipFromText(string text, string sender)
     {
-        //Response.Write("Entrato in createZip: " + text + "\n");
-        //string path = Server.MapPath("mobile.txt");
-        //StreamWriter file = new StreamWriter(path);
-        //file.WriteLine(text);
+
+
         byte[] encodedText = Convert.FromBase64String(text);
 
         Stream stream = new MemoryStream(encodedText);
@@ -204,110 +220,283 @@ public partial class MobileConnection : System.Web.UI.Page
         xmlDoc.LoadXml(pat);
         string xpath = "data";
         var nodes = xmlDoc.SelectNodes(xpath);
-        Dictionary<string, int> ffields = new Dictionary<string, int>();
+        //Dictionary<string, int> ffields = new Dictionary<string, int>();
+        string[,] fieldTypeMapping = null;
+        int fIDX = -1;
         int formParentID = 0;
         int formResponseID = 0;
         string tmpNm = "";
         string clientVersion = "";
-        int ffID = 0;
+        //int ffID = 0;
         int prevFFID = 0;
         int ffIdRoster = 0;
-        int i = 0;
+        int repCount = 0;
         bool previousRoster = false;
-
-        foreach (XmlNode childrenNode in nodes)
+        try
         {
-            foreach (XmlNode child in childrenNode.ChildNodes)
+            using(GRASPEntities db = new GRASPEntities())
             {
-                if (child.Name == "id")
+
+                foreach(XmlNode childrenNode in nodes)
                 {
-                    formParentID = FormResponse.getFormID(child.InnerText);
-                    ffields = FormField.getFormFieldsID(formParentID);
-                    formResponseID = FormResponse.createFormResponse(formParentID, sender, "");
-                    if (formResponseID == 0)
-                        return false;
-                }
-                else if (child.Name.Contains('_'))
-                {
-                    string[] tmpSplit = child.Name.Split('_');
-                    tmpNm = tmpSplit[0];
-                    if (tmpSplit.Length > 2)
+                    foreach(XmlNode child in childrenNode.ChildNodes)
                     {
-                        for (int k = 1; k < tmpSplit.Length - 1; k++)
-                            tmpNm += "_" + tmpSplit[k];
-                    }
-                    ffields.TryGetValue(tmpNm, out ffID);
-
-                }
-                else
-                {
-                    ffields.TryGetValue(child.Name, out ffID);
-                }
-
-                if (ffID != 0 && ffID != null)
-                {
-                    int count = FormField.isRoster(ffID);
-                    if (count == -1)
-                    {
-
-                        if (prevFFID == ffID)
+                        if(child.Name == "id")
                         {
-                            i++;
-                            foreach (XmlNode rChild in child.ChildNodes)
+                            formParentID = FormResponse.getFormID(child.InnerText);
+                            formResponseID = FormResponse.createFormResponse(formParentID, sender, "");
+
+                            //ffields = FormField.getFormFieldsID(formParentID);
+                            fieldTypeMapping = FormField.getFormFieldTypeMap(formParentID); //idx= 0:name; 1:id; 2:type; 3:positionIndex
+
+                            if(formResponseID == 0)
+                                return false;
+                        }
+                        else if(child.Name.Contains('_'))
+                        {
+                            string[] tmpSplit = child.Name.Split('_');
+                            tmpNm = tmpSplit[0];
+                            if(tmpSplit.Length > 2)
                             {
-                                ffields.TryGetValue(rChild.Name, out ffIdRoster);
-                                if (ffIdRoster != 0 && ffIdRoster != null)
+                                for(int k = 1; k < tmpSplit.Length - 1; k++)
+                                    tmpNm += "_" + tmpSplit[k];
+                            }
+                            //ffields.TryGetValue(tmpNm, out ffID);
+                            fIDX = -1;
+                            for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
+                            {
+                                if(tmpNm == fieldTypeMapping[i, 0])
                                 {
-                                    //file.WriteLine(rChild.InnerText + "," + formResponseID + "," + ffIdRoster + "," + i.ToString());
-                                    ResponseValue.createResponseValue(rChild.InnerText, formResponseID, ffIdRoster, i);
+                                    fIDX = i;
+                                    break;
                                 }
                             }
                         }
                         else
                         {
-                            i = 1;
-                            foreach (XmlNode rChild in child.ChildNodes)
+                            //ffields.TryGetValue(child.Name, out ffID);
+                            fIDX = -1;
+                            for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
                             {
-                                ffields.TryGetValue(rChild.Name, out ffIdRoster);
-                                if (ffIdRoster != 0 && ffIdRoster != null)
+                                if(tmpNm == fieldTypeMapping[i, 0])
                                 {
-                                    //file.WriteLine(rChild.InnerText + "," + formResponseID + "," + ffIdRoster + "," + i.ToString());
-                                    ResponseValue.createResponseValue(rChild.InnerText, formResponseID, ffIdRoster, i);
+                                    fIDX = i;
+                                    break;
                                 }
                             }
                         }
 
-                        prevFFID = ffID;
-                        previousRoster = true;
+                        if(fIDX != -1)
+                        {
+                            //file.WriteLine(" --- " + fieldTypeMapping[fIDX, 0] + " | " + fieldTypeMapping[fIDX, 1] + " | " + fieldTypeMapping[fIDX, 2] + " ---");
+                            switch(fieldTypeMapping[fIDX, 2])
+                            {
+                                case "REPEATABLES_BASIC":
+                                case "REPEATABLES":
 
+                                    //if(prevFFID == Convert.ToInt32(fieldTypeMapping[fIDX, 1]))
+                                    if(prevFFID == fIDX)
+                                    {
+                                        repCount++;
+                                        foreach(XmlNode rChild in child.ChildNodes)
+                                        {
+                                            //ffields.TryGetValue(rChild.Name, out ffIdRoster);  
+                                            ffIdRoster = -1;
+                                            for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
+                                            {
+                                                if(rChild.Name == fieldTypeMapping[i, 0])
+                                                {
+                                                    ffIdRoster = i;
+                                                    break;
+                                                }
+                                            }
+                                            if(ffIdRoster != -1)
+                                            {
+                                                //file.WriteLine(rChild.InnerText + "," + formResponseID + "," + Convert.ToInt32(fieldTypeMapping[ffIdRoster, 1]) + "," + repCount.ToString());
+                                                if(fieldTypeMapping[fIDX, 2] == "NUMERIC_TEXT_FIELD")
+                                                {
+                                                    ResponseValue.createResponseValue(db, rChild.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[ffIdRoster, 1]), Convert.ToInt32(fieldTypeMapping[ffIdRoster, 3]), repCount, "NUMERIC_TEXT_FIELD");
+
+                                                }
+                                                else
+                                                {
+                                                    ResponseValue.createResponseValue(db, rChild.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[ffIdRoster, 1]), Convert.ToInt32(fieldTypeMapping[ffIdRoster, 3]), repCount);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        repCount = 1;
+                                        foreach(XmlNode rChild in child.ChildNodes)
+                                        {
+                                            //ffields.TryGetValue(rChild.Name, out ffIdRoster);
+                                            ffIdRoster = -1;
+                                            for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
+                                            {
+                                                if(rChild.Name == fieldTypeMapping[i, 0])
+                                                {
+                                                    ffIdRoster = i;
+                                                    break;
+                                                }
+                                            }
+                                            if(ffIdRoster != -1)
+                                            {
+                                                //file.WriteLine(rChild.InnerText + "," + formResponseID + "," + Convert.ToInt32(fieldTypeMapping[ffIdRoster, 1]) + "," + repCount.ToString());
+                                                if(fieldTypeMapping[fIDX, 2] == "NUMERIC_TEXT_FIELD")
+                                                {
+                                                    ResponseValue.createResponseValue(db, rChild.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[ffIdRoster, 1]), Convert.ToInt32(fieldTypeMapping[ffIdRoster, 3]), repCount, "NUMERIC_TEXT_FIELD");
+
+                                                }
+                                                else
+                                                {
+                                                    ResponseValue.createResponseValue(db, rChild.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[ffIdRoster, 1]), Convert.ToInt32(fieldTypeMapping[ffIdRoster, 3]), repCount);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    //prevFFID = Convert.ToInt32(fieldTypeMapping[fIDX, 1]);
+                                    prevFFID = fIDX;
+                                    previousRoster = true;
+                                    break;
+                                case "IMAGE":
+                                    //string folderPath = HttpContext.Current.Server.MapPath("~/UploadedFiles/" + formResponseID);
+
+                                    //string stringValue = FixBase64ForImage(child.InnerText);
+                                    //var bytes = Convert.FromBase64String(stringValue);
+
+                                    //bool isExists = System.IO.Directory.Exists(folderPath);
+                                    //if (!isExists)
+                                    //    System.IO.Directory.CreateDirectory(folderPath);
+
+                                    //using (var imageFile = new FileStream(folderPath + "\\" + child.Name + ".jpg", FileMode.Create))
+                                    //{
+                                    //    imageFile.Write(bytes, 0, bytes.Length);
+                                    //    imageFile.Flush();
+                                    //}
+
+                                    //Added by Rushdi on 30-SEP-2014
+                                    if(child.InnerText.Contains("/instances"))
+                                    {
+                                        child.InnerText = sender.Replace('+', ' ').Trim() + "\\" + child.InnerText.Split('/').Last();
+                                    }
+                                    //------------------------------
+
+                                    string imagePthValue = Utility.GetImageFolderName() + "\\" + child.InnerText;
+                                    ResponseValue.createResponseValue(db, imagePthValue, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                    break;
+
+                                case "GEOLOCATION":
+                                    if(!string.IsNullOrEmpty(child.InnerText))
+                                    {
+                                        ResponseValue.createResponseValue(db, child.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                        FormResponseCoord.createFormResponseCoord(child.InnerText, formResponseID);
+                                    }
+                                    break;
+                                case "NUMERIC_TEXT_FIELD":
+                                    ResponseValue.createResponseValue(db, child.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0, "NUMERIC_TEXT_FIELD");
+                                    break;
+                                default:
+                                    if(previousRoster)
+                                    {
+                                        //file.WriteLine(repCount.ToString() + "," + formResponseID + "," + prevFFID + ", -1");
+                                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[prevFFID, 1]), Convert.ToInt32(fieldTypeMapping[prevFFID, 3]), -1);
+                                    }
+                                    //file.WriteLine(child.InnerText + "," + formResponseID + "," + Convert.ToInt32(fieldTypeMapping[fIDX, 1]) + ", 0");
+                                    string valueToInsert = "";
+                                    if(child.InnerText != null && child.InnerText.Length > 4000)
+                                    {
+                                        valueToInsert = child.InnerText.Substring(0, 3999);
+                                    }
+                                    else
+                                    {
+                                        valueToInsert = child.InnerText;
+                                    }
+                                    ResponseValue.createResponseValue(db, valueToInsert, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                    if(tmpNm == "client_version")
+                                        clientVersion = child.InnerText;
+                                    prevFFID = fIDX;
+                                    previousRoster = false;
+                                    break;
+                            }
+                        }
+                    }
+                    if(previousRoster)
+                    {
+                        //file.WriteLine(repCount.ToString() + "," + formResponseID + "," + prevFFID + ", -1");
+                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[prevFFID, 1]), Convert.ToInt32(fieldTypeMapping[prevFFID, 3]), -1);
+                    }
+                }
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch(Exception ex)
+                {
+                    string exLog = "";
+                    if(ex is DbEntityValidationException)
+                    {
+                        DbEntityValidationException dbEx = (DbEntityValidationException)ex;
+                        foreach(var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach(var validationError in validationErrors.ValidationErrors)
+                            {
+                                exLog += "Property: " + validationError.PropertyName + "  Error: " + validationError.ErrorMessage + "\r\n";
+                            }
+                        }
                     }
                     else
                     {
-                        if (previousRoster)
-                        {
-                            //file.WriteLine(i.ToString() + "," + formResponseID + "," + prevFFID + ", -1");
-                            ResponseValue.createResponseValue(i.ToString(), formResponseID, prevFFID, -1);
-                        }
-                        //file.WriteLine(child.InnerText + "," + formResponseID + "," + ffID + ", 0");
-                        ResponseValue.createResponseValue(child.InnerText, formResponseID, ffID, 0);
-                        if (tmpNm == "client_version")
-                            clientVersion = child.InnerText;
-                        prevFFID = ffID;
-                        previousRoster = false;
-
+                        exLog = ex.Message + "\r\n" + ex.StackTrace;
                     }
+                    string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
+                    if(!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    StreamWriter file = new StreamWriter(folderPath + "\\MobileConnection.txt", true);
+                    file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    file.WriteLine(text);
+                    file.WriteLine("____________________________________________________________________________");
+                    file.WriteLine("------ ERROR " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    file.WriteLine(exLog);
+                    file.WriteLine("____________________________________________________________________________");
+                    file.Close();
+
+                    db.Database.ExecuteSqlCommand("DELETE FormResponse WHERE id=" + formResponseID);
+
+                    return false;
                 }
-            }
-            if (previousRoster)
-            {
-                //file.WriteLine(i.ToString() + "," + formResponseID + "," + prevFFID + ", -1");
-                ResponseValue.createResponseValue(i.ToString(), formResponseID, prevFFID, -1);
+
+                FormResponse.updateClientVersion(formResponseID, clientVersion);
+                Index.GenerateIndexesHASH(formParentID, formResponseID);
+                ServerSideCalculatedField.GenerateSingle(formParentID, formResponseID);
+                UserToFormResponses.GenerateAssociationForAllUsers(formParentID, formResponseID);
+                return true;
             }
         }
-        //file.Close();
-        ResponseValue.setPositionIndex(formResponseID);
-        FormResponse.updateClientVersion(formResponseID, clientVersion);
-        return true;
-
+        catch(Exception ex)
+        {
+            string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
+            if(!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            StreamWriter file = new StreamWriter(folderPath + "\\MobileConnection.txt", true);
+            file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            file.WriteLine(text);
+            file.WriteLine("____________________________________________________________________________");
+            file.WriteLine("------ ERROR " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            file.WriteLine(ex.Message);
+            file.WriteLine(ex.StackTrace);
+            file.WriteLine("____________________________________________________________________________");
+            file.Close();
+            return false;
+        }
+        finally
+        {
+            //file.Close();
+        }
     }
 }

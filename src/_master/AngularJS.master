@@ -79,12 +79,13 @@
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
                     <ul class="nav navbar-nav side-nav line-bottom">
                         <li class="line-bottom"><a href="Home_Page.aspx"><i class="fa fa-home"></i>Home Page</a></li>
-                        <li class="line-bottom"><a href="Surveys.aspx"><i class="fa fa-check-square-o"></i>Surveys</a></li>
+                        <li id="surveys" runat="server" class="line-bottom"><a href="Surveys.aspx"><i class="fa fa-check-square-o"></i>Surveys</a></li>
                         <li id="reports" runat="server" class="line-bottom"><a href="Reports.aspx"><i class="fa fa-bar-chart-o"></i>Reports</a></li>
                         <li id="maps" runat="server" class="line-bottom"><a href="Maps.aspx"><i class="fa fa-map-marker"></i>Maps</a></li>
-                        <li class="line-bottom"><a href="Data_Entry.aspx"><i class="fa fa-pencil"></i>Data Entry</a></li>
+                        <li id="dataentry" runat="server" class="line-bottom"><a href="Data_Entry.aspx"><i class="fa fa-pencil"></i>Data Entry</a></li>
                         <li id="users" runat="server" class="line-bottom"><a href="Users.aspx"><i class="fa fa-users"></i>Users</a></li>
                         <li id="settings" runat="server" class="line-bottom"><a href="Settings.aspx"><i class="fa fa-cogs"></i>Settings</a></li>
+                        <li id="indexManagement" runat="server" class="line-bottom"><a href="IndexManagement.aspx"><i class="fa fa-cogs"></i>Indexes Management</a></li>
                         <li>
                             <asp:LinkButton ID="exit" runat="server" OnClick="exit_Click"><i class="fa fa-power-off"></i>Exit</asp:LinkButton></li>
                     </ul>

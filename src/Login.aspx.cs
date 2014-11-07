@@ -32,20 +32,24 @@ public partial class Login : System.Web.UI.Page
     }
     protected void login_LoggedIn(object sender, EventArgs e)
     {
-        Response.Redirect("Admin/Home_Page.aspx", true);
+        
         string user = User_Credential.getNameForUser(login.UserName);
         Session["role"] = User_Credential.getRoleForUser(login.UserName);
-        //string userRoleName = sRes[0];
-
-        //Session["auth"] = "1";
-        //Session["uLevel"] = sRes[0];
-
-        afterLogin(login.UserName, user);
+        Session["isAuthenticated"] = "1";
+        /*
+         * In CustomMemebershipProvider the following session variables have been set:
+         * UserID
+         * RoleID
+         * 
+         * */
+        
+        Response.Redirect("Admin/Home_Page.aspx", true);
+        //afterLogin(login.UserName, user);
     }
 
     private void afterLogin(string username, string user)
     {
-        Debug.WriteLine("user name: " + user);
+        //Debug.WriteLine("user name: " + user);
         //UsersRolesDSTableAdapters.UsersTableAdapter userTA =
         //       new UsersRolesDSTableAdapters.UsersTableAdapter();
         //UsersRolesDS.UsersDataTable userDT =

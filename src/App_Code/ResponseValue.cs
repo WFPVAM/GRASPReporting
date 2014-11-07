@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 /// <summary>
@@ -46,6 +47,101 @@ public partial class ResponseValue
         db.SaveChanges();
 
     }
+
+    public static ResponseValue createResponseValue(GRASPEntities db, string value, int formResponseID, int formFieldID, int positionIndex, int rCount)
+    {
+        return createResponseValue(db, value, formResponseID, formFieldID, positionIndex, rCount, "");
+    }
+
+    /// <summary>
+    /// Insert a ResponseValue record using an external DB entity without committing the DB changes.
+    /// </summary>
+    /// <param name="db">Database Entity</param>
+    /// <param name="value">String containing the answer</param>
+    /// <param name="formResponseID">Int the responseID</param>
+    /// <param name="formFieldID"></param>
+    /// <param name="rCount">If the field is inside a repeatable, specify the current numeber of repetition</param>
+    /// <returns>Return the ResponseValue record inserted in the database</returns>
+    public static ResponseValue createResponseValue(GRASPEntities db, string value, int formResponseID, int formFieldID,
+        int positionIndex, int rCount, string fieldType)
+    {
+        if(db != null)
+        {
+            var response = new ResponseValue();
+            response.value = value;
+            response.FormResponseID = formResponseID;
+            response.formFieldId = formFieldID;
+            response.RVCreateDate = DateTime.Now;
+            response.RVRepeatCount = rCount;
+            response.positionIndex = positionIndex;
+
+            if(fieldType.Length != 0)
+            {
+                switch(fieldType)
+                {
+                    case "NUMERIC_TEXT_FIELD":
+                        double nvalue = 0;
+                        if(value.Length != 0)
+                        {
+                            Double.TryParse(value, out nvalue);
+                        }
+                        response.nvalue = nvalue;
+                        break;
+                    case "DATE_FIELD":
+                        DateTime dvalue;
+                        if(DateTime.TryParse(value, out dvalue))
+                        {
+                            response.dvalue = dvalue;
+                        }
+                        break;
+                }
+            }
+
+            db.ResponseValue.Add(response);
+            //ONLY FOR DEBUG
+            //try
+            //{
+            //    //db.SaveChanges();
+            //}
+            //catch(Exception ex)
+            //{
+            //    string err = ex.StackTrace;
+            //}
+            return response;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+
+    public static void updateResponseValue(GRASPEntities db, string value, int formResponseID, int formFieldID, int positionIndex, int rCount)
+    {
+        updateResponseValue(db, value, formResponseID, formFieldID, positionIndex, rCount, "");
+    }
+    public static void updateResponseValue(GRASPEntities db, string value, int formResponseID, int formFieldID, int positionIndex, int rCount, string fieldType)
+    {
+        ResponseValue respValue = (from rv in db.ResponseValue
+                                   where rv.FormResponseID == formResponseID && rv.formFieldId == formFieldID
+                                        && rv.RVRepeatCount == rCount
+                                   select rv).FirstOrDefault();
+        respValue.value = value;
+    }
+    public static string UpdateWithSql(string value, int formFieldID, int positionIndex, int rCount)
+    {
+        string escVal = "";
+        if(value.Length < 255)
+        {  //prevent sql injection...
+            escVal = value.Replace("'", "''");
+            escVal = escVal.Replace("sp_", "sp~");
+            escVal = escVal.Replace("xp_", "xp~");
+        }
+
+        return "UPDATE ResponseValue SET value=" + value + " WHERE FORMFIELDID";
+    }
+
+
     /// <summary>
     /// Updates all the position index of a Formresponse
     /// </summary>
@@ -58,7 +154,7 @@ public partial class ResponseValue
                     where rv.FormResponseID == formResponseID
                     select rv;
 
-        foreach (var i in items)
+        foreach(var i in items)
         {
             i.positionIndex = getPositionIndex((int)i.formFieldId);
         }
@@ -77,10 +173,10 @@ public partial class ResponseValue
         GRASPEntities db = new GRASPEntities();
 
         var items = (from ff in db.FormField
-                    where ff.id == formfieldID
-                    select ff).FirstOrDefault();
+                     where ff.id == formfieldID
+                     select ff).FirstOrDefault();
 
-        if (items != null)
+        if(items != null)
             pi = items.positionIndex;
 
         return pi;
@@ -114,7 +210,7 @@ public partial class ResponseValue
                     where rv.FormResponseID == formResponseID
                     select rv;
 
-        foreach (var i in items)
+        foreach(var i in items)
         {
             db.ResponseValue.Remove(i);
         }

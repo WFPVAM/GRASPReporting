@@ -4,10 +4,18 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <style type="text/css">
-        .color {
-            color: #0058B1;
-            margin-left: 5px;
-        }
+        .color { color: #0058B1; margin-left: 5px; }
+        .rgEditForm {border:1px solid #666;font-size:12px;width:500px !important; }
+        .rgEditForm .rgHeader { background: #0058B1; height: 30px !important; }
+        .rgEditForm table { margin:3px 0 15px 10px;width:500px; }
+        .rgEditForm table td { vertical-align: top !important; }
+        .rgEditForm table tr td:first-child table tr td:first-child { width:110px !important; }
+        .rgEditForm table tr td label { font-size: 12px; }
+        .rgEditForm table tr td a { font-weight: bold; border: 1px solid #ccc;padding:5px; }
+        .rgEditForm table tr td a:hover { background: #0058B1; color: #fff; }
+        .rgEditForm table tr td:first-child table tr td input[type="text"], 
+            .rgEditForm table tr td:first-child table tr td input[type="password"] { height: 21px; padding: 2px; font-size:12px;width:200px;}
+        .errMsg { color: #f00; font-size: 11px; }
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphBody1" runat="Server">
@@ -21,33 +29,62 @@
         </div>
     </div>
     <div>
-        <telerik:RadGrid ID="rgUser" runat="server" DataSourceID="ObjectDataSource1" CellSpacing="0" GridLines="None" Skin="MetroTouch" 
+        <telerik:RadGrid ID="rgUser" runat="server" DataSourceID="OdsUsers" Skin="Metro"
             ForeColor="#0058B1" BorderColor="White" AlternatingItemStyle-BackColor="#CCE6FF" HeaderStyle-BackColor="#0058B1" HeaderStyle-ForeColor="White"
-            AllowPaging="True" AllowSorting="True" AllowAutomaticInserts="True" AllowAutomaticDeletes="true" AllowAutomaticUpdates="true">
+            AllowPaging="True" AllowSorting="True" AllowAutomaticInserts="True" AllowAutomaticDeletes="True" AllowAutomaticUpdates="True" OnItemCommand="rgUser_ItemCommand">
+            <ExportSettings>
+                <Pdf PageWidth="">
+                </Pdf>
+            </ExportSettings>
             <AlternatingItemStyle BackColor="#CCE6FF"></AlternatingItemStyle>
 
-            <MasterTableView DataSourceID="ObjectDataSource1" AutoGenerateColumns="False" CommandItemDisplay="Top" DataKeyNames="user_id">
-                
+            <MasterTableView DataSourceID="OdsUsers" AutoGenerateColumns="False" EditMode="PopUp" CommandItemDisplay="Top" DataKeyNames="user_id">
+                <EditFormSettings>
+                <PopUpSettings Modal="true" />
+            </EditFormSettings>
                 <Columns>
                     <telerik:GridBoundColumn DataField="user_id" DataType="System.Int32" FilterControlAltText="Filter user_id column" HeaderText="ID" ReadOnly="True" SortExpression="user_id" UniqueName="user_id">
+                        <ColumnValidationSettings>
+                            <ModelErrorMessage Text=""></ModelErrorMessage>
+                        </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
-                    <telerik:GridBoundColumn DataField="email" FilterControlAltText="Filter email column" HeaderText="Email" SortExpression="email" UniqueName="email">
+                    <telerik:GridBoundColumn DataField="email" FilterControlAltText="Filter email column" HeaderText="Email" SortExpression="email" UniqueName="email" Visible="false">
+                        <ColumnValidationSettings>
+                            <ModelErrorMessage Text=""></ModelErrorMessage>
+                        </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
                     <telerik:GridBoundColumn DataField="name" FilterControlAltText="Filter name column" HeaderText="First Name" SortExpression="name" UniqueName="name">
+                        <ColumnValidationSettings>
+                            <ModelErrorMessage Text=""></ModelErrorMessage>
+                        </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
                     <telerik:GridBoundColumn DataField="surname" FilterControlAltText="Filter surname column" HeaderText="Last Name" SortExpression="surname" UniqueName="surname">
+                        <ColumnValidationSettings>
+                            <ModelErrorMessage Text=""></ModelErrorMessage>
+                        </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
-                    <telerik:GridBoundColumn DataField="username" FilterControlAltText="Filter username column" HeaderText="UserName" SortExpression="username" UniqueName="username">
-                    </telerik:GridBoundColumn>
-                    <telerik:GridTemplateColumn HeaderText="password" DataField="password" FilterControlAltText="Filter password column" SortExpression="password" UniqueName="password">
+                    <telerik:GridTemplateColumn DataField="username" FilterControlAltText="Filter username column" HeaderText="UserName" SortExpression="username" UniqueName="username">
                         <EditItemTemplate>
-                            <asp:TextBox ID="passwordTextBox" runat="server" Text='<%# Bind("password") %>'></asp:TextBox>
+                            <asp:TextBox ID="usernameTextBox" runat="server" Text='<%# Bind("username") %>'></asp:TextBox>
                         </EditItemTemplate>
                         <ItemTemplate>
-                            
+                            <asp:Label ID="usernameLabel" runat="server" Text='<%# Eval("username") %>'></asp:Label>
                         </ItemTemplate>
                     </telerik:GridTemplateColumn>
-                    <telerik:GridBoundColumn DataField="phone_number" FilterControlAltText="Filter phone_number column" HeaderText="Phone" SortExpression="phone_number" UniqueName="phone_number">
+                    <telerik:GridTemplateColumn HeaderText="Password" DataField="password" UniqueName="password" Visible="false">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="passwordTextBox" TextMode="Password" runat="server" Text='<%# Bind("password") %>'></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="Regex2" runat="server" ControlToValidate="passwordTextBox" CssClass="errMsg"
+                                ValidationExpression="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$"
+                                ErrorMessage="Weak Password" ForeColor="Red" /><br />
+                            <label>Confirm Password</label><br /><asp:TextBox ID="TxtPwdConfirm" TextMode="Password" runat="server" Text=''></asp:TextBox>
+                            <asp:CompareValidator ID="CvPwd" runat="server" ErrorMessage="Paswords doesn't match" CssClass="errMsg" ControlToCompare="TxtPwdConfirm" ControlToValidate="passwordTextBox"></asp:CompareValidator>
+                        </EditItemTemplate>
+                    </telerik:GridTemplateColumn>
+                    <telerik:GridBoundColumn DataField="phone_number" FilterControlAltText="Filter phone_number column" HeaderText="Phone" SortExpression="phone_number" UniqueName="phone_number" Visible="false">
+                        <ColumnValidationSettings>
+                            <ModelErrorMessage Text=""></ModelErrorMessage>
+                        </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
                     <telerik:GridDropDownColumn DataField="roles_id" FilterControlAltText="Filter supervisor column" HeaderText="Role" SortExpression="roles_id" UniqueName="roles_id" DataSourceID="ldsRoles" ListValueField="id" ListTextField="description">
                         <ColumnValidationSettings>
@@ -56,9 +93,9 @@
                     </telerik:GridDropDownColumn>
                     <telerik:GridTemplateColumn HeaderText="Actions">
                         <ItemTemplate>
-                            <asp:LinkButton ID="LinkButton1" runat="server" CommandName="Edit"><i class="color fa fa-edit fa-2"></i><span class="color">Edit User</span></asp:LinkButton>
-                            <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="javascript:if(!confirm('This action will delete the selected report. Are you sure?')){return false;}"
-                                CommandName="Delete"><i class="color fa fa-trash-o fa-2"></i><span class="color">Delete User</span></asp:LinkButton>
+                            <asp:LinkButton ID="LinkButton1" runat="server" CommandName="Edit"><i class="color fa fa-edit fa-2"></i><span class="color">Edit</span></asp:LinkButton>
+                            <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="javascript:if(!confirm('This action will delete the selected user. Are you sure?')){return false;}"
+                                CommandName="Delete"><i class="color fa fa-trash-o fa-2"></i><span class="color">Delete</span></asp:LinkButton>
                             <%--<asp:ImageButton ID="btnEdit" runat="server" AlternateText="Edit User"
                                 CommandName="Edit" ImageUrl="../_images/Edit.png" />
                             <asp:ImageButton ID="btnDelete" runat="server" AlternateText="Delete User"
@@ -73,7 +110,7 @@
             <HeaderStyle BackColor="#0058B1" ForeColor="White"></HeaderStyle>
         </telerik:RadGrid>
 
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="getUsers"  
+        <asp:ObjectDataSource ID="OdsUsers" runat="server" SelectMethod="getUsers"
             TypeName="User_Credential" UpdateMethod="updateUser" InsertMethod="addUser" DeleteMethod="deleteUser">
             <DeleteParameters>
                 <asp:Parameter Name="user_id" Type="Int32" />

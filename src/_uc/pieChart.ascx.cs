@@ -23,13 +23,12 @@ using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Diagnostics;
 /// <summary>
 /// User Control to create the structure for a pie chart with KendoUI
 /// </summary>
 public partial class _uc_pieChart : System.Web.UI.UserControl
 {
-    public int reportFieldID { get; set; }
-    public string labelName { get; set; }
 
     public string json = "";
     public string chartName = "";
@@ -37,6 +36,12 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
     public string table = "false";
     public string firstColumn = "";
     public string secondColumn = "";
+
+    public int reportFieldID { get; set; }
+    public string labelName { get; set; }
+    public int ResponseStatusID { get; set; }
+
+
     /// <summary>
     /// Shows a bar charts on the selected report, taking the data from the DB
     /// and passing them to the javascript as json
@@ -56,8 +61,8 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
         firstColumn = ReportData.ReportFieldLabel;
         secondColumn = ReportData.ReportFieldValueLabel;
 
-        var items = from rv in db.ResponseValue
-                    where rv.formFieldId == formFieldID
+        var items = from rv in db.FormFieldResponses
+                    where rv.formFieldId == formFieldID && (ResponseStatusID == 0 || rv.ResponseStatusID == ResponseStatusID)
                     group rv by rv.value into g
                     select new
                     {
@@ -67,7 +72,7 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
 
         Dictionary<string, string> response = new Dictionary<string, string>();
         List<Object> newItems = new List<Object>();
-        foreach (var r in items)
+        foreach (var r in items.AsParallel())
         {
             try
             {
@@ -107,5 +112,6 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
         json = serializer.Serialize(newItems);
         if (json == "[]")
             warning.Visible = true;
+
     }
 }

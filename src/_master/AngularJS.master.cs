@@ -30,32 +30,60 @@ public partial class _master_AngularJS : System.Web.UI.MasterPage
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        lblVersion.Text = Utility.getVersion();
-        LoggedUser = HttpContext.Current.User.Identity.Name.ToString().ToUpper();
-        RoleUser = User_Credential.getRoleForUser(LoggedUser);
-        if (RoleUser == "DataEntryOperator")
+        if(Session["isAuthenticated"] != null)
         {
-            settings.Visible = false;
-            maps.Visible = false;
-            users.Visible = false;
-            reports.Visible = false;
-        }
-        else if (RoleUser == "Supervisor" || RoleUser == "Analyst")
-        {
-            settings.Visible = false;
-            users.Visible = false;
+            lblVersion.Text = Utility.getVersion();
+            LoggedUser = HttpContext.Current.User.Identity.Name.ToString().ToUpper();
+            RoleUser = User_Credential.getRoleForUser(LoggedUser);
+            if(RoleUser == "DataEntryOperator")
+            {
+                settings.Visible = false;
+                maps.Visible = false;
+                users.Visible = false;
+                reports.Visible = false;
+                surveys.Visible = false;
+            }
+            else if(RoleUser == "Supervisor" || RoleUser == "Analyst")
+            {
+                settings.Visible = false;
+                users.Visible = false;
+                indexManagement.Visible = false;
+            }
+            else if(RoleUser == "Reader")
+            {
+                settings.Visible = false;
+                users.Visible = false;
+                reports.Visible = false;
+                dataentry.Visible = false;
+                indexManagement.Visible = false;
+            }
+            else if(RoleUser == "Reviewer")
+            {
+                settings.Visible = false;
+                users.Visible = false;
+                reports.Visible = false;
+                dataentry.Visible = false;
+                indexManagement.Visible = false;
+            }
+            else
+            {
+                settings.Visible = true;
+                indexManagement.Visible = true;
+                maps.Visible = true;
+                users.Visible = true;
+                reports.Visible = true;
+            }
         }
         else
         {
-            settings.Visible = true;
-            maps.Visible = true;
-            users.Visible = true;
-            reports.Visible = true;
+            System.Web.Security.FormsAuthentication.SignOut();
+            Response.Redirect("~/login.aspx", true);
         }
     }
 
     protected void exit_Click(object sender, EventArgs e)
     {
         System.Web.Security.FormsAuthentication.SignOut();
+        Response.Redirect("~/login.aspx", true);
     }
 }

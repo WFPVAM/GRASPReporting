@@ -15,7 +15,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <asp:Literal ID="tableForms" runat="server"></asp:Literal>
+        <asp:Literal ID="tableForms" runat="server" EnableViewState="false"></asp:Literal>
     </div>
     </form>
 </body>

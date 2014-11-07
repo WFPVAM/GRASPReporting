@@ -46,6 +46,24 @@
         // or SQLServer, the event is not raised.
 
     }
+    protected void Application_AuthenticateRequest(Object sender, EventArgs e)
+    {
+        // I take the url referer host. (manipulating the query string this value is null or your local address)
+        string strRefererHost = Request.UrlReferrer == null ? string.Empty : Request.UrlReferrer.Host;
 
+        // This is the host name of your application 
+        string strUrlHost = Request.Url.Host;
+
+        // I read the query string parameters
+        string strQSPars = Request.Url.Query ?? string.Empty;
+
+        // If the referer is not the application host (... someone manipulated the qs)...  
+        // and    there is a query string parameter (be sure of this otherwise nobody can access the default page of your site
+        // because this page has always a local referer...)
+        if(strRefererHost != strUrlHost && strQSPars != string.Empty
+            && Request.Url.LocalPath.Contains("ViewForm.aspx"))
+            Response.Redirect("~/WrongReferer.aspx"); // your error page
+
+    }
        
 </script>

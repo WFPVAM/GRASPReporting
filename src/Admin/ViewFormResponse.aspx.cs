@@ -1,22 +1,7 @@
-﻿/*
- *GRASP(Geo-referential Real-time Acquisition Statistics Platform) Reporting Tool <http://www.brainsen.com>
- * Developed by Brains Engineering s.r.l (marco.giorgi@brainsen.com)
- * This file is part of GRASP Reporting Tool.  
- *  GRASP Reporting Tool is free software: you can redistribute it and/or modify it
- *  under the terms of the GNU Lesser General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or (at
- *  your option) any later version.  
- *  GRASP Reporting Tool is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser  General Public License for more details.  
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with GRASP Reporting Tool. 
- *  If not, see <http://www.gnu.org/licenses/>
- */
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -37,6 +22,7 @@ public partial class Admin_ViewFormResponse : System.Web.UI.Page
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
+        int counter = 0;
         tableForms.Text = "";
         StringBuilder sb = new StringBuilder();
         if (Request["FormID"] != null || Request["FormID"] != "")
@@ -77,42 +63,129 @@ public partial class Admin_ViewFormResponse : System.Web.UI.Page
 
             sb.Append("</tr></thead><tbody>");
 
+
+            Stopwatch stopWatch = new Stopwatch();
+            //stopWatch.Start();
+
+
             IEnumerable<FormResponse> formResponse = FormResponse.getFormResponse(FormID);
-            foreach (FormResponse resp in formResponse)
-            {
-                sb.Append("<tr>");
-                sb.Append("<td>" + resp.id.ToString() + "</td>");
-                sb.Append("<td>" + resp.senderMsisdn + "</td>");
-                
-                var ffields = from ff in db.FormFieldExport
+
+
+                List<FormFieldExport> ffields = (from ff in db.FormFieldExport
                               where ff.form_id == FormID && ff.FormFieldParentID == null &&
                               ff.type != "SEPARATOR" && ff.type != "TRUNCATED_TEXT" && ff.type != "WRAPPED_TEXT"
                               orderby ff.positionIndex ascending
-                              select ff;
+                              select ff).ToList();
+
+                List<ResponseValue> responseValues = (from rv in db.ResponseValue
+                                      from fr in db.FormResponse
+                                      where rv.FormResponseID == fr.id && fr.parentForm_id == FormID
+                                      //where rv.FormResponseID == resp.id //&& rv.formFieldId == ffID
+                                      select rv).ToList();
+
+
+            foreach (FormResponse resp in formResponse)
+            {
+                
+                sb.Append("<tr>");
+                sb.Append("<td><a href=\"ViewForm.aspx?id=" + resp.id.ToString() + "\" target=\"_blank\">" + resp.id.ToString() + "</a></td>");
+                sb.Append("<td>" + resp.senderMsisdn + "</td>");
+                
 
                 foreach (var ff in ffields)
                 {
-                    ResponseValue resVal = getResponseValues((int)ff.id, (int)resp.id);
+
+                    stopWatch.Start();
+
+
+                    ResponseValue resVal;// = getResponseValues((int)ff.id, (int)resp.id);
+
+                    resVal = (from rv in responseValues
+                              where rv.FormResponseID == resp.id && rv.formFieldId == (int)ff.id 
+                              select rv).FirstOrDefault();
+
                     if (resVal != null)
                     {
                         if (resVal.RVRepeatCount == -1)
                         {
-                            string val = checkRoaster((int)resVal.formFieldId);
+                            string val = ""; // checkRoaster((int)resVal.formFieldId);
                             if (val != "")
                             {
                                 sb.Append("<td>" + val + "</td>");
                             }
+                            else if(ff.type == "IMAGE")  //if(FormField.isImage((int)resVal.formFieldId) == -1)
+                            {
+                                if (resVal.value.ToString() != "")
+                                {
+
+                                    //string folderPath = HttpContext.Current.Request.Url.ToString().Replace(HttpContext.Current.Request.RawUrl, "/") + resVal.value;
+                                    //string folderPath = HttpContext.Current.Server.MapPath("~/UploadedFiles/" + resVal.FormResponseID) + "//" + resVal.value;
+
+                                   // sb.Append("<td><img height=\"30px\"   src=\"~\" >" + folderPath + "</td>");
+                                    sb.Append("<td></td>");
+                                }
+                                else sb.Append("<td> </td>");
+                            }
                             else sb.Append("<td>" + resVal.value + "</td>");
                         }
-                        else sb.Append("<td>" + resVal.value + "</td>");
+                        else
+                        {
+                            //if (FormField.isImage((int)resVal.formFieldId) == -1)
+                            if(ff.type=="IMAGE")
+                            {
+                                string FilePath = Utility.GetWEBDAVRoot() + resVal.value;
+                                bool isExists = System.IO.File.Exists(FilePath);
+                                if (isExists)
+                                {
+
+                                    if (resVal.value != null && resVal.value.ToString() != "")
+                                    {
+                                       // string imagepath = HttpContext.Current.Request.Url.ToString().Replace(HttpContext.Current.Request.RawUrl, "/") + resVal.value;
+                                      //  sb.Append("<td><img height=\"80px\" width=\"80px\" src=" + imagepath + "></td>");
+                                        sb.Append("<td></td>");
+                                    }
+                                    else sb.Append("<td> </td>");
+                                }
+                                else sb.Append("<td> </td>");
+                            }
+                            else
+                                sb.Append("<td>" + resVal.value + "</td>");
+                        }
                     }
                     else sb.Append("<td> </td>");
+
+
+
+                    stopWatch.Stop();
+                    // Get the elapsed time as a TimeSpan value.
+                    TimeSpan ts = stopWatch.Elapsed;
+                    // Format and display the TimeSpan value.
+                    string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:000}",
+                        ts.Hours, ts.Minutes, ts.Seconds,
+                        ts.Milliseconds);
+                    Debug.WriteLine(elapsedTime);
+                    stopWatch.Reset();
                 }
                 sb.Append("</tr>");
+
+                counter++;
+                if(counter == 1)
+                {
+                    break;
+                }
             }
             sb.Append("</tbody></table></div>");
 
-            tableForms.Text = sb.ToString();
+
+
+
+            
+
+
+
+
+
+            //tableForms.Text = "<h1>" + elapsedTime + "</h1>" + sb.ToString();
         }
     }
     /// <summary>
