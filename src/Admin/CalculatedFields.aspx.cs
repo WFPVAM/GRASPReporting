@@ -17,14 +17,23 @@ public partial class Admin_CalculatedFields : System.Web.UI.Page
         if(Request["FormID"] != null && Request["FormID"] != "")
         {
             formID = Convert.ToInt32(Request["FormID"]);
+            lnkCalcFieldList.Attributes["href"] = "CalculatedFieldInsert.aspx?FormID=" + formID.ToString();
+
             using(GRASPEntities db = new GRASPEntities())
             {
                 var formFieldExt = (from ffe in db.FormFieldExt
                                     where ffe.FormID == formID
                                     select ffe).OrderBy(o => o.PositionIndex);
+                if(Request["recalcall"] != null && Request["recalcall"].ToString() == "true")
+                {
+                    foreach(var f in formFieldExt)
+                    {
+                        LitMessage.Text += "<br/>" + f.FormFieldExtName + ": " + ServerSideCalculatedField.Generate(f.FormFieldExtID);
+                    }
+
+                }
                 GrdCalcFields.DataSource = formFieldExt.ToList();
             }
-
         }
     }
 
@@ -33,7 +42,6 @@ public partial class Admin_CalculatedFields : System.Web.UI.Page
         Telerik.Web.UI.ButtonCommandEventArgs arg = e as Telerik.Web.UI.ButtonCommandEventArgs;
         int fieldExtID = Convert.ToInt32(arg.CommandArgument.ToString());
         LitMessage.Text = ServerSideCalculatedField.Generate(fieldExtID);
-
     }
 
     protected void BtnDelete_Command(object sender, CommandEventArgs e)
@@ -47,5 +55,7 @@ public partial class Admin_CalculatedFields : System.Web.UI.Page
             db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE FormFieldExtID=" + fieldExtID);
         }
         GrdCalcFields.Rebind();
+        LitMessage.Text = "The calculated field has been deleted.<br/>Now <strong>you must recalculate all the fields that was belonging to the field you have currently deleted, otherwise the results will not correct.</strong>";
+
     }
 }
