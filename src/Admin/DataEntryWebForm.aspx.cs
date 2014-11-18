@@ -1705,9 +1705,6 @@ public partial class DataEntry : System.Web.UI.Page
             int ffID = 0;
             ffields.TryGetValue(v.Key, out ffID);
 
-
-
-
             if(ffID == 0 || ffID == null)
             {
                 int ind = v.Key.IndexOf("LatDE");
@@ -1828,7 +1825,7 @@ public partial class DataEntry : System.Web.UI.Page
 
             foreach(var v in values)
             {
-                //int ffID = 0;
+                fIDX = -1;
                 //ffields.TryGetValue(v.Key, out ffID);
                 //int tmp22 = fieldTypeMapping.GetLength(0);
                 for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)

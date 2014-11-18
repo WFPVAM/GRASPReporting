@@ -1,0 +1,107 @@
+﻿Version 1.1.3
+________________
+
+
+under development
+
+
+New features
+* Review Restore: it’s possible to restore an entire review cycle based on review data filter, by reviewer or by response status.
+
+
+Improvements
+* Reports: it’s possible to filter the any reports by response status
+* Reports: speed optimization up to 7x in generating the reports
+* Reports: both value and percentage are shown on the pie charts
+* Reports: calculated fields can be used to generate charts
+
+
+Fixes
+* Data Edit: bug on empty values for numerical fields
+* Form View: is not shown anymore field name for empty values
+
+
+
+
+Database Changes:
+In order to properly upgrade GRASP Reporting, the following database schema changes must be done:
+
+
+1. Modified View FormFieldExport
+2. Add table RolesToResponseStatus
+
+
+
+
+
+
+________________
+
+
+Version 1.1.2
+________________
+
+
+Released on 30 October 2014
+Author: Marco Giorgi (marco.giorgi@brainsen.com)
+
+
+New features
+* Server-side calculated fields: now it’s possible to add calculated fields to the forms specifying a mathematical formula using the existing form fields.
+* Indexes: indexes are used to search and discover duplicated records based on a combination of one or more fields that are expected to be unique.
+* User Permission: the web application has now a complete redesigned security check to deny access to resources based on user roles. Users can now be associated to view or edit only form responses that contains a specific value in a specific field.
+* Custom Filter: it’s possible to define custom advanced filter on view and export data function.
+* Data Edit: it’s possible to edit form responses using the same interface of web data entry.
+* Data Review Workflow: responses can be reviewed and any status change is recorded in the response history.
+
+
+Improvements
+All the heavy tasks have been refactored to support multiprocessor/multicore support to improve calculation speed and more use of RAM memory to reduce access to database. 
+This changes guarantee an optimal load scalability.
+
+
+Fixes
+Response value field has been expanded from 255 to 4000 chars in order to avoid exceptions in data entry. 
+If the input is longer than 4000 chars, it will be truncated.
+
+
+
+
+Database Schema Changes:
+In order to properly upgrade GRASP Reporting the following database schema changes must be done:
+
+
+1. Added table FormFieldExt
+2. Added table FormFieldExtDependencies
+3. Added table FormResponseReviews
+4. Added table FormResponseStatus
+5. Added table Indexes
+6. Added table IndexFields
+7. Added table IndexHASHes
+8. Added table ResponseValueExt
+9. Added table ResponseValueReviews
+10. Added table UserFilters
+11. Added table UserToFormResponses
+12. Added table UserToResponseStatus
+13. Added field to User_Credential  [UserResponseFilter] [nvarchar](max) 
+14. Changed type ResponseValue.value to nvarchar(4000)
+15. Added field to ResponseValue [nvalue] [float] NULL
+16. Added field to ResponseValue [dvalue] [datetime] NULL
+17. Added field to FormResponse [ResponseStatusID] [int] NOT NULL
+18. Modified View FormFieldExport
+19. Modified View FormFieldResponses
+20. Modified View ResponseDetails
+21. Modified View ResponseRepeatable
+22. Modified View SurveyListAPI
+23. Add records to table Roles
+24. Add records to table FormResponseStatus
+
+
+These scripts are for GRASP Database never updated from the release of May 2014.
+If some of the tables or fields listed above have been already added to the Database you will receive an error or warning when the script is launched. In this case you must proceed with a manual update.
+
+
+The above scripts will not erase any data in your database.
+
+
+SQL scripts can be found in the folder SQLDbScripts

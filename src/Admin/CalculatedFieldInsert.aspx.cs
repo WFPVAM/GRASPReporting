@@ -276,10 +276,12 @@ public partial class Admin_CalculatedFieldInsert : System.Web.UI.Page
                 hdnFormFieldExtID.Value = ffe.FormFieldExtID.ToString();
                 frmRespCount = db.FormResponse.Where(r => r.parentForm_id == formID).Count();
             }
-            litGenerate.Text = "The formula will be calculated on " + String.Format("{0:0,0}", frmRespCount) + " responses.<br/>" +
+            litGenerate.Text = "<br/><strong>The field has been created. Now you have to generate the values, using the formula you have inserted, by clicking on the below button.</strong><br/>" + 
+                "The formula will be calculated on " + String.Format("{0:0,0}", frmRespCount) + " responses.<br/>" +
                 "The operation could take several minutes to finish, depending by the formula complexity and number of responses.<br/>" +
                 "<br/>";
             pnlGenerateValues.Visible = true;
+            btnSaveNewField.Enabled = false;
 
             pnlSaveOrEdit.Visible = false;
             pnlFieldList.Visible = false;
@@ -310,6 +312,7 @@ public partial class Admin_CalculatedFieldInsert : System.Web.UI.Page
                 pnlSaveOrEdit.Visible = false;
                 pnlFieldList.Visible = false;
                 btnGenerate.Enabled = false;
+                pnlGenerateValues.Visible = false;
             }
         }
     }
