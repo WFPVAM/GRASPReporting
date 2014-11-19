@@ -12,8 +12,8 @@
         #tblContainer { width: 90%; margin: auto; }
         #blankMargin { height: 250px;width:90%; }
         #tblContainer h1 { margin: 0 0 10px 0; padding: 5px 0; border: 3px solid #ccc; width: 100%; background: #eee; border-bottom: 1px solid #ddd; }
-        .rosterContainer { height: 100%; min-height: 100%; overflow: hidden; border-top: 1px solid #0058b1; border-bottom: 1px solid #0058b1; }
-        .roasterTitle { font-size: 16px; font-weight: bold; }
+        .repContainer { height: 100%; min-height: 100%; overflow: hidden; border-top: 2px solid #0058b1; border-bottom: 2px solid #0058b1; }
+        .repTitle { font-size: 16px; font-weight: bold; }
         .left { font-weight: bold; width: 50%; text-align: right; border-bottom: 1px solid #ddd; margin: 0; padding: 2px 0 0px 0; }
         .right { width: 49%; border-bottom: 1px dashed #ddd; margin: 0; padding: 2px 0 4px 0; text-align: left; }
         .inline { display: inline-block; padding: 0 2px; width: 100px; border-left: 1px solid #ddd; }
@@ -65,16 +65,19 @@
         <div class="currentStatus">
             <label>Current Response Status</label>:
         <asp:Label ID="lblFormResponseStatus" runat="server" Text="" CssClass="statusName"></asp:Label>
+            
             <telerik:RadButton ID="btnChangeStatus" runat="server" Text=" Change Status " OnClick="btnChangeStatus_Click"></telerik:RadButton>
         </div>
         <asp:Panel ID="pnlChangeStatus" runat="server" Visible="false">
-            <telerik:RadComboBox ID="ddlFormResponseStatus" runat="server" AppendDataBoundItems="true"
+            <telerik:RadComboBox ID="ddlFormResponseStatus" runat="server" EmptyMessage="Select a Status..."
                 DataTextField="ResponseStatusName" DataValueField="ResponseStatusID" Skin="Metro" Width="280px">
             </telerik:RadComboBox>
             <br />
             <asp:TextBox ID="txtDetails" runat="server" TextMode="MultiLine" Height="60px" Width="270px"></asp:TextBox>
             <asp:Literal ID="LitMessage" runat="server"></asp:Literal>
            <br />
+            <telerik:RadButton ID="btnGoBack" runat="server" Text=" Cancel " OnClick="btnGoBack_Click"></telerik:RadButton>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <telerik:RadButton ID="btnSaveStatusChange" runat="server" Text=" Save Changes " OnClick="btnSaveStatusChange_Click"></telerik:RadButton>
         </asp:Panel>
         <div id="editlnk">

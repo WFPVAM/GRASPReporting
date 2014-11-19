@@ -41,13 +41,35 @@ public partial class Admin_ViewForm : System.Web.UI.Page
         {
             int resID = 0;
             int selVerID = 0;
+            int roleID = Convert.ToInt32(Session["RoleID"].ToString());
 
             if(Request["id"] != "" && Request["id"] != null)
             {
                 resID = Convert.ToInt32(Request["id"]);
                 if(!IsPostBack)
                 {
-                    lblFormResponseStatus.Text = FormResponse.GetStatus(resID);
+                    if(Request["recalc"] != null)
+                    {
+                        //perform a recalculation of the calculated fields of the single form response.
+                        using(GRASPEntities db = new GRASPEntities())
+                        {
+                            int formID = 0;
+                            int formresponseID = Convert.ToInt32(Request["id"].ToString());
+                            var res = (from r in db.FormResponse.Where(r => r.id == formresponseID)
+                                       select new { r.parentForm_id }).FirstOrDefault();
+                            if(res != null)
+                            {
+                                formID = Convert.ToInt32(res.parentForm_id);
+                            }
+                            if(formID != 0)
+                            {
+                                ServerSideCalculatedField.GenerateSingle(formID, Convert.ToInt32(Request["id"].ToString()));
+                                Response.Write("Recalc OK");
+                                Response.End();
+                            }
+                        }
+                    }
+
 
                 }
                 if(Request["v"] != null && Request["v"].ToString().Length != 0)
@@ -55,20 +77,47 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                     selVerID = Convert.ToInt32(Request["v"].ToString());
                 }
             }
-            GRASPEntities db = new GRASPEntities();
-
-            if(Session["RoleID"] != "3")
+            using(GRASPEntities db = new GRASPEntities())
             {
-                int userID = Convert.ToInt32(Session["UserID"]);
-                string userResponseFilter = (from u in db.User_Credential
-                                             where u.user_id == userID
-                                             select u.UserResponseFilter).FirstOrDefault();
-                if(userResponseFilter != null && userResponseFilter.Length != 0)
+                FormResponseStatus responseStatus = FormResponse.GetStatus(resID);
+                lblFormResponseStatus.Text = responseStatus.ResponseStatusName;
+                if(db.RolesToResponseStatus.Where(r => r.RoleID == roleID && r.ResponseStatusID == responseStatus.ResponseStatusID && r.RoleToRespStatusTypeID==2).Count() == 0)
                 {
-                    int responseAccess = (from r in db.UserToFormResponses
-                                          where r.formResponseID == resID && r.userID == userID
-                                          select r).Count();
-                    if(responseAccess > 0)
+                    btnChangeStatus.Enabled = false;
+                    btnChangeStatus.ToolTip = "Permission Denied.";
+                }
+
+
+                if(roleID != 3)
+                {
+                    int userID = Convert.ToInt32(Session["UserID"]);
+                    string userResponseFilter = (from u in db.User_Credential
+                                                 where u.user_id == userID
+                                                 select u.UserResponseFilter).FirstOrDefault();
+                    if(userResponseFilter != null && userResponseFilter.Length != 0)
+                    {
+                        int responseAccess = (from r in db.UserToFormResponses
+                                              where r.formResponseID == resID && r.userID == userID
+                                              select r).Count();
+                        if(responseAccess > 0)
+                        {
+                            if(selVerID != 0)
+                            {
+                                ShowResponse(resID, selVerID);
+                            }
+                            else
+                            {
+                                ShowResponse(resID);
+                            }
+                        }
+                        else
+                        {
+                            //User cannot see the Response:
+                            Response.Write("<h1>Authorization Denied</h1>");
+                            Response.End();
+                        }
+                    }
+                    else
                     {
                         if(selVerID != 0)
                         {
@@ -78,12 +127,6 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                         {
                             ShowResponse(resID);
                         }
-                    }
-                    else
-                    {
-                        //User cannot see the Response:
-                        Response.Write("<h1>Authorization Denied</h1>");
-                        Response.End();
                     }
                 }
                 else
@@ -98,17 +141,6 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                     }
                 }
             }
-            else
-            {
-                if(selVerID != 0)
-                {
-                    ShowResponse(resID, selVerID);
-                }
-                else
-                {
-                    ShowResponse(resID);
-                }
-            }
         }
         else
         {
@@ -117,49 +149,21 @@ public partial class Admin_ViewForm : System.Web.UI.Page
         }
     }
 
-    //protected void ShowVersions(int resID, int selVerID)
-    //{
-    //    string cssClass = "";
-
-    //    using(GRASPEntities db = new GRASPEntities())
-    //    {
-    //        var vers = (from frr in db.FormResponseReviews
-    //                    from rvr in db.ResponseValueReviews
-    //                    where frr.FormResponseReviewID == rvr.FormResponseReviewID
-    //                         && frr.FormResponseID == resID
-    //                    select new { frr.FormResponseReviewID, frr.FormResponseReviewSeqNo, frr.FormResponseReviewDate, frr.FRRUserName }).Distinct().ToList();
-    //        if(vers.Count()!=0)
-    //        {
-    //            litVersions.Text = "Data Edit Versions: ";
-    //        }
-    //        foreach(var ver in vers)
-    //        {
-    //            if(ver.FormResponseReviewID == selVerID)
-    //            {
-    //                cssClass = "class=\"selected\"";
-    //            }
-    //            else
-    //            {
-    //                cssClass = "";
-    //            }
-    //            litVersions.Text = litVersions.Text +
-    //                "<a " + cssClass + " href=\"viewform.aspx?id=" + resID + "&v=" + ver.FormResponseReviewID +
-    //                "\" title=\"" + ver.FormResponseReviewDate + " by " + ver.FRRUserName + "\">" +
-    //                ver.FormResponseReviewSeqNo + "</a> | ";
-    //        }
-    //    }
-    //}
     protected void ShowResponse(int resID)
     {
         int rosterCount = 0;
         decimal prevID = 0;
+        string t = "";
 
         using(GRASPEntities db = new GRASPEntities())
         {
-            var items = from rv in db.FormFieldResponses
-                        where rv.FormResponseID == resID
+            var items = (from rv in db.FormFieldResponses
+                        where rv.FormResponseID == resID && rv.RVRepeatCount<=0
                         orderby rv.positionIndex ascending
-                        select rv;
+                        select rv);
+            var repeatableItems = (from r in db.ResponseRepeatable
+                                   where r.FormResponseID== resID
+                                   select r).ToList();
 
             if(items.Count() > 0)
             {
@@ -171,24 +175,32 @@ public partial class Admin_ViewForm : System.Web.UI.Page
 
             foreach(var f in items)
             {
+                t += String.Format("{0,27}", f.name) +"\t" + f.type + "\t\t" + f.positionIndex + "\t" + f.RVRepeatCount + "\r\n";
                 string respValue = "";
+                string respLabel="";
+
                 if(f.RVRepeatCount == 0) //It's a normal field
                 {
 
-                    if(rosterCount != 0)
-                    {
-                        litTableResult.Text += "</div></div>";
-                    }
+                    //if(rosterCount != 0)
+                    //{
+                    //    litTableResult.Text += "</div></div>";
+                    //}
                     if(f.value != "")
                     {
                         respValue = f.value;
+                        respLabel = f.label;
+                        if(respLabel.Trim().Length == 0)
+                        {
+                            respLabel = f.name;
+                        }
                         if((f.type == "IMAGE") && (respValue != "GRASPImage\\"))
                         {
                             respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
                         }
                         if(respValue != "GRASPImage\\")
                         {
-                            litTableResult.Text += "<div class=\"left clear\"><label>" + f.label + "</label></div>" +
+                            litTableResult.Text += "<div class=\"left clear\"><label>" + respLabel + "</label></div>" +
                                 "<div class=\"right\">" + respValue + "</div>";
                         }
                     }
@@ -198,48 +210,62 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                 }
                 else if(f.RVRepeatCount == -1) //Repeatable Header
                 {
-                    if(rosterCount != 0)
-                    {
-                        litTableResult.Text += "</div></div>"; //Close previous repeatable
-                    }
-                    litTableResult.Text += "<div class=\" rosterContainer clear\"><div class=\"roasterTitle clear\"><label>" + f.label + "</label></div>";
+                    //if(rosterCount != 0)
+                    //{
+                    //    litTableResult.Text += "</div></div>"; //Close previous repeatable
+                    //}
+                    //Opens repeatable
+                    litTableResult.Text += "<div class=\" repContainer clear\"><div class=\"repTitle clear\">" + f.label + "</div>";
                     prevID = f.formFieldId.Value;
-                }
-                else
-                {
-                    if(prevID != f.formFieldId.Value && f.RVRepeatCount == 1) //Repetable start
+                    foreach(var rf in repeatableItems.Where(r=>r.ParentFormFieldID==f.formFieldId).OrderBy(o=>o.RVRepeatCount))
                     {
+                        respValue = rf.value;
+                        respLabel = rf.label;
+                        if(respLabel.Trim().Length == 0)
+                        {
+                            respLabel = rf.name;
+                        }
 
-                        if(rosterCount != 0)
-                        {
-                            litTableResult.Text += "</div>"; //Close previous field
-                        }
-                        if(f.value != "")
-                        {
-                            respValue = f.value;
-
-                            if(f.type == "IMAGE")
-                            {
-                                respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
-                            }
-                            litTableResult.Text += "<div class=\"left clear\"><label>" + f.label + "</label></div>" +
-                            "<div class=\"right overflowTable\"><div class=\"inline\">" + respValue + "</div>";
-                        }
-                        rosterCount = 1;
+                        litTableResult.Text += "<div class=\"left clear\"><label>" + respLabel + "</label></div>" +
+                            "<div class=\"right overflowTable\"><div class=\"inline\">" + respValue + "</div></div>";
                     }
-                    else
-                    {
-                        if(f.value != "")
-                        {
-                            if(f.type == "IMAGE")
-                            {
-                                respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
-                            }
-                            litTableResult.Text += "<div class=\"inline\">" + respValue + "</div>";
-                        }
-                    }
-                    prevID = f.formFieldId.Value;
+                    litTableResult.Text += "</div>";
                 }
+                //else
+                //{
+                //    if(prevID != f.formFieldId.Value && f.RVRepeatCount == 1) //Repetable start
+                //    {
+
+                //        if(rosterCount != 0)
+                //        {
+                //            litTableResult.Text += "</div>"; //Close previous field
+                //        }
+                //        if(f.value != "")
+                //        {
+                //            respValue = f.value;
+
+                //            if(f.type == "IMAGE")
+                //            {
+                //                respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+                //            }
+                //            litTableResult.Text += "<div class=\"left clear\"><label>" + f.label + "</label></div>" +
+                //            "<div class=\"right overflowTable\"><div class=\"inline\">" + respValue + "</div>";
+                //        }
+                //        rosterCount = 1;
+                //    }
+                //    else
+                //    {
+                //        if(f.value != "")
+                //        {
+                //            if(f.type == "IMAGE")
+                //            {
+                //                respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+                //            }
+                //            litTableResult.Text += "<div class=\"inline\">" + respValue + "</div>";
+                //        }
+                //    }
+                //    prevID = f.formFieldId.Value;
+                //}
             }
         }
     }
@@ -348,8 +374,9 @@ public partial class Admin_ViewForm : System.Web.UI.Page
         pnlChangeStatus.Visible = true;
 
         int responseID = 0;
-        if(Request["id"] != "" && Request["id"] != null)
+        if(Request["id"] != "" && Request["id"] != null && Session["RoleID"] != null)
         {
+            int roleID = Convert.ToInt32(Session["RoleID"].ToString());
             responseID = Convert.ToInt32(Request["id"]);
 
             using(GRASPEntities db = new GRASPEntities())
@@ -358,6 +385,10 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                           from fr in db.FormResponse
                           where (s.ResponseStatusDependency) <= fr.ResponseStatusID && fr.id == responseID
                           select s;
+                res = from s in res
+                      from rs in db.RolesToResponseStatus
+                      where rs.RoleID == roleID && s.ResponseStatusID == rs.ResponseStatusID && rs.RoleToRespStatusTypeID==1
+                      select s;
                 ddlFormResponseStatus.DataSource = res.ToList();
                 ddlFormResponseStatus.Items.Clear();
                 ddlFormResponseStatus.DataBind();
@@ -377,7 +408,7 @@ public partial class Admin_ViewForm : System.Web.UI.Page
             {
                 LitMessage.Text = "<div>Please insert a reason in order to reject a form response.</div>";
             }
-            else
+            else if(ddlFormResponseStatus.SelectedValue.Length>0)
             {
                 int formResponseStatusID = Convert.ToInt32(ddlFormResponseStatus.SelectedValue);
                 int responseID = Convert.ToInt32(Request["id"]);
@@ -388,7 +419,17 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                 pnlHistory.Visible = true;
                 litTableResult.Visible = true;
                 grdHistory.Rebind();
-                lblFormResponseStatus.Text = FormResponse.GetStatus(responseID);
+                FormResponseStatus responseStatus = FormResponse.GetStatus(responseID);
+                lblFormResponseStatus.Text = responseStatus.ResponseStatusName;
+                using(GRASPEntities db = new GRASPEntities())
+                {
+                    int roleID = Convert.ToInt32(Session["RoleID"].ToString());
+                    if(db.RolesToResponseStatus.Where(r => r.RoleID == roleID && r.ResponseStatusID == responseStatus.ResponseStatusID && r.RoleToRespStatusTypeID == 2).Count() == 0)
+                    {
+                        btnChangeStatus.Enabled = false;
+                        btnChangeStatus.ToolTip = "Permission Denied.";
+                    }
+                }
                 pnlResponseStatus.Height = Unit.Empty;
             }
         }
@@ -420,5 +461,13 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                 grdHistory.DataSource = history.OrderByDescending(o => o.FormResponseReviewDate).ToList();
             }
         }
+    }
+    protected void btnGoBack_Click(object sender, EventArgs e)
+    {
+
+        pnlChangeStatus.Visible = false;
+        pnlHistory.Visible = true;
+        litTableResult.Visible = true;
+        pnlResponseStatus.Height = Unit.Empty;
     }
 }
