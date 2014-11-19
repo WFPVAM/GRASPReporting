@@ -23,6 +23,7 @@ public partial class DataEntry : System.Web.UI.Page
     List<FieldConstraintRel> fieldConstraintRel = new List<FieldConstraintRel>();
     string formula = "";
     string model = "currForm.";
+    string scriptWatch = "";
     Dictionary<int, string> relevant;
     Dictionary<int, string> constraint;
     Dictionary<int, string> roaster;
@@ -254,16 +255,17 @@ public partial class DataEntry : System.Web.UI.Page
                 }
 
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
-                {
-                    angJSForm.Text += outVal;
-                }
                 if(FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
 
                     filedLabe = FormF.label;
 
+
+                    if(relevant.TryGetValue((int)FormF.id, out outVal))
+                    {
+                        angJSForm.Text += outVal;
+                    }
 
                     filedBody += "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
                     if(FormF.isReadOnly == 1)
@@ -277,21 +279,33 @@ public partial class DataEntry : System.Web.UI.Page
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else filedBody += " required />\n";
+                        else
+                        {
+                            filedBody += " required />\n";
+                        }
                         filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else filedBody += "/>\n";
+                    else
+                    {
+                        filedBody += "/>\n";
+                    }
                 }
                 else
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
                     if(repVal == null)
+                    {
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+                    }
 
                     filedLabe = FormF.label;
 
 
+                    if(relevant.TryGetValue((int)FormF.id, out outVal))
+                    {
+                        angJSForm.Text += outVal.Replace("currForm", "rb_" + repVal);
+                    }
 
                     filedBody += "  <input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
@@ -304,12 +318,18 @@ public partial class DataEntry : System.Web.UI.Page
                         filedBody += " name=\"r_" + FormF.name + "\"";
                         if(outVal != null && outVal != "")
                         {
-                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"rb_" + repVal + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else filedBody += " required />\n";
+                        else
+                        {
+                            filedBody += " required />\n";
+                        }
                         filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else filedBody += "/>\n";
+                    else
+                    {
+                        filedBody += "/>\n";
+                    }
 
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
@@ -1274,26 +1294,53 @@ public partial class DataEntry : System.Web.UI.Page
     {
         GRASPEntities db = new GRASPEntities();
 
-        var roasters = from ff in db.FormFieldExport
+        var repeatableItems = from ff in db.FormFieldExport
                        where ff.FormFieldParentID == formFieldParentID
                        orderby ff.positionIndex ascending
                        select ff;
+        var bindings = (from br in db.BindingRules
+                    where br.form_id == formID
+                    orderby br.FormField_id ascending
+                    select br).ToList();
 
-        ltlScript.Text += "\n$scope.addNew" + name + " = function () {$scope.currForm." + name + ".push({ ";
+        ltlScript.Text += "\n$scope.addNew" + name + " = function () { var i=0;if($scope.currForm." + name + "){i=$scope.currForm." + name + ".length;}" +
+            "\r\n$scope.currForm." + name + ".push({ ";
         string script = "";
-        foreach(FormFieldExport lbl in roasters)
+        foreach(FormFieldExport item in repeatableItems)
         {
-            if(lbl.type != "TRUNCATED_TEXT" && lbl.type != "WRAPPED_TEXT")
+            if(item.type != "TRUNCATED_TEXT" && item.type != "WRAPPED_TEXT")
             {
-                if(lbl.type == "NUMERIC_TEXT_FIELD" || lbl.type == "CURRENCY_FIELD")
+                if(item.type == "NUMERIC_TEXT_FIELD" || item.type == "CURRENCY_FIELD")
                 {
-                    script += lbl.name + ": 0,";
+                    script += item.name + ": 0,";
                 }
-                else script += lbl.name + ": '',";
+                else
+                {
+                    script += item.name + ": '',";
+                }
+
+                //var bRule = bindings.Where(b => b.FormField_id == item.id).FirstOrDefault();
+                //if(bRule != null)
+                //{
+                //    string tmp = bRule.value;
+                //    string elemName = bRule.name;
+                //    if(bRule.type == "DROP_DOWN_LIST")
+                //    {
+                //        elemName = bRule.name + ".value";
+                //    }
+                //    if(bRule.type == "CHECK_BOX")
+                //    {
+                //        tmp = "true";
+                //    }
+                //    scriptWatch += "\r\n$scope.$watch(\"" + model +"rb_" + name + "." + elemName + getTypeBindNeg(bRule.bType) + "'" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "'";
+                //    scriptWatch += ("\",function(newVal,oldVal){");
+                //    scriptWatch += createWatchReset((int)item.id, name);
+                //}
+
             }
         }
         ltlScript.Text += script.Substring(0, script.Length - 1);
-        ltlScript.Text += " });};\n";
+        ltlScript.Text += " });};\r\n\r\n" +  "\r\n\r\n";
 
     }
     /// <summary>
@@ -1436,6 +1483,10 @@ public partial class DataEntry : System.Web.UI.Page
                     }
                     else
                     {
+                        if(name.Contains("Q3010ExtF"))
+                        {
+                            int nn = 0;
+                        }
                         value = "<div ng-show=\"" + model + name + getTypeBind(i.bType) + "'" + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace("\n", " ") + "'";
                         scriptFunc = "$scope.$watch(\"" + model + name + getTypeBindNeg(i.bType) + "'" + tmp.Replace(@"'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "'";
                     }
@@ -1603,6 +1654,8 @@ public partial class DataEntry : System.Web.UI.Page
         }
         return signal;
     }
+
+
     /// <summary>
     /// Adds in the script of AngularJS some controls for a field
     /// </summary>
@@ -1616,30 +1669,38 @@ public partial class DataEntry : System.Web.UI.Page
                          select ff).FirstOrDefault();
         if(formfield != null)
         {
-            //if (formfield.type == "NUMERIC_TEXT_FIELD" || formfield.type == "CURRENCY_FIELD")
-            //{
-            //    scriptFunc += " $scope.currForm." + formfield.name + " = 0;});";
-            //}
-            //else if (formfield.type == "REPEATABLES_BASIC" || formfield.type == "REPEATABLES")
-            //{
-            //    scriptFunc += " $scope.currForm." + formfield.name + " = [];});";
-            //}
-            //else if (formfield.type == "WRAPPED_TEXT" || formfield.type == "TRUNCATED_TEXT")
-            //{
-            //    scriptFunc += " });";
-            //}
-            //else scriptFunc += " $scope.currForm." + formfield.name + " = \"\";});";
             if(formfield.type == "REPEATABLES_BASIC" || formfield.type == "REPEATABLES")
             {
                 scriptFunc += " $scope.currForm." + formfield.name + " = [];});";
             }
             else scriptFunc += "var key = \"" + formfield.name + "\"; delete $scope.currForm[key];});";
             Literal1.Text += scriptFunc;
-
-
-
-
         }
+
+    }
+    private string createWatchReset(int key, string extrascope)
+    {
+        string watchAction = "";
+
+        GRASPEntities db = new GRASPEntities();
+        var formfield = (from ff in db.FormField
+                         where ff.id == key
+                         select ff).FirstOrDefault();
+        if(formfield != null)
+        {
+            if(formfield.type == "REPEATABLES_BASIC" || formfield.type == "REPEATABLES")
+            {
+                watchAction = " $scope." + extrascope + "." + formfield.name + " = [];});";
+            }
+            else
+            {
+                watchAction = "var key = \"" + formfield.name + "\"; delete $scope.currForm.R3unitroster[key];});";
+                watchAction = "alert('ciao " + formfield.name + "');});";
+            }
+            
+        }
+        //"alert(\"hey\");});";// 
+        return watchAction;
 
     }
     /// <summary>

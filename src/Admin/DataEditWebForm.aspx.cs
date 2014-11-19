@@ -278,16 +278,16 @@ public partial class DataEdit : System.Web.UI.Page
                 }
 
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
-                {
-                    angJSForm.Text += outVal;
-                }
                 if(FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
 
                     filedLabe = FormF.label;
 
+                    if(relevant.TryGetValue((int)FormF.id, out outVal))
+                    {
+                        angJSForm.Text += outVal;
+                    }
 
                     filedBody += "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
                     if(FormF.isReadOnly == 1)
@@ -308,10 +308,16 @@ public partial class DataEdit : System.Web.UI.Page
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else filedBody += " required />\n";
+                        else
+                        {
+                            filedBody += " required />\n";
+                        }
                         filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else filedBody += "/>\n";
+                    else
+                    {
+                        filedBody += "/>\n";
+                    }
                 }
                 else
                 {
@@ -322,7 +328,10 @@ public partial class DataEdit : System.Web.UI.Page
 
                     filedLabe = FormF.label;
 
-
+                    if(relevant.TryGetValue((int)FormF.id, out outVal))
+                    {
+                        angJSForm.Text += outVal.Replace("currForm", "rb_" + repVal);
+                    }
 
                     filedBody += "  <input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
@@ -335,12 +344,18 @@ public partial class DataEdit : System.Web.UI.Page
                         filedBody += " name=\"r_" + FormF.name + "\"";
                         if(outVal != null && outVal != "")
                         {
-                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                            filedBody += " ng-required=\"rb_" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
-                        else filedBody += " required />\n";
+                        else
+                        {
+                            filedBody += " required />\n";
+                        }
                         filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else filedBody += "/>\n";
+                    else
+                    {
+                        filedBody += "/>\n";
+                    }
 
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
@@ -1431,7 +1446,7 @@ public partial class DataEdit : System.Web.UI.Page
                     orderby br.FormField_id ascending
                     select br;
         var values = (from v in db.FormFieldResponses
-                      where v.FormResponseID == formResponseID && v.type == "DROP_DOWN_LIST"
+                      where v.FormResponseID == formResponseID && (v.type == "DROP_DOWN_LIST")
                       select new { v.formFieldId, v.RVRepeatCount }).ToList();
 
         foreach(var i in items)
@@ -1460,7 +1475,7 @@ public partial class DataEdit : System.Web.UI.Page
                         tmp = "true";
                     }
 
-                    if(i.value.Contains("/data/"))
+                    if(i.value.Contains("/data/")) //validation is done against the value in another field of the form.
                     {
                         tmp = model + Regex.Match(i.value, @"/data/(.+?)_").Groups[1].Value;
                         value = "<div ng-show=\"" + model + name + getTypeBind(i.bType) + " " + tmp.Replace(@"'", @"\'").Replace("\r\n", " ").Replace("\n", " ") + " ";
@@ -1911,7 +1926,7 @@ public partial class DataEdit : System.Web.UI.Page
 
             foreach(var v in values)
             {
-                //int ffID = 0;
+                fIDX = -1;
                 //ffields.TryGetValue(v.Key, out ffID);
                 for(int i = 0; i < fieldTypeMapping.Length; i++)
                 {
