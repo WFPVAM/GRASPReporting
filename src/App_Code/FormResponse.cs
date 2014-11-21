@@ -16,11 +16,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
+using System.Xml;
+using Ionic.Zlib;
 
 /// <summary>
 /// FormResponse class contains auxiliary functions to query FormResponse table on Grasp DB
@@ -209,21 +213,21 @@ public partial class FormResponse
             }
         }
     }
-    public static string GetStatus(int formResponseID)
+    public static FormResponseStatus GetStatus(int formResponseID)
     {
         using(GRASPEntities db = new GRASPEntities())
         {
-            string statusName = (from f in db.FormResponse
+            FormResponseStatus status = (from f in db.FormResponse
                                  from fs in db.FormResponseStatus
                                  where (int)f.id == formResponseID && f.ResponseStatusID == fs.ResponseStatusID
-                                 select fs.ResponseStatusName).FirstOrDefault();
-            if(statusName != null)
+                                 select fs).FirstOrDefault();
+            if(status != null)
             {
-                return statusName;
+                return status;
             }
             else
             {
-                return "";
+                return null;
             }
         }
     }
