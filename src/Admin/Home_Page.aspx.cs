@@ -21,9 +21,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Telerik.Web.UI;
 /// <summary>
 /// Home Page
 /// </summary>
@@ -40,7 +42,7 @@ public partial class Admin_Dashboard : System.Web.UI.Page
         string path = Server.MapPath("~/public/GraspMobile.apk");
         FileInfo fi1 = new FileInfo(path);
 
-        if (fi1.Exists)
+        if(fi1.Exists)
         {
             ltrlInfo.Text = "Last Update: <i>" + fi1.LastWriteTime.ToString("dd MMMM yyyy") + "</i>";
             long Size = fi1.Length;
@@ -50,12 +52,83 @@ public partial class Admin_Dashboard : System.Web.UI.Page
         }
 
         string pathFileInfo = Server.MapPath("../Public/InfoHP.txt");
-        if (File.Exists(pathFileInfo))
+        if(File.Exists(pathFileInfo))
         {
-            using (StreamReader sr = new StreamReader(pathFileInfo))
+            using(StreamReader sr = new StreamReader(pathFileInfo))
             {
                 Literal1.Text = sr.ReadToEnd();
             }
         }
+
+        PnlResponseProcessing.Visible = false;
+
+        string loggedUser = HttpContext.Current.User.Identity.Name.ToString().ToUpper();
+        string roleUser = User_Credential.getRoleForUser(loggedUser);
+        if(roleUser == "SuperAdministrator")
+        {
+            //PnlResponseProcessing.Visible = true;
+        }
+
+        RadProgressArea.Localization.UploadedFiles = "Processed Response: ";
+        RadProgressArea.Localization.CurrentFileName = "-";
+        RadProgressArea.Localization.TotalFiles = "Total Response: ";
+        RadProgressArea.Localization.Uploaded = "";
+        RadProgressArea.Localization.Total = "";
+        RadProgressArea.Localization.TransferSpeed = "";
+        string[] files = Directory.GetFiles(Utility.GetResponseFilesFolderName() + "incoming");
+        if(files.Length > 0)
+        {
+            BtnProcessIncomingResponse.Enabled = true;
+            LitIncomingInfo.Text = "New Form Response(s): " + files.Length;
+        }
+        else
+        {
+            BtnProcessIncomingResponse.Enabled = false;
+            LitIncomingInfo.Text = "All Responses have been processed.";
+        }
+
+    }
+    protected void BtnProcessIncomingResponse_Click(object sender, EventArgs e)
+    {
+        string[] files = Directory.GetFiles(Utility.GetResponseFilesFolderName() + "incoming");
+        double step = 100.0000 / (double)files.Length;
+
+        RadProgressContext ProgressContex = RadProgressContext.Current;
+        ProgressContex.PrimaryTotal = files.Length;
+        ProgressContex.PrimaryValue = 0;
+        ProgressContex.PrimaryPercent = 0;
+
+        IncomingProcessor incomProc = new IncomingProcessor();
+
+        double ms = 0;
+        Stopwatch sw = new Stopwatch();
+        for(int i = 0; i < files.Length; i++)
+        {
+            sw.Reset();
+            sw.Start();
+            string filePath = files[i];
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string senderNo = "+" + fileName.Substring(18);
+            using(StreamReader sr = File.OpenText(files[i]))
+            {
+                string s = sr.ReadToEnd();
+                sr.Close();
+                incomProc.ProcessResponse(s, senderNo, fileName);
+            }
+
+            ProgressContex.CurrentOperationText = "Processing " + fileName;
+            ProgressContex.PrimaryValue = (i + 1).ToString();
+            ProgressContex.PrimaryPercent = (step * (i + 1)).ToString("00.##");
+            sw.Stop();
+
+            TimeSpan ts = sw.Elapsed;
+            ms += ts.TotalMilliseconds;
+            TimeSpan ts2 = TimeSpan.FromMilliseconds((ms/ (double)(i + 1)) * (files.Length - (i + 1)));
+            ts.Add(ts2);
+
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts2.Hours, ts2.Minutes, ts2.Seconds);
+            ProgressContex.TimeEstimated = elapsedTime;
+        }
+
     }
 }

@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -69,6 +70,98 @@ public partial class Settings : System.Web.UI.Page
         using(StreamWriter outfile = new StreamWriter(Server.MapPath("../Public/InfoHP.txt")))
         {
             outfile.Write(sb.ToString());
+        }
+    }
+    protected void TsSettingsMenu_TabClick(object sender, Telerik.Web.UI.RadTabStripEventArgs e)
+    {
+        int tabIdx = e.Tab.Index;
+        switch(tabIdx)
+        {
+            case 0:
+                //editor
+                break;
+            case 1:
+                FillDdlRoles();
+                break;
+        }
+    }
+
+    protected void FillDdlRoles()
+    {
+        using(GRASPEntities db = new GRASPEntities())
+        {
+            var roles = (from r in db.Roles
+                        select r).OrderBy(o=>o.description);
+            DdlRoles.DataSource = roles.ToList();
+            DdlRoles.DataBind();
+        }
+    }
+    protected void FillCblReviewStatus(int roleID)
+    {
+        using(GRASPEntities db = new GRASPEntities())
+        {
+            var status = (from r in db.FormResponseStatus
+                         select r).OrderBy(o => o.ResponseStatusName);
+
+            CblSelectableStatus.DataSource = status.ToList();
+            CblSelectableStatus.DataBind();
+            CblReviewableStatus.DataSource = status.ToList();
+            CblReviewableStatus.DataBind();
+
+            var rolesToStatus = (from rs in db.RolesToResponseStatus
+                                where rs.RoleID == roleID
+                                select rs).ToList();
+
+            foreach(ListItem li in CblSelectableStatus.Items)
+            {
+                int rsID = Convert.ToInt32(li.Value);
+                if(rolesToStatus.Where(w => w.RoleToRespStatusTypeID==1 && w.ResponseStatusID == rsID).Count() > 0)
+                {
+                    li.Selected = true;
+                }
+            }
+            foreach(ListItem li in CblReviewableStatus.Items)
+            {
+                int rsID = Convert.ToInt32(li.Value);
+                if(rolesToStatus.Where(w => w.RoleToRespStatusTypeID == 2 && w.ResponseStatusID == rsID).Count() > 0)
+                {
+                    li.Selected = true;
+                }
+            }
+        }
+    }
+
+    protected void DdlRoles_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        int roleID = Convert.ToInt32(DdlRoles.SelectedValue);
+        FillCblReviewStatus(roleID);
+        PnlRoleReviewAssociation.Visible = true;
+        LblMessage.Text = "";
+    }
+    protected void BtnSaveRoleChanges_Click(object sender, EventArgs e)
+    {
+        int roleID = Convert.ToInt32(DdlRoles.SelectedValue);
+        using(GRASPEntities db = new GRASPEntities())
+        {
+            db.Database.ExecuteSqlCommand("DELETE FROM RolesToResponseStatus WHERE RoleID=@roleID", new SqlParameter("@roleID", roleID));
+
+            foreach(ListItem li in CblSelectableStatus.Items)
+            {
+                if(li.Selected)
+                {
+                    db.Database.ExecuteSqlCommand("INSERT INTO RolesToResponseStatus (RoleID,ResponseStatusID,RoleToRespStatusTypeID) VALUES (@roleID,@respStatusID,1)",
+                        new SqlParameter("@roleID", roleID), new SqlParameter("@respStatusID", li.Value));
+                }
+            }
+            foreach(ListItem li in CblReviewableStatus.Items)
+            {
+                if(li.Selected)
+                {
+                    db.Database.ExecuteSqlCommand("INSERT INTO RolesToResponseStatus (RoleID,ResponseStatusID,RoleToRespStatusTypeID) VALUES (@roleID,@respStatusID,2)",
+                        new SqlParameter("@roleID", roleID), new SqlParameter("@respStatusID", li.Value));
+                }
+            }
+            LblMessage.Text = "Changes have been saved.";
         }
     }
 }

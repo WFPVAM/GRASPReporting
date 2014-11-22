@@ -52,6 +52,9 @@
                     </SpecialDays>                    
                 </Calendar>
             </telerik:RadDatePicker>
+            <span>Sender: </span>
+            <asp:TextBox ID="txtSender" runat="server"></asp:TextBox>
+
             <telerik:RadButton ID="btnApplyQuickFilter" runat="server" Text="Apply Quick Filter" Skin="Metro" CssClass="btnApplyQuickFilter" OnClick="btnApplyQuickFilter_Click"></telerik:RadButton>
         </div>
 
@@ -95,6 +98,11 @@
                         </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
                     <telerik:GridBoundColumn DataField="clientVersion" DataType="System.String" HeaderText="Client">
+                        <ColumnValidationSettings>
+                            <ModelErrorMessage Text=""></ModelErrorMessage>
+                        </ColumnValidationSettings>
+                    </telerik:GridBoundColumn>
+                    <telerik:GridBoundColumn DataField="ResponseStatus" DataType="System.String" HeaderText="Status">
                         <ColumnValidationSettings>
                             <ModelErrorMessage Text=""></ModelErrorMessage>
                         </ColumnValidationSettings>

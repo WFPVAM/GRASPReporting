@@ -122,7 +122,7 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
                     //TODO: put filter in a session var
                     int userID = Convert.ToInt32(Session["UserID"]);
                     string userResponseFilter = (from u in db.UserFilters
-                                                 where u.userID == userID
+                                                 where u.userID == userID && u.formID==formID
                                                  select u.UserFilterDescription).FirstOrDefault();
                     if(userResponseFilter!= null && userResponseFilter.Length != 0)
                     {
@@ -130,12 +130,15 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
                                     from fr in db.UserToFormResponses
                                     where r.id == fr.formResponseID && fr.userID == userID
                                     select r;
-                        if(lblFilterSummary.Text.Length > 0)
+                        if(!IsPostBack)
                         {
-                            lblFilterSummary.Text += "<br/>";
+                            if(lblFilterSummary.Text.Length > 0)
+                            {
+                                lblFilterSummary.Text += "<br/>";
+                            }
+                            lblFilterSummary.Text += "Predefined User Filter: " + userResponseFilter;
+                            filterSummary.Visible = true;
                         }
-                        lblFilterSummary.Text += "Predefined User Filter: " + userResponseFilter;
-                        filterSummary.Visible = true;
                     }
                 }
 
@@ -151,6 +154,12 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
                 {
                     responseStatusID = Convert.ToInt32(ddlReviewStatus.SelectedValue);
                     responses = responses.Where(w => w.ResponseStatusID == responseStatusID);
+                }
+
+                //If sender has been specified, filter by sender field
+                if(txtSender.Text.Length != 0)
+                {
+                    responses = responses.Where(r => r.senderMsisdn == txtSender.Text);
                 }
 
                 //RadGrid1.VirtualItemCount = responses.Count();
@@ -170,10 +179,11 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
                 var res = (from r in responses
                            from rv1 in db.ResponseValue
                            from rv2 in db.ResponseValue
-                           where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID &&
-                           rv1.formFieldId == ffidCompileDate && rv2.formFieldId == ffidEnumerator && r.parentForm_id == formID
+                           from rs in db.FormResponseStatus
+                           where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID && r.ResponseStatusID==rs.ResponseStatusID &&
+                                   rv1.formFieldId == ffidCompileDate && rv2.formFieldId == ffidEnumerator && r.parentForm_id == formID
                            orderby r.id descending
-                           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, CompileDate = rv1.value, Enumerator = rv2.value });
+                           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, CompileDate = rv1.value, Enumerator = rv2.value, ResponseStatus=rs.ResponseStatusName });
 
                 //Build the Custom Paging values for better performance
 

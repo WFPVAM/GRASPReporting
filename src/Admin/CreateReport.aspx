@@ -59,7 +59,7 @@
         <div class="col-lg-8">
             <div class="alert alert-dismissable alert-danger">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>OPS!</strong> Name you choose for this report already exists.
+                &nbsp;Name you choose for this report already exists.
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
         <div class="col-lg-8">
             <div class="alert alert-dismissable alert-danger">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>OPS!</strong> Review your inserts.
+                &nbsp;Review your inserts.
             </div>
         </div>
     </div>
@@ -116,7 +116,11 @@
                     </telerik:RadToolTip>
                 </div>
                 <div role="form">
-                    <div class="form-group">
+                    <div class="form-group">                        
+                        <label>Chart Title</label>
+                        <asp:TextBox ID="TxtChartTitle" runat="server"></asp:TextBox>
+                    </div>                        
+                    <div class="form-group"> 
                         <label>Chart Type</label>
                         <telerik:RadComboBox ID="rcbChartType" runat="server" AutoPostBack="true" EnableLoadOnDemand="true" CloseDropDownOnBlur="true" OnSelectedIndexChanged="rcbChartType_SelectedIndexChanged"
                             EmptyMessage="Select a chart type" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White">
@@ -169,6 +173,7 @@
                             <label>Select Series Value</label>
                             <telerik:RadComboBox ID="ddlValueField" runat="server" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White" EnableLoadOnDemand="true"
                                 CloseDropDownOnBlur="true" EmptyMessage="Select a field">
+
                             </telerik:RadComboBox>
                         </div>
                         <div class="form-group">

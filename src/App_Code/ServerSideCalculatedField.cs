@@ -14,9 +14,9 @@ public static class ServerSideCalculatedField
     {
         using(GRASPEntities db = new GRASPEntities())
         {
-            var ffe = from f in db.FormFieldExt
+            var ffe = (from f in db.FormFieldExt
                       where f.FormID == formID
-                      select f;
+                      select f).OrderBy(f=>f.FormFieldID);
             foreach(var f in ffe)
             {
                 CalculateFormulaPL(formID, f.FormFieldExtFormula, 0, f.FormFieldExtID, false, formResponseID);
@@ -63,22 +63,29 @@ public static class ServerSideCalculatedField
         int i = 1;
         int n = 1;
 
-        if(!test && formFieldExtID != null)
+        if(!test)
         {
-            
-            if(formResponseID == 0) //Delete all the existing results
-            {
-                db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE FormFieldExtID = " + formFieldExtID.Value);
-            }
-            else //delete only the calculated fields for the current responseID
-            {
-                db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE FormResponseID = " + formResponseID);
-            }
             FormFieldExt ffe = (from f in db.FormFieldExt
                                 where f.FormFieldExtID == formFieldExtID
                                 select f).FirstOrDefault();
             formFieldID = (int)ffe.FormFieldID;
             positionIndex = (int)ffe.PositionIndex;
+
+            if(formFieldExtID != null)
+            {
+                if(formResponseID == 0) //Delete all the existing results for a particular formField
+                {
+                    db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE formFieldID = " + formFieldID);
+                }
+                else //delete only the calculated field for the current responseID
+                {
+                    db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE FormResponseID = " + formResponseID + " AND formFieldID = " + formFieldID);
+                }
+            }
+            else //Delete all the fields of the form response
+            {
+                db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE FormResponseID = " + formResponseID);
+            }
         }
 
 

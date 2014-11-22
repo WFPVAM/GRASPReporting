@@ -58,8 +58,8 @@
                     </telerik:GridTemplateColumn>
                     <telerik:GridTemplateColumn UniqueName="cmd">
                         <ItemTemplate>
-                            <telerik:RadButton ID="BtnRecalculate" runat="server" Text="Calculate" CommandArgument='<%#Eval("FormFieldExtID")%>' CommandName="Calculate" OnCommand="BtnRecalculate_Command"></telerik:RadButton>
-                            <telerik:RadButton ID="BtnDelete" runat="server" Text="Delete" CommandArgument='<%#Eval("FormFieldExtID")%>' CommandName="Delete" OnClientClicking="ConfirmDelete" OnCommand="BtnDelete_Command"></telerik:RadButton>
+                            <telerik:RadButton ID="BtnRecalculate" runat="server" Text="Calculate" CommandArgument='<%#Eval("FormFieldExtID")%>' CommandName="Calculate" SingleClick="true" SingleClickText="Calculating..." OnCommand="BtnRecalculate_Command"></telerik:RadButton>
+                            <telerik:RadButton ID="BtnDelete" runat="server" Text="Delete" CommandArgument='<%#Eval("FormFieldExtID")%>' CommandName="Delete"  SingleClick="true" OnClientClicking="ConfirmDelete" OnCommand="BtnDelete_Command"></telerik:RadButton>
                         </ItemTemplate>
                     </telerik:GridTemplateColumn>
                 </Columns>

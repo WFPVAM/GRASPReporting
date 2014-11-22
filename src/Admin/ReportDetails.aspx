@@ -28,8 +28,8 @@
                     <telerik:GridBoundColumn DataField="ChartType" HeaderText="Chart Type" ReadOnly="True"
                         UniqueName="ChartType">
                     </telerik:GridBoundColumn>
-                    <telerik:GridBoundColumn DataField="ReportDescription" HeaderText="Report Description"
-                        UniqueName="ReportDescription">
+                    <telerik:GridBoundColumn DataField="ChartTitle" HeaderText="Chart Title"
+                        UniqueName="ChartTitle">
                     </telerik:GridBoundColumn>
                     <telerik:GridBoundColumn DataField="Aggregate" HeaderText="Aggregate Function"
                         UniqueName="Aggregate">
@@ -49,6 +49,7 @@
                 </Columns>
             </MasterTableView>
         </telerik:RadGrid>
+        <telerik:RadButton ID="BtnAddNewChart" runat="server" Text=" Add New Chart " OnClick="BtnAddNewChart_Click" Skin="Metro"></telerik:RadButton>
         <asp:LinqDataSource ID="ldsReport" runat="server" OnSelecting="ldsReport_Selecting" OrderBy="CreateDate"></asp:LinqDataSource>
     </div>
 </asp:Content>

@@ -106,8 +106,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cphBody1" runat="Server">
     <telerik:RadWindowManager ID="RadWindow1" runat="server">
         <Windows>
-            <telerik:RadWindow ID="wndwExport" VisibleStatusbar="false" Modal="true" Behaviors="Default" runat="server" Overlay="true" ShowContentDuringLoad="false" VisibleOnPageLoad="false" ReloadOnShow="true"></telerik:RadWindow>
-            <telerik:RadWindow ID="wndwForm" Skin="Metro" VisibleStatusbar="false" Modal="true" Behaviors="Default" runat="server" Overlay="true" ShowContentDuringLoad="false" VisibleOnPageLoad="false" ReloadOnShow="true" OnClientClose="closeWin"></telerik:RadWindow>
+            <telerik:RadWindow ID="wndwExport" Skin="Metro" VisibleStatusbar="false" Modal="true" Behaviors="Default" runat="server" Overlay="true" ShowContentDuringLoad="false" VisibleOnPageLoad="false" ReloadOnShow="true"></telerik:RadWindow>
+            <telerik:RadWindow ID="wndwForm" Skin="Metro" VisibleStatusbar="false" Modal="true" Behaviors="Default" runat="server" Overlay="true" ShowContentDuringLoad="false" VisibleOnPageLoad="false" ReloadOnShow="true"></telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
     <div class="row">

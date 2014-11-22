@@ -29,7 +29,7 @@ public partial class Admin_ReportDetails : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Request["id"] != "" && Request["id"] != null)
+        if(Request["id"] != "" && Request["id"] != null)
         {
             reportID = Convert.ToInt32(Request["id"]);
         }
@@ -53,7 +53,8 @@ public partial class Admin_ReportDetails : System.Web.UI.Page
             ChartType = x.ChartType,
             Aggregate = x.ReportFieldAggregate,
             CreateDate = x.ReportFieldCreateDate,
-            ReportID = x.ReportFieldID.ToString().TrimStart()
+            ReportID = x.ReportFieldID.ToString().TrimStart(),
+            ChartTitle = x.ReportFieldTitle
         };
     }
     /// <summary>
@@ -64,7 +65,16 @@ public partial class Admin_ReportDetails : System.Web.UI.Page
     protected void rgReports_DeleteCommand(object sender, Telerik.Web.UI.GridCommandEventArgs e)
     {
         int rID = Convert.ToInt32(e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["ReportID"].ToString());
-        if (rID == ReportField.deleteReportFieldChart(rID))
+        if(rID == ReportField.deleteReportFieldChart(rID))
+        {
             rgReports.DataBind();
+        }
+    }
+    protected void BtnAddNewChart_Click(object sender, EventArgs e)
+    {
+        if(Request["id"] != null && Request["id"] != "")
+        {
+            Response.Redirect("CreateReport.aspx?rid=" + Request["id"].ToString(), true);
+        }
     }
 }

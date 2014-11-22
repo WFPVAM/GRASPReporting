@@ -73,7 +73,10 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         aggregate = ReportData.ReportFieldAggregate.ToLower();
         firstColumn = ReportData.ReportFieldLabel;
         secondColumn = ReportData.ReportFieldValueLabel;
-        chartName = "\"" + ReportData.ReportFieldLabel + " / " + ReportData.ReportFieldValueLabel + "\"";
+        //chartName = "\"" + ReportData.ReportFieldLabel + " / " + ReportData.ReportFieldValueLabel + "\"";
+
+        chartName = "\"" + labelName + "\"";
+
         if(ReportData.ReportFieldLegend == 1)
             legend = "true";
         if(ReportData.ReportFieldTableData == 1)
@@ -99,9 +102,12 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         }
         else
         {
+            var deleteRespStatusID = (from rs in db.FormResponseStatus
+                                       where rs.ResponseStatusName == "Deleted"
+                                       select new { rs.ResponseStatusID }).FirstOrDefault();
 
             var resVal = from ffr in db.FormFieldResponses
-                         where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
+                         where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) && ffr.ResponseStatusID!=deleteRespStatusID.ResponseStatusID
                             && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
                          select new { ffr.value, ffr.formFieldId, ffr.nvalue };
 

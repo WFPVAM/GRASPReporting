@@ -112,9 +112,8 @@ public partial class Admin_CheckDuplicates : System.Web.UI.Page
             {
 
                 responses = (from r in db.FormResponse
-                             from h in db.IndexHASHes
                              from d in duplicates
-                             where r.id == h.FormResponseID && r.id == d.formResponseID
+                             where r.id == d.formResponseID
                              select r);
             }
 
@@ -134,12 +133,12 @@ public partial class Admin_CheckDuplicates : System.Web.UI.Page
                        from rv1 in db.ResponseValue
                        from rv2 in db.ResponseValue
                        from h in db.IndexHASHes
-                       where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID && r.id==h.FormResponseID &&
+                       where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID && r.id==h.FormResponseID && h.IndexID==indexID &&
                        rv1.formFieldId == ffidCompileDate && rv2.formFieldId == ffidEnumerator && r.parentForm_id == formID
                        select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, CompileDate = rv1.value, Enumerator = rv2.value, hash = h.IndexHASHString });
 
 
-            grdDuplicatedResponses.DataSource = res.ToList();
+            grdDuplicatedResponses.DataSource = res.ToList().OrderByDescending(o=>o.id);
         }
     }
     protected void grdDuplicatedResponses_DetailTableDataBind(object sender, Telerik.Web.UI.GridDetailTableDataBindEventArgs e)
@@ -156,9 +155,11 @@ public partial class Admin_CheckDuplicates : System.Web.UI.Page
                         int formResponseID = Convert.ToInt32(dataItem.GetDataKeyValue("id").ToString());
 
                         using(GRASPEntities db = new GRASPEntities())
-                        {
+                        {                            
+                            int indexID = Convert.ToInt32(ddlIndexes.SelectedValue);
+
                             string hash = (from h in db.IndexHASHes
-                                           where h.FormResponseID == formResponseID
+                                           where h.FormResponseID == formResponseID && h.IndexID==indexID
                                            select h.IndexHASHString).FirstOrDefault();
 
                             int ffidCompileDate = 0;
@@ -173,9 +174,10 @@ public partial class Admin_CheckDuplicates : System.Web.UI.Page
                                                 from rv1 in db.ResponseValue
                                                 from rv2 in db.ResponseValue
                                                 from h in db.IndexHASHes
-                                                where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID &&
+                                                where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID && 
                                                        rv1.formFieldId == ffidCompileDate && rv2.formFieldId == ffidEnumerator &&
-                                                       r.id == h.FormResponseID && r.id != formResponseID && h.IndexHASHString == hash
+                                                       r.id == h.FormResponseID && h.FormResponseID != formResponseID && h.IndexHASHString == hash &&
+                                                       h.IndexID==indexID
                                                 select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, CompileDate = rv1.value, Enumerator = rv2.value });
 
                             e.DetailTableView.DataSource = dupResponses.ToList();

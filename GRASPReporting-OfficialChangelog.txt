@@ -7,6 +7,8 @@ under development
 
 New features
 * Review Restore: it’s possible to restore an entire review cycle based on review data filter, by reviewer or by response status.
+* Review Process: 2 steps review workflow
+* Response View: it’s possible to filter by sender number
 
 
 Improvements
@@ -14,11 +16,16 @@ Improvements
 * Reports: speed optimization up to 7x in generating the reports
 * Reports: both value and percentage are shown on the pie charts
 * Reports: calculated fields can be used to generate charts
+* Response View: Response Status is shown in the responses table.
+* Calculated Fields: when a field associated to a survey is selected, a dropdown with values is shown.
 
 
 Fixes
 * Data Edit: bug on empty values for numerical fields
+* Data Edit: bug on repeatable fields visualization.
 * Form View: is not shown anymore field name for empty values
+* Form View: bug on repeatable fields visualization.
+* Duplicated Search: fixed bug on duplicated record view page
 
 
 
@@ -27,17 +34,26 @@ Database Changes:
 In order to properly upgrade GRASP Reporting, the following database schema changes must be done:
 
 
-1. Modified View FormFieldExport
-2. Add table RolesToResponseStatus
+1. Add table RolesToResponseStatus
+2. Add record to Roles
+3. Add record FormResponseStatus
+4. Add fields to ReportFields
+5.   
+6. Add view FormFieldResponseReviews
+7. Add view ResponseRepeatableReviews
 
 
 
 
 
 
+
+
+The following web.config key must be created under appSettings section:
+<add key="FileResponseFolder" value=" physicalPathToYourWebApplication \responsefiles” />
+-> replace physicalPathToYourWebApplication  with the local physical path of your web application.
+Create in the root of your web application the folder “responsefiles” with the following subfolders: “incoming”, “error” and “processed”.
 ________________
-
-
 Version 1.1.2
 ________________
 

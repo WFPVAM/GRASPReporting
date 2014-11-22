@@ -54,7 +54,7 @@ public partial class Admin_Statistics_ViewChart : System.Web.UI.Page
                 case "pie":
                     _uc_pieChart c = (_uc_pieChart)Page.LoadControl("../_uc/pieChart.ascx");
                     c.reportFieldID = Convert.ToInt32(rep.ReportFieldID);
-                    c.labelName = rep.ReportFieldLabel;
+                    c.labelName = rep.ReportFieldTitle;
                     c.ResponseStatusID = responseStatusID;
                     PlaceHolder1.Controls.Add(c);
                     Literal1.Text += "createChartPie" + rep.ReportFieldID + "(); ";
@@ -62,7 +62,7 @@ public partial class Admin_Statistics_ViewChart : System.Web.UI.Page
                 case "bar":
                     _uc_barChart c2 = (_uc_barChart)Page.LoadControl("../_uc/barChart.ascx");
                     c2.reportFieldID = Convert.ToInt32(rep.ReportFieldID);
-                    c2.labelName = rep.ReportFieldLabel;
+                    c2.labelName = rep.ReportFieldTitle;
                     c2.ResponseStatusID = responseStatusID;
                     PlaceHolder1.Controls.Add(c2);
                     Literal1.Text += "createChartBar" + rep.ReportFieldID + "(); ";
