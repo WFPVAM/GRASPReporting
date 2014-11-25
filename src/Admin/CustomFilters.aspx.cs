@@ -51,6 +51,9 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
 
                 ddlFormFields.DataSource = ffs.ToList();
                 ddlFormFields.DataBind();
+
+
+                ddlSurveyValues.Visible = false;
             }
         }
     }
@@ -61,15 +64,22 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
     {
         string fieldID = ddlFormFields.SelectedValue.ToString();
         string op = ddlOperator.SelectedValue.ToString();
-        string filterVal = txtFilterVal.Text;
+        string filterVal;
 
         RadComboBoxItem selItem = ddlFormFields.SelectedItem;
         Label lbltype = (Label)selItem.FindControl("lblType");
         string fieldType = lbltype.Text;
 
         //Fill the summary for readbale query:
+        if(ddlSurveyValues.Visible)
+        {
+            filterVal = ddlSurveyValues.Text;
+        }
+        else
+        {
+            filterVal = txtFilterVal.Text;       
+        }
         lblFilterSummary.Text += ddlFormFields.Text + " " + ddlOperator.Text + " " + filterVal + "<br/>";
-
 
         //ddlSQLOperator.Visible = true;
         ddlSQLOperator.Visible = false;
@@ -233,6 +243,9 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                     litFieldInfo.Text += "<br/><label>Max Value: </label>" + max.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Min Value: </label>" + min.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Null Values: </label>" + countNull.ToString();
+                    
+                    txtFilterVal.Visible = true;
+                    ddlSurveyValues.Visible = false;
                     break;
                 case "TEXT_FIELD":
                     litFieldInfo.Text = "<strong>" + e.Text + "</strong> is associated to a free text field<br/>";
@@ -253,6 +266,9 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                         litFieldInfo.Text += "<li><label>" + tf.value + " </label>(" + tf.count.ToString() + ")</li>";
                     }
                     litFieldInfo.Text += "</ul>";
+                    
+                    txtFilterVal.Visible = true;
+                    ddlSurveyValues.Visible = false;
 
                     break;
                 case "RADIO_BUTTON":
@@ -276,8 +292,11 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                         litFieldInfo.Text += "<li><label>" + s.value + " </label>(" + count.ToString() + ")</li>";
                     }
                     litFieldInfo.Text += "</ul>";
+                    ddlSurveyValues.DataSource = surveyList.ToList();
+                    ddlSurveyValues.DataBind();
 
-                    
+                    txtFilterVal.Visible = false;
+                    ddlSurveyValues.Visible = true;                    
 
                     break;
                 case "SERVERSIDE_CALCULATED":
@@ -299,6 +318,9 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                     litFieldInfo.Text += "<br/><label>Max Value: </label>" + max.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Min Value: </label>" + min.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Null Values: </label>" + countNull.ToString();
+                    
+                    txtFilterVal.Visible = true;
+                    ddlSurveyValues.Visible = false;
 
                     break;
             }

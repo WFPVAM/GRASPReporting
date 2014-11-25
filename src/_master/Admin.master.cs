@@ -58,7 +58,7 @@ public partial class _master_Admin : System.Web.UI.MasterPage
                 dataentry.Visible = false;
                 indexManagement.Visible = false;
             }
-            else if(RoleUser == "Reviewer")
+            else if(RoleUser.StartsWith("Reviewer"))
             {
                 settings.Visible = false;
                 users.Visible = false;

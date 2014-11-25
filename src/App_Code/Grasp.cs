@@ -322,6 +322,26 @@ public partial class FormFieldResponses
     public Nullable<System.DateTime> dvalue { get; set; }
 }
 
+public partial class FormFieldResponsesReviews
+{
+    public decimal id { get; set; }
+    public string value { get; set; }
+    public Nullable<int> RVRepeatCount { get; set; }
+    public Nullable<int> FormResponseID { get; set; }
+    public Nullable<int> formFieldId { get; set; }
+    public Nullable<decimal> parentForm_id { get; set; }
+    public string label { get; set; }
+    public string name { get; set; }
+    public string type { get; set; }
+    public Nullable<decimal> survey_id { get; set; }
+    public int positionIndex { get; set; }
+    public string senderMsisdn { get; set; }
+    public Nullable<System.DateTime> FRCreateDate { get; set; }
+    public int ResponseStatusID { get; set; }
+    public Nullable<double> nvalue { get; set; }
+    public Nullable<System.DateTime> dvalue { get; set; }
+}
+
 public partial class FormResponse
 {
     public FormResponse()
@@ -559,6 +579,8 @@ public partial class ReportField
     public string ReportFieldAggregate { get; set; }
     public Nullable<int> ReportFieldLegend { get; set; }
     public Nullable<int> ReportFieldTableData { get; set; }
+    public string ReportFieldTitle { get; set; }
+    public string ReportFieldNote { get; set; }
 }
 
 public partial class ResponseDetails
@@ -593,6 +615,26 @@ public partial class ResponseRepeatable
     public string name { get; set; }
     public Nullable<decimal> survey_id { get; set; }
     public Nullable<int> positionIndex { get; set; }
+    public Nullable<int> SurveyElementIndex { get; set; }
+    public string type { get; set; }
+    public int ResponseStatusID { get; set; }
+    public Nullable<double> nvalue { get; set; }
+    public Nullable<System.DateTime> dvalue { get; set; }
+}
+
+public partial class ResponseRepeatableReviews
+{
+    public decimal id { get; set; }
+    public string value { get; set; }
+    public Nullable<int> FormResponseID { get; set; }
+    public Nullable<int> RVRepeatCount { get; set; }
+    public Nullable<int> formFieldId { get; set; }
+    public Nullable<decimal> ParentFormFieldID { get; set; }
+    public Nullable<decimal> parentForm_id { get; set; }
+    public string label { get; set; }
+    public string name { get; set; }
+    public Nullable<decimal> survey_id { get; set; }
+    public int positionIndex { get; set; }
     public Nullable<int> SurveyElementIndex { get; set; }
     public string type { get; set; }
     public int ResponseStatusID { get; set; }
@@ -662,6 +704,14 @@ public partial class Roles
     public string description { get; set; }
 
     public virtual ICollection<User_Credential> User_Credential { get; set; }
+}
+
+public partial class RolesToResponseStatus
+{
+    public int RoleID { get; set; }
+    public int ResponseStatusID { get; set; }
+    public int RoleToRespStatusID { get; set; }
+    public int RoleToRespStatusTypeID { get; set; }
 }
 
 public partial class SmsInternetServiceSettings

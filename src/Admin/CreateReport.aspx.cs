@@ -34,8 +34,40 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
-            hdnReportID.Value = "";
+        if(Request["rid"] != null)
+        {
+            hdnReportID.Value = Request["rid"].ToString();
+            int reportID = Convert.ToInt32(Request["rid"].ToString());
+
+            using(GRASPEntities db = new GRASPEntities())
+            {
+                Report report = (from r in db.Reports
+                                 where r.ReportID == reportID
+                                 select r).FirstOrDefault();
+                tbReportName.Text = report.ReportName;
+                FormID = (int)report.FormID;
+            }
+        }
+        if(!IsPostBack)
+        {
+            if(Request["rid"] != null)
+            {
+                //Add chart to an existing report.
+
+                error.Visible = false;
+                tbReportName.ReadOnly = true;
+                tbReportDescription.ReadOnly = true;
+                ddlForm.Enabled = false;
+                btnForFields.Enabled = false;
+                btnReset.Enabled = false;
+                pnlReportFields.Visible = true;
+                pnlForm.Visible = false;
+            }
+            else
+            {
+                hdnReportID.Value = "";
+            }
+        }
         reportName = tbReportName.Text;
     }
     /// <summary>
@@ -47,16 +79,18 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
     /// <param name="e"></param>
     protected void btnForFields_Click(object sender, EventArgs e)
     {
-        GRASPEntities db = new GRASPEntities();
-
-        try
+        if(FormID == 0)
         {
             FormID = Convert.ToInt32(ddlForm.SelectedValue);
-            reportName = tbReportName.Text;
+        }
+        reportName = tbReportName.Text;
+
+        using(GRASPEntities db = new GRASPEntities())
+        {
             var report = (from r in db.Reports
                           where r.FormID == FormID && r.ReportName == reportName
                           select r).FirstOrDefault();
-            if (report == null)
+            if(report == null)
             {
                 error.Visible = false;
                 tbReportName.ReadOnly = true;
@@ -69,12 +103,12 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 pnlForm.Visible = false;
                 //serieFieldBind();
             }
-            else error.Visible = true;
+            else
+            {
+                error.Visible = true;
+            }
+        }
 
-        }
-        catch (Exception ex)
-        {
-        }
     }
     /// <summary>
     /// Fills the dropdown list for selecting the form
@@ -109,9 +143,12 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
         string aggregate = "";
         try
         {
-            FormID = Convert.ToInt32(ddlForm.SelectedValue);
+            if(FormID == 0)
+            {
+                FormID = Convert.ToInt32(ddlForm.SelectedValue);
+            }
             chartType = rcbChartType.SelectedValue;
-            if (chartType == "bar")
+            if(chartType == "bar")
             {
 
                 FormFieldID = Convert.ToInt32(ddlSerieField.SelectedValue);
@@ -119,25 +156,30 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 ReportFieldLabel = (tbReportFieldSerie.Text != "") ? tbReportFieldSerie.Text : ddlSerieField.Text;
                 ReportFieldValue = (tbReportFieldValue.Text != "") ? tbReportFieldValue.Text : ddlValueField.Text;
                 aggregate = ddlAggregate.SelectedValue;
-                if (chkLegend.Checked)
+                if(chkLegend.Checked)
                     legend = 1;
-                if (chkTable.Checked)
+                if(chkTable.Checked)
                     table = 1;
-                if (hdnReportID.Value == "")
+                if(hdnReportID.Value == "")
+                {
                     hdnReportID.Value = Report.createNewReport(tbReportName.Text, tbReportDescription.Text, FormID).ToString();
-                ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, ReportFieldLabel, chartType, ReportFieldValue, FormFieldValueID, aggregate, legend, table);
+                }
+                ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, TxtChartTitle.Text, ReportFieldLabel, chartType, ReportFieldValue, FormFieldValueID, aggregate, legend, table);
             }
-            else if (chartType == "pie")
+            else if(chartType == "pie")
             {
-                if (chkLegend.Checked)
+                if(chkLegend.Checked)
                     legend = 1;
-                if (chkTable.Checked)
+                if(chkTable.Checked)
                     table = 1;
                 ReportFieldLabel = (tbReportFieldLabel.Text != "") ? tbReportFieldLabel.Text : ddlLabelFormField.Text;
                 FormFieldID = Convert.ToInt32(ddlLabelFormField.SelectedValue);
-                if (hdnReportID.Value == "")
+                if(hdnReportID.Value == "")
+                {
                     hdnReportID.Value = Report.createNewReport(tbReportName.Text, tbReportDescription.Text, FormID).ToString();
-                ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, ReportFieldLabel, chartType, null, null, null, legend, table);
+                }
+                ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, TxtChartTitle.Text, ReportFieldLabel, chartType, null, null, null, legend, table);
+
             }
 
             success.Visible = true;
@@ -145,9 +187,13 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
             //pathNewReport = newReport.ChartType + "Chart.aspx?formID=" +  Convert.ToString(FormID).TrimStart() + "&reportID=" + Convert.ToString(newReport.ReportID).TrimStart();
             pnlReportFields.Enabled = false;
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             error2.Visible = true;
+        }
+        if(Request["rid"] != null)
+        {
+            Response.Redirect("ReportDetails.aspx?id=" + Request["rid"].ToString(), true);
         }
     }
     /// <summary>
@@ -229,7 +275,7 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
     protected void rcbChartType_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string chartType = rcbChartType.SelectedValue;
-        if (chartType == "pie")
+        if(chartType == "pie")
         {
             ddlSerieField.Text = "";
             ddlSerieField.ClearSelection();
@@ -249,9 +295,9 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
             error2.Visible = false;
             if(ddlLabelFormField.SelectedValue == "")
                 serieFieldBind(ddlLabelFormField);
-            
+
         }
-        else if (chartType == "bar")
+        else if(chartType == "bar")
         {
             error2.Visible = false;
             ddlLabelFormField.Text = "";
@@ -278,12 +324,10 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
     /// </summary>
     private void serieValueBind()
     {
-        try
+
+        if(FormID == 0)
         {
             FormID = Convert.ToInt32(ddlForm.SelectedValue);
-        }
-        catch (Exception ex)
-        {
         }
 
         GRASPEntities db = new GRASPEntities();
@@ -292,15 +336,24 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                                               where ff.form_id == FormID && ff.FormFieldParentID == null
                                               orderby ff.positionIndex ascending
                                               select ff;
+        var ffs = ((from f in db.FormFieldExport
+                   where f.form_id == FormID && f.type != "TRUNCATED_TEXT" && f.type != "WRAPPED_TEXT" && f.type != "IMAGE" && f.FormFieldParentID == null
+                   select new { name = f.name, label = f.label, type = f.type, id = f.id, positionIndex = f.positionIndex }).Union(
+                    from fe in db.FormFieldExt
+                    where fe.FormID == FormID
+                    select new { name = fe.FormFieldExtName, label = fe.FormFieldExtLabel, type = "SERVERSIDE_CALCULATED", 
+                        id = fe.FormFieldID.Value, positionIndex=fe.PositionIndex.Value })).OrderBy(o=>o.positionIndex);
 
-        IEnumerable<FormFieldExport> rosterFields = from i in db.FormFieldExport
+
+        List<FormFieldExport> rosterFields = (from i in db.FormFieldExport
                                                     where i.FormFieldParentID != null
                                                     orderby i.positionIndex ascending
-                                                    select i;
+                                                    select i).ToList();
+        int tmp = fields.Count();
 
-        foreach (FormFieldExport ff in fields)
+        foreach(var ff in ffs)
         {
-            if (ff.type == "SEPARATOR")
+            if(ff.type == "SEPARATOR")
             {
                 RadComboBoxItem item = new RadComboBoxItem();
                 item.Text = "-- " + ff.name;
@@ -308,11 +361,11 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 item.Enabled = false;
                 ddlValueField.Items.Add(item);
             }
-            else if (ff.type == "REPEATABLES" || ff.type == "REPEATABLES_BASIC")
+            else if(ff.type == "REPEATABLES" || ff.type == "REPEATABLES_BASIC")
             {
-                foreach (FormFieldExport f in rosterFields.Where(x => x.FormFieldParentID == ff.id))
+                foreach(FormFieldExport f in rosterFields.Where(x => x.FormFieldParentID == ff.id))
                 {
-                    if (f.type == "NUMERIC_TEXT_FIELD" || f.type == "CURRENCY_FIELD")
+                    if(f.type == "NUMERIC_TEXT_FIELD" || f.type == "CURRENCY_FIELD")
                     {
                         RadComboBoxItem item = new RadComboBoxItem();
                         item.Text = f.name + " (" + f.label + ")";
@@ -321,10 +374,10 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                     }
                 }
             }
-            else if (ff.type == "NUMERIC_TEXT_FIELD" || ff.type == "CURRENCY_FIELD")
+            else if(ff.type == "NUMERIC_TEXT_FIELD" || ff.type == "CURRENCY_FIELD" || ff.type == "SERVERSIDE_CALCULATED")
             {
                 RadComboBoxItem item = new RadComboBoxItem();
-                item.Text = ff.name + " (" + ff.label + ")";
+                item.Text = ff.name + " (" + ff.label + " " + ff.type + ")";
                 item.Value = ff.id.ToString();
                 ddlValueField.Items.Add(item);
             }
@@ -337,12 +390,9 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
     /// <param name="ddl">The dropdown list where the elements are added</param>
     private void serieFieldBind(RadComboBox ddl)
     {
-        try
+        if(FormID==0)
         {
             FormID = Convert.ToInt32(ddlForm.SelectedValue);
-        }
-        catch (Exception ex)
-        {
         }
 
         GRASPEntities db = new GRASPEntities();
@@ -357,9 +407,9 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                                                     orderby i.positionIndex ascending
                                                     select i;
 
-        foreach (FormFieldExport ff in fields)
+        foreach(FormFieldExport ff in fields)
         {
-            if (ff.type == "SEPARATOR")
+            if(ff.type == "SEPARATOR")
             {
                 RadComboBoxItem item = new RadComboBoxItem();
                 item.Text = "-- " + ff.name;
@@ -367,11 +417,11 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 item.Enabled = false;
                 ddl.Items.Add(item);
             }
-            else if (ff.type == "REPEATABLES" || ff.type == "REPEATABLES_BASIC")
+            else if(ff.type == "REPEATABLES" || ff.type == "REPEATABLES_BASIC")
             {
-                foreach (FormFieldExport f in rosterFields.Where(x => x.FormFieldParentID == ff.id))
+                foreach(FormFieldExport f in rosterFields.Where(x => x.FormFieldParentID == ff.id))
                 {
-                    if (f.type == "DROP_DOWN_LIST" || f.type == "RADIO_BUTTON")
+                    if(f.type == "DROP_DOWN_LIST" || f.type == "RADIO_BUTTON")
                     {
                         RadComboBoxItem item = new RadComboBoxItem();
                         item.Text = f.name + " (" + f.label + ")";
@@ -380,7 +430,7 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                     }
                 }
             }
-            else if (ff.type == "DROP_DOWN_LIST" || ff.type == "RADIO_BUTTON")
+            else if(ff.type == "DROP_DOWN_LIST" || ff.type == "RADIO_BUTTON")
             {
                 RadComboBoxItem item = new RadComboBoxItem();
                 item.Text = ff.name + " (" + ff.label + ")";

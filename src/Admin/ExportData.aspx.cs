@@ -41,6 +41,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         {
             if(Request["FormID"] != null && Request["FormID"] != "")
             {
+                Page.Server.ScriptTimeout = 3100;
                 formID = Request["FormID"];
                 name = Request["FormName"];
                 if(!IsPostBack)
@@ -79,6 +80,8 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             int startFormResponseID = 0;
             string filterCount = "";
             string filter = "";
+
+            Server.ScriptTimeout = 3100;
 
             if(txtStartFromResponseID.Text != "")
             {
@@ -220,7 +223,8 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         SqlCommand cmd = new SqlCommand();
         SqlDataReader reader;
 
-        cmd.CommandTimeout = 90;
+        
+        cmd.CommandTimeout = 3000;
         cmd.CommandText = sqlCmd;
         cmd.CommandType = CommandType.Text;
         cmd.Connection = sqlConnection1;
@@ -526,7 +530,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         //Response.AppendHeader("content-disposition", "attachment; filename=" + formName + ".zip");
         using(ZipFile zip = new ZipFile())
         {
-            
+
             zip.AddDirectory(folderName);
             //zip.Save(Response.OutputStream);
             zip.Save(folderName + "\\" + fileName + ".zip");

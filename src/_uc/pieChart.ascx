@@ -3,11 +3,11 @@
 
 
 
-<div class="col-lg-6">
+<div class="col-lg-12">
     <div class="panel panel-primary">
-        <div class="panel-heading">
+<%--        <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i><%= labelName%></h3>
-        </div>
+        </div>--%>
         <div id="warning" class="alert alert-dismissable alert-warning" runat="server" visible="false">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <p><i class="fa fa-warning"></i><strong>Warning! </strong>Data you choose for this report are empty.</p>
@@ -26,7 +26,8 @@
                             $("<%= "#flot-chart-pie" + reportFieldID %>").kendoChart({
                                 title: {
                                     text: <%= chartName%>,
-                                    position: "top"
+                                    position: "top",
+                                    font: "bold 16px  Arial,Helvetica,sans-serif"
                                 },
                                 legend: {
                                     visible: <%= legend%>,
@@ -55,7 +56,7 @@
                 </div>
             </div>
             <div id="tableData" runat="server" visible="false" style="width: 50%; margin: 0 auto;">
-                <telerik:RadGrid ID="tabularData" runat="server" AutoGenerateColumns="false" Height="100%" CellSpacing="0" GridLines="None" Skin="MetroTouch"
+                <telerik:RadGrid ID="tabularData" runat="server" AutoGenerateColumns="false" Height="100%" CellSpacing="0" GridLines="None" Skin="Metro"
             ForeColor="#0058B1" BorderColor="White" AlternatingItemStyle-BackColor="#CCE6FF" HeaderStyle-BackColor="#0058B1" HeaderStyle-ForeColor="White">
                     <MasterTableView>
                         <Columns>

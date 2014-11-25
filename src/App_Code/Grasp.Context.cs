@@ -59,22 +59,25 @@ public partial class GRASPEntities : DbContext
     public virtual DbSet<FormResponseCoords_ResponseValue> FormResponseCoords_ResponseValue { get; set; }
     public virtual DbSet<BindingRules> BindingRules { get; set; }
     public virtual DbSet<Detail_Form_Response> Detail_Form_Response { get; set; }
-    public virtual DbSet<FormFieldExport> FormFieldExport { get; set; }
     public virtual DbSet<ResponseDetails> ResponseDetails { get; set; }
     public virtual DbSet<ResponseMapping> ResponseMapping { get; set; }
     public virtual DbSet<SurveyListAPI> SurveyListAPI { get; set; }
     public virtual DbSet<IndexHASH> IndexHASHes { get; set; }
     public virtual DbSet<IndexField> IndexFields { get; set; }
     public virtual DbSet<Index> Indexes { get; set; }
-    public virtual DbSet<FormFieldExt> FormFieldExt { get; set; }
     public virtual DbSet<FormFieldExtDependencies> FormFieldExtDependencies { get; set; }
     public virtual DbSet<ResponseValueExt> ResponseValueExt { get; set; }
     public virtual DbSet<FormResponseReviews> FormResponseReviews { get; set; }
     public virtual DbSet<FormFieldResponses> FormFieldResponses { get; set; }
     public virtual DbSet<User_Credential> User_Credential { get; set; }
-    public virtual DbSet<UserToFormResponses> UserToFormResponses { get; set; }
     public virtual DbSet<UserFilters> UserFilters { get; set; }
     public virtual DbSet<ResponseValueReviews> ResponseValueReviews { get; set; }
     public virtual DbSet<ResponseRepeatable> ResponseRepeatable { get; set; }
     public virtual DbSet<FormResponseStatus> FormResponseStatus { get; set; }
+    public virtual DbSet<UserToFormResponses> UserToFormResponses { get; set; }
+    public virtual DbSet<FormFieldExt> FormFieldExt { get; set; }
+    public virtual DbSet<FormFieldExport> FormFieldExport { get; set; }
+    public virtual DbSet<RolesToResponseStatus> RolesToResponseStatus { get; set; }
+    public virtual DbSet<FormFieldResponsesReviews> FormFieldResponsesReviews { get; set; }
+    public virtual DbSet<ResponseRepeatableReviews> ResponseRepeatableReviews { get; set; }
 }

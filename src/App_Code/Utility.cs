@@ -62,6 +62,10 @@ public class Utility
     {
         return ConfigurationManager.AppSettings["ImageFolderName"];
     }
+    public static string GetResponseFilesFolderName()
+    {
+        return ConfigurationManager.AppSettings["FileResponseFolder"];
+    }
 
 
 
@@ -234,7 +238,7 @@ public class Utility
                     canAccess = true;
                 break;
             case "/admin/calculatedfieldinsert.aspx":
-                if((roleName != "DataEntryOperator" && roleName != "Reviewer" && roleName != "Reader"))
+                if((roleName != "DataEntryOperator" && !roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/checkduplicates.aspx":
@@ -250,27 +254,27 @@ public class Utility
                     canAccess = true;
                 break;
             case "/admin/data_entry.aspx":
-                if((roleName != "Reviewer" && roleName != "Reader"))
+                if((!roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/dataeditwebform.aspx":
-                if((roleName != "Reviewer" && roleName != "Reader"))
+                if((!roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/exportdata.aspx":
-                if((roleName != "DataEntryOperator" && roleName != "Reviewer" && roleName != "Reader"))
+                if((roleName != "DataEntryOperator" && !roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/userfilter.aspx":
-                if((roleName != "DataEntryOperator" && roleName != "Reviewer" && roleName != "Reader"))
+                if((roleName != "DataEntryOperator" && !roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/users.aspx":
-                if((roleName != "DataEntryOperator" && roleName != "Reviewer" && roleName != "Reader"))
+                if((roleName != "DataEntryOperator" && !roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/settings.aspx":
-                if((roleName != "DataEntryOperator" && roleName != "Reviewer" && roleName != "Reader"))
+                if((roleName != "DataEntryOperator" && !roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/surveys.aspx":
@@ -278,7 +282,7 @@ public class Utility
                     canAccess = true;
                 break;
             case "/admin/indexmanagement.aspx":
-                if((roleName != "DataEntryOperator" && roleName != "Reviewer" && roleName != "Reader"))
+                if((roleName != "DataEntryOperator" && !roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/viewform.aspx":
@@ -286,11 +290,11 @@ public class Utility
                     canAccess = true;
                 break;
             case "/admin/dataentrywebform.aspx":
-                if((roleName != "Reviewer" && roleName != "Reader"))
+                if((!roleName.StartsWith("Reviewer") && roleName != "Reader"))
                     canAccess = true;
                 break;
             case "/admin/reviewrestore.aspx":
-                if((roleName != "Reviewer" && roleName != "Reader"))
+                if((!roleName.StartsWith("Reviewer") && roleName != "Reader" && roleName != "DataEntryOperator"))
                     canAccess = true;
                 break;
 

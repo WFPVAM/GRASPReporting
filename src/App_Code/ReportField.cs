@@ -32,9 +32,9 @@ public partial class ReportField
     /// <param name="ReportFieldLabel">An optional description for the series name</param>
     /// <param name="chartType">The type of the chart</param>
     /// <returns>The reportField created</returns>
-    public static ReportField createNewReportField(int ReportID, int FormFieldID, string ReportFieldLabel, string chartType)
+    public static ReportField createNewReportField(int ReportID, int FormFieldID, string title, string ReportFieldLabel, string chartType)
     {
-        return createNewReportField(ReportID, FormFieldID, ReportFieldLabel, chartType, null, null, null, null, null);
+        return createNewReportField(ReportID, FormFieldID, title, ReportFieldLabel, chartType, null, null, null, null, null);
     }
     /// <summary>
     /// Creates a new bar chart for a report
@@ -49,7 +49,7 @@ public partial class ReportField
     /// <param name="legend">1 if you want the legend to display</param>
     /// <param name="table">1 if you want the table to display</param>
     /// <returns>the reportField created</returns>
-    public static ReportField createNewReportField(int ReportID, int FormFieldID, string ReportFieldLabel, string chartType, string ValueField, int? ValueFormFieldID, string aggregate, int? legend, int? table)
+    public static ReportField createNewReportField(int ReportID, int FormFieldID, string title, string ReportFieldLabel, string chartType, string ValueField, int? ValueFormFieldID, string aggregate, int? legend, int? table)
     {
         GRASPEntities db = new GRASPEntities();
 
@@ -64,7 +64,7 @@ public partial class ReportField
         reportField.ReportFieldAggregate = aggregate;
         reportField.ReportFieldLegend = legend;
         reportField.ReportFieldTableData = table;
-
+        reportField.ReportFieldTitle = title;
         db.ReportFields.Add(reportField);
         db.SaveChanges();
 

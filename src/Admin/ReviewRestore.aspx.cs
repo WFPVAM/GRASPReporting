@@ -27,14 +27,10 @@ public partial class Admin_ReviewRestore : System.Web.UI.Page
             {
                 using(GRASPEntities db = new GRASPEntities())
                 {
-                    var users = from u in db.User_Credential.Where(w => w.UserDeleteDate == null && w.roles_id != 3)
-                                join f in db.UserFilters on u.user_id equals f.userID into uf
-                                from jf in uf.DefaultIfEmpty()
-                                where jf == null ? true : jf.formID == formID
-                                select new { u.username, u.user_id, u.supervisor, jf.UserFilterDescription };
+                    var users = from u in db.User_Credential.Where(w => w.UserDeleteDate == null)
+                                select new { u.username, u.user_id, u.supervisor };
                     DdlUsers.DataSource = users.ToList();
                     DdlUsers.DataBind();
-
                 }
                 RdpStartDate.Visible = false;
                 RdpEndDate.Visible = false;

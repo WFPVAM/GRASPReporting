@@ -1517,7 +1517,7 @@ vertical-align: middle;
     min-height: 1px;
     overflow: hidden;
 }
-
+/*
 textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"] {
     background-color: #fff;
     border: 1px solid #d5d5d5;
@@ -1530,6 +1530,7 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
     padding: 5px 4px;
     transition-duration: 0.1s;
 }
+*/
 .form-group {
     margin-bottom: 15px;
 }
@@ -1574,13 +1575,13 @@ input[type="checkbox"] + .lbl, input[type="radio"] + .lbl {
 }*/
 
 
-
+/*
 input[readonly] {
     background: none repeat scroll 0 0 #f5f5f5 !important;
     color: #939192;
     cursor: default;
 }
-
+*/
 .form-control {
     background-color: #fff;
     border: 1px solid #ccc;

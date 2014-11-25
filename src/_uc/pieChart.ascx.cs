@@ -61,8 +61,12 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
         firstColumn = ReportData.ReportFieldLabel;
         secondColumn = ReportData.ReportFieldValueLabel;
 
+        var deleteRespStatusID = (from rs in db.FormResponseStatus
+                                  where rs.ResponseStatusName == "Deleted"
+                                  select new { rs.ResponseStatusID }).FirstOrDefault();
+
         var items = from rv in db.FormFieldResponses
-                    where rv.formFieldId == formFieldID && (ResponseStatusID == 0 || rv.ResponseStatusID == ResponseStatusID)
+                    where rv.formFieldId == formFieldID && (ResponseStatusID == 0 || rv.ResponseStatusID == ResponseStatusID) && rv.ResponseStatusID != deleteRespStatusID.ResponseStatusID
                     group rv by rv.value into g
                     select new
                     {
@@ -88,11 +92,11 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
             }
         }
         
-        var report = (from r in db.Reports
-                      where r.ReportID == reportID
-                      select r).FirstOrDefault();
-
-        chartName = (report.ReportDescription != "") ? "\"" + report.ReportDescription + "\"" : "\"" + report.ReportName + "\"";
+        //var report = (from r in db.Reports
+        //              where r.ReportID == reportID
+        //              select r).FirstOrDefault();
+        //chartName = (report.ReportDescription != "") ? "\"" + report.ReportDescription + "\"" : "\"" + report.ReportName + "\"";
+        chartName = "\"" + labelName + "\"";
 
         if (ReportData.ReportFieldLegend == 1)
             legend = "true";

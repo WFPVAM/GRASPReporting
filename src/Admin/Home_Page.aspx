@@ -12,6 +12,46 @@
         </div>
     </div>
     <div class="row">
+
+        <div runat="server" id="PnlResponseProcessing" class="col-lg-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <i class="fa fa-android fa-5x"></i>
+                        </div>
+                        <div class="col-xs-8 text-right">
+                            <p class="announcement-heading">Incoming</p>
+                            <p class="announcement-text">
+                                <asp:Literal ID="LitIncomingInfo" runat="server"></asp:Literal>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-footer announcement-bottom">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <telerik:RadButton ID="BtnProcessIncomingResponse" runat="server" Text=" Process Responses " SingleClick="true" SingleClickText=" Processing - Please Wait " Skin="Metro" OnClick="BtnProcessIncomingResponse_Click"></telerik:RadButton>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <i class="fa fa-download"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer announcement-bottom">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <telerik:RadProgressManager ID="RadProgressManager" runat="server" RefreshPeriod="1000" />
+                            <telerik:RadProgressArea ID="RadProgressArea" Skin="Metro" ProgressIndicators="TotalProgressBar, TotalProgressPercent, TotalProgress, CurrentFileName, TimeEstimated" runat="server"></telerik:RadProgressArea>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div class="col-lg-4">
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -58,8 +98,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+
         </div>
     </div>
 </asp:Content>

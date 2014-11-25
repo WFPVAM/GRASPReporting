@@ -47,12 +47,18 @@
             <telerik:AjaxSetting AjaxControlID="ddlFormFields">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="ddlOperator" UpdatePanelCssClass="" />
-                    <telerik:AjaxUpdatedControl ControlID="txtFilterVal" UpdatePanelCssClass="" />
+                    <telerik:AjaxUpdatedControl ControlID="txtFilterVal" LoadingPanelID="RadAjaxLoadingPanel1" UpdatePanelCssClass="" />
                     <telerik:AjaxUpdatedControl ControlID="litFieldInfo" UpdatePanelCssClass="" />
+                    <telerik:AjaxUpdatedControl ControlID="ddlSurveyValues" LoadingPanelID="RadAjaxLoadingPanel1" UpdatePanelCssClass="" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
         </AjaxSettings>
     </telerik:RadAjaxManager>
+
+            <telerik:RadAjaxLoadingPanel ID="RadAjaxLoadingPanel1" runat="server">
+        <img src="../_images/preloader1.gif" />
+    </telerik:RadAjaxLoadingPanel>
+
     <div>
         <asp:Literal ID="litInfo" runat="server"></asp:Literal>
 
@@ -108,6 +114,8 @@
                 <telerik:RadComboBox ID="ddlOperator" runat="server" Skin="Metro" Width="100px">
                 </telerik:RadComboBox>
                 <asp:TextBox ID="txtFilterVal" runat="server"></asp:TextBox>
+                <telerik:RadComboBox ID="ddlSurveyValues" runat="server" Skin="Metro" Width="150px" DataTextField="value">
+                </telerik:RadComboBox>
                 <telerik:RadButton ID="btnAddFilter" runat="server" Text="Add Filter" OnClick="btnAddFilter_Click"></telerik:RadButton>
             </div>
             <div id="infoField">

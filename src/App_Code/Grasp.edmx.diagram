@@ -41,7 +41,6 @@
         <EntityTypeShape EntityType="GRASPModel.FormResponseCoords_ResponseValue" Width="1.5" PointX="9.75" PointY="9" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.BindingRules" Width="1.5" PointX="14.75" PointY="10.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.Detail_Form_Response" Width="1.5" PointX="11.75" PointY="11.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GRASPModel.FormFieldExport" Width="1.5" PointX="15.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.ResponseDetails" Width="1.5" PointX="14.75" PointY="15.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.ResponseMapping" Width="1.5" PointX="16.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.SurveyListAPI" Width="1.5" PointX="16.75" PointY="16.75" IsExpanded="true" />
@@ -80,18 +79,22 @@
         <AssociationConnector Association="GRASPModel.FK_IndexFields_FormField" />
         <EntityTypeShape EntityType="GRASPModel.Index" Width="1.5" PointX="18.375" PointY="0.75" />
         <AssociationConnector Association="GRASPModel.FK_IndexFields_IndexFields" />
-        <EntityTypeShape EntityType="GRASPModel.FormFieldExt" Width="1.5" PointX="13.375" PointY="18.75" />
-        <EntityTypeShape EntityType="GRASPModel.FormFieldExtDependencies" Width="1.5" PointX="19.375" PointY="9.75" />
+        <EntityTypeShape EntityType="GRASPModel.FormFieldExtDependencies" Width="2.125" PointX="19.375" PointY="9.75" />
         <EntityTypeShape EntityType="GRASPModel.ResponseValueExt" Width="1.5" PointX="19.375" PointY="12.75" />
         <EntityTypeShape EntityType="GRASPModel.FormResponseReviews" Width="1.5" PointX="19.375" PointY="15.75" />
         <EntityTypeShape EntityType="GRASPModel.FormFieldResponses" Width="1.5" PointX="15.375" PointY="19.75" />
         <EntityTypeShape EntityType="GRASPModel.User_Credential" Width="2.125" PointX="5" PointY="3.875" />
         <AssociationConnector Association="GRASPModel.FK623D294B7F468633" />
-        <EntityTypeShape EntityType="GRASPModel.UserToFormResponses" Width="1.5" PointX="19.375" PointY="18.75" />
         <EntityTypeShape EntityType="GRASPModel.UserFilters" Width="1.5" PointX="20.375" PointY="0.75" />
         <EntityTypeShape EntityType="GRASPModel.ResponseValueReviews" Width="1.5" PointX="21.375" PointY="7.75" />
         <EntityTypeShape EntityType="GRASPModel.ResponseRepeatable" Width="1.5" PointX="21.375" PointY="11.75" />
         <EntityTypeShape EntityType="GRASPModel.FormResponseStatus" Width="1.5" PointX="18.375" PointY="3.75" />
+        <EntityTypeShape EntityType="GRASPModel.UserToFormResponses" Width="1.5" PointX="15.375" PointY="0.75" />
+        <EntityTypeShape EntityType="GRASPModel.FormFieldExt" Width="1.5" PointX="17.375" PointY="19.75" />
+        <EntityTypeShape EntityType="GRASPModel.FormFieldExport" Width="1.5" PointX="19.375" PointY="18.75" />
+        <EntityTypeShape EntityType="GRASPModel.RolesToResponseStatus" Width="1.5" PointX="20.375" PointY="3.75" />
+        <EntityTypeShape EntityType="GRASPModel.FormFieldResponsesReviews" Width="1.5" PointX="21.375" PointY="16.75" />
+        <EntityTypeShape EntityType="GRASPModel.ResponseRepeatableReviews" Width="1.5" PointX="21.375" PointY="21.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

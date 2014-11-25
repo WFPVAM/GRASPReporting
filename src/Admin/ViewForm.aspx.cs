@@ -284,9 +284,14 @@ public partial class Admin_ViewForm : System.Web.UI.Page
 
             var items = from rv in db.ResponseValueReviews
                         join ff in db.FormField on rv.formFieldId equals (int?)ff.id
-                        where rv.FormResponseID == resID && rv.FormResponseReviewID == revisionNo
+                        where rv.FormResponseID == resID && rv.FormResponseReviewID == revisionNo && rv.RVRepeatCount <= 0
                         orderby ff.id, rv.id ascending
                         select new { rv, ff };
+
+
+            var repeatableItems = (from r in db.ResponseRepeatableReviews
+                                   where r.FormResponseID == resID && r.RVRepeatCount > 0
+                                   select r).ToList();
 
             if(items.Count() > 0)
             {
@@ -308,63 +313,61 @@ public partial class Admin_ViewForm : System.Web.UI.Page
 
             foreach(var f in items)
             {
+                //t += String.Format("{0,27}", f.ff.name) + "\t" + f.ff.type + "\t\t" + f.ff.positionIndex + "\t" + f.rv.RVRepeatCount + "\r\n";
                 string respValue = "";
-                if(f.rv.RVRepeatCount == 0) //E' un campo normale
-                {
-                    if(rosterCount != 0)
-                    {
-                        litTableResult.Text += "</div></div>";
-                    }
+                string respLabel = "";
 
-                    respValue = ((f.rv.value != "") ? f.rv.value : f.ff.name);
-                    if((f.ff.type == "IMAGE") && (respValue != "GRASPImage\\"))
+                if(f.rv.RVRepeatCount == 0) //It's a normal field
+                {
+
+                    //if(rosterCount != 0)
+                    //{
+                    //    litTableResult.Text += "</div></div>";
+                    //}
+                    if(f.rv.value != "")
                     {
-                        respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+                        respValue = f.rv.value;
+                        respLabel = f.ff.label;
+                        if(respLabel.Trim().Length == 0)
+                        {
+                            respLabel = f.ff.name;
+                        }
+                        if((f.ff.type == "IMAGE") && (respValue != "GRASPImage\\"))
+                        {
+                            respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+                        }
+                        if(respValue != "GRASPImage\\")
+                        {
+                            litTableResult.Text += "<div class=\"left clear\"><label>" + respLabel + "</label></div>" +
+                                "<div class=\"right\">" + respValue + "</div>";
+                        }
                     }
-                    if(respValue != "GRASPImage\\")
-                    {
-                        litTableResult.Text += "<div class=\"left clear\"><label>" + f.ff.label + "</label></div>" +
-                            "<div class=\"right\">" + respValue + "</div>";
-                    }
-                    prevID = f.ff.id;
+                    prevID = f.rv.formFieldId.Value;
                     rosterCount = 0;
+
                 }
-                else if(f.rv.RVRepeatCount == -1) //Intestazione del roster
+                else if(f.rv.RVRepeatCount == -1) //Repeatable Header
                 {
-                    if(rosterCount != 0)
+                    //if(rosterCount != 0)
+                    //{
+                    //    litTableResult.Text += "</div></div>"; //Close previous repeatable
+                    //}
+                    //Opens repeatable
+                    litTableResult.Text += "<div class=\" repContainer clear\"><div class=\"repTitle clear\">" + f.ff.label + "</div>";
+                    prevID = f.rv.formFieldId.Value;
+                    foreach(var rf in repeatableItems.Where(r => r.ParentFormFieldID == f.rv.formFieldId).OrderBy(o => o.RVRepeatCount))
                     {
-                        litTableResult.Text += "</div></div>"; //Chiudo il roster precedente
-                    }
-                    litTableResult.Text += "<div class=\" rosterContainer clear\"><div class=\"roasterTitle clear\"><label>" + f.ff.label + "</label></div>";
-                    prevID = f.ff.id;
-                }
-                else
-                {
-                    if(prevID != f.ff.id && f.rv.RVRepeatCount == 1) //Iniziano i campi del Roster
-                    {
-                        if(rosterCount != 0)
+                        respValue = rf.value;
+                        respLabel = rf.label;
+                        if(respLabel.Trim().Length == 0)
                         {
-                            litTableResult.Text += "</div>"; //Chiudo il campo precedente
+                            respLabel = rf.name;
                         }
-                        respValue = ((f.rv.value != "") ? f.rv.value : f.ff.name);
-                        if(f.ff.type == "IMAGE")
-                        {
-                            respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
-                        }
-                        litTableResult.Text += "<div class=\"left clear\"><label>" + f.ff.label + "</label></div>" +
-                        "<div class=\"right overflowTable\"><div class=\"inline\">" + respValue + "</div>";
-                        rosterCount = 1;
+
+                        litTableResult.Text += "<div class=\"left clear\"><label>" + respLabel + "</label></div>" +
+                            "<div class=\"right overflowTable\"><div class=\"inline\">" + respValue + "</div></div>";
                     }
-                    else
-                    {
-                        respValue = ((f.rv.value != "") ? f.rv.value : f.ff.name);
-                        if(f.ff.type == "IMAGE")
-                        {
-                            respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
-                        }
-                        litTableResult.Text += "<div class=\"inline\">" + respValue + "</div>";
-                    }
-                    prevID = f.ff.id;
+                    litTableResult.Text += "</div>";
                 }
             }
         }

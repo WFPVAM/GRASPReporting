@@ -101,7 +101,7 @@
           <Property Name="isHidden" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.Form_FormField' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.Form_FormField' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Form_FormField">
           <Key>
             <PropertyRef Name="Form_id" />
@@ -158,7 +158,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.Form_FormField' does not have a pr
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.FormField_FormResponse' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.FormField_FormResponse' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormField_FormResponse">
           <Key>
             <PropertyRef Name="FormField_id" />
@@ -213,7 +213,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.FormField_FormResponse' does not h
           <Property Name="ResponseStatusID" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.FormResponse_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.FormResponse_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormResponse_ResponseValue">
           <Key>
             <PropertyRef Name="FormResponse_id" />
@@ -234,7 +234,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.FormResponse_ResponseValue' does n
           <Property Name="FRCoordGeometry" Type="geometry" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.FormResponseCoords_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.FormResponseCoords_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormResponseCoords_ResponseValue">
           <Key>
             <PropertyRef Name="FormResponseCoords_FRCoordID" />
@@ -369,7 +369,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.FormResponseCoords_ResponseValue' 
           <Property Name="subject" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.message_FrontlineMultimediaMessagePart' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.message_FrontlineMultimediaMessagePart' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="message_FrontlineMultimediaMessagePart">
           <Key>
             <PropertyRef Name="message_id" />
@@ -408,6 +408,8 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.message_FrontlineMultimediaMessage
           <Property Name="ReportFieldAggregate" Type="nvarchar" MaxLength="50" />
           <Property Name="ReportFieldLegend" Type="int" />
           <Property Name="ReportFieldTableData" Type="int" />
+          <Property Name="ReportFieldTitle" Type="nvarchar" MaxLength="500" />
+          <Property Name="ReportFieldNote" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Reports">
           <Key>
@@ -426,7 +428,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.message_FrontlineMultimediaMessage
           <Property Name="id" Type="numeric" Precision="19" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="id_flsmsId" Type="nvarchar" MaxLength="255" />
           <Property Name="pushed" Type="tinyint" Nullable="false" />
-          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="value" Type="nvarchar" MaxLength="4000" />
           <Property Name="RVRepeatCount" Type="int" />
           <Property Name="FormResponseID" Type="int" />
           <Property Name="RVCreateDate" Type="datetime" />
@@ -436,7 +438,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.message_FrontlineMultimediaMessage
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseValue_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.ResponseValue_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseValue_ResponseValue">
           <Key>
             <PropertyRef Name="ResponseValue_id" />
@@ -476,6 +478,15 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseValue_ResponseValue' does 
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="description" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="RolesToResponseStatus">
+          <Key>
+            <PropertyRef Name="RoleToRespStatusID" />
+          </Key>
+          <Property Name="RoleID" Type="int" Nullable="false" />
+          <Property Name="ResponseStatusID" Type="int" Nullable="false" />
+          <Property Name="RoleToRespStatusID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleToRespStatusTypeID" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="SmsInternetServiceSettings">
           <Key>
@@ -593,7 +604,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseValue_ResponseValue' does 
           <Property Name="formID" Type="numeric" Precision="19" Scale="0" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.BindingRules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.BindingRules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="BindingRules">
           <Key>
             <PropertyRef Name="FormField_id" />
@@ -619,7 +630,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.BindingRules' does not have a prim
           <Property Name="required" Type="tinyint" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.Detail_Form_Response' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.Detail_Form_Response' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Detail_Form_Response">
           <Key>
             <PropertyRef Name="id" />
@@ -629,7 +640,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.Detail_Form_Response' does not hav
           <Property Name="name" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.FormFieldExport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.FormFieldExport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormFieldExport">
           <Key>
             <PropertyRef Name="id" />
@@ -642,7 +653,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.FormFieldExport' does not have a p
           <Property Name="positionIndex" Type="int" Nullable="false" />
           <Property Name="required" Type="tinyint" />
           <Property Name="type" Type="nvarchar" MaxLength="255" />
-          <Property Name="x_form" Type="ntext" />
+          <Property Name="x_form" Type="nvarchar(max)" />
           <Property Name="form_id" Type="numeric" Precision="19" Scale="0" />
           <Property Name="survey_id" Type="numeric" Precision="19" Scale="0" />
           <Property Name="isReadOnly" Type="tinyint" />
@@ -653,14 +664,14 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.FormFieldExport' does not have a p
           <Property Name="formula" Type="varchar" MaxLength="255" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.FormFieldResponses' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.FormFieldResponses' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormFieldResponses">
           <Key>
             <PropertyRef Name="id" />
             <PropertyRef Name="ResponseStatusID" />
           </Key>
           <Property Name="id" Type="numeric" Precision="19" Scale="0" Nullable="false" />
-          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="value" Type="nvarchar" MaxLength="4000" />
           <Property Name="RVRepeatCount" Type="int" />
           <Property Name="FormResponseID" Type="int" />
           <Property Name="RVCreateDate" Type="datetime" />
@@ -678,7 +689,33 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.FormFieldResponses' does not have 
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseDetails' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.FormFieldResponsesReviews' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="FormFieldResponsesReviews">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+            <PropertyRef Name="ResponseStatusID" />
+          </Key>
+          <Property Name="id" Type="numeric" Precision="19" Scale="0" Nullable="false" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="RVRepeatCount" Type="int" />
+          <Property Name="FormResponseID" Type="int" />
+          <Property Name="formFieldId" Type="int" />
+          <Property Name="parentForm_id" Type="numeric" Precision="19" Scale="0" />
+          <Property Name="label" Type="nvarchar(max)" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="type" Type="nvarchar" MaxLength="255" />
+          <Property Name="survey_id" Type="numeric" Precision="19" Scale="0" />
+          <Property Name="positionIndex" Type="int" Nullable="false" />
+          <Property Name="senderMsisdn" Type="nvarchar" MaxLength="255" />
+          <Property Name="FRCreateDate" Type="datetime" />
+          <Property Name="ResponseStatusID" Type="int" Nullable="false" />
+          <Property Name="nvalue" Type="float" />
+          <Property Name="dvalue" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GRASP.dbo.ResponseDetails' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseDetails">
           <Key>
             <PropertyRef Name="id" />
@@ -691,7 +728,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseDetails' does not have a p
           <Property Name="enumerator" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseMapping' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.ResponseMapping' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseMapping">
           <Key>
             <PropertyRef Name="ResponseID" />
@@ -703,7 +740,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseMapping' does not have a p
           <Property Name="FRCoordGeometry" Type="geometry" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseRepeatable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.ResponseRepeatable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseRepeatable">
           <Key>
             <PropertyRef Name="id" />
@@ -727,7 +764,33 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.ResponseRepeatable' does not have 
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASP.dbo.ResponseRepeatableReviews' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ResponseRepeatableReviews">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+            <PropertyRef Name="ResponseStatusID" />
+          </Key>
+          <Property Name="id" Type="numeric" Precision="19" Scale="0" Nullable="false" />
+          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="FormResponseID" Type="int" />
+          <Property Name="RVRepeatCount" Type="int" />
+          <Property Name="formFieldId" Type="int" />
+          <Property Name="ParentFormFieldID" Type="numeric" Precision="19" Scale="0" />
+          <Property Name="parentForm_id" Type="numeric" Precision="19" Scale="0" />
+          <Property Name="label" Type="nvarchar(max)" />
+          <Property Name="name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="survey_id" Type="numeric" Precision="19" Scale="0" />
+          <Property Name="positionIndex" Type="int" Nullable="false" />
+          <Property Name="SurveyElementIndex" Type="int" />
+          <Property Name="type" Type="nvarchar" MaxLength="255" />
+          <Property Name="ResponseStatusID" Type="int" Nullable="false" />
+          <Property Name="nvalue" Type="float" />
+          <Property Name="dvalue" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="SurveyListAPI">
           <Key>
             <PropertyRef Name="id" />
@@ -1228,6 +1291,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
           <EntitySet Name="ResponseValueExt" EntityType="Self.ResponseValueExt" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ResponseValueReviews" EntityType="Self.ResponseValueReviews" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RolesToResponseStatus" EntityType="Self.RolesToResponseStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SmsInternetServiceSettings" EntityType="Self.SmsInternetServiceSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SmsInternetServiceSettings_SmsInternetServiceSettingValue" EntityType="Self.SmsInternetServiceSettings_SmsInternetServiceSettingValue" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SmsInternetServiceSettingValue" EntityType="Self.SmsInternetServiceSettingValue" Schema="dbo" store:Type="Tables" />
@@ -1340,6 +1404,26 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
     [FormFieldResponses].[dvalue] AS [dvalue]
     FROM [dbo].[FormFieldResponses] AS [FormFieldResponses]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="FormFieldResponsesReviews" EntityType="Self.FormFieldResponsesReviews" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [FormFieldResponsesReviews].[id] AS [id], 
+    [FormFieldResponsesReviews].[value] AS [value], 
+    [FormFieldResponsesReviews].[RVRepeatCount] AS [RVRepeatCount], 
+    [FormFieldResponsesReviews].[FormResponseID] AS [FormResponseID], 
+    [FormFieldResponsesReviews].[formFieldId] AS [formFieldId], 
+    [FormFieldResponsesReviews].[parentForm_id] AS [parentForm_id], 
+    [FormFieldResponsesReviews].[label] AS [label], 
+    [FormFieldResponsesReviews].[name] AS [name], 
+    [FormFieldResponsesReviews].[type] AS [type], 
+    [FormFieldResponsesReviews].[survey_id] AS [survey_id], 
+    [FormFieldResponsesReviews].[positionIndex] AS [positionIndex], 
+    [FormFieldResponsesReviews].[senderMsisdn] AS [senderMsisdn], 
+    [FormFieldResponsesReviews].[FRCreateDate] AS [FRCreateDate], 
+    [FormFieldResponsesReviews].[ResponseStatusID] AS [ResponseStatusID], 
+    [FormFieldResponsesReviews].[nvalue] AS [nvalue], 
+    [FormFieldResponsesReviews].[dvalue] AS [dvalue]
+    FROM [dbo].[FormFieldResponsesReviews] AS [FormFieldResponsesReviews]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="ResponseDetails" EntityType="Self.ResponseDetails" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [ResponseDetails].[id] AS [id], 
@@ -1378,6 +1462,26 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
     [ResponseRepeatable].[nvalue] AS [nvalue], 
     [ResponseRepeatable].[dvalue] AS [dvalue]
     FROM [dbo].[ResponseRepeatable] AS [ResponseRepeatable]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ResponseRepeatableReviews" EntityType="Self.ResponseRepeatableReviews" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ResponseRepeatableReviews].[id] AS [id], 
+    [ResponseRepeatableReviews].[value] AS [value], 
+    [ResponseRepeatableReviews].[FormResponseID] AS [FormResponseID], 
+    [ResponseRepeatableReviews].[RVRepeatCount] AS [RVRepeatCount], 
+    [ResponseRepeatableReviews].[formFieldId] AS [formFieldId], 
+    [ResponseRepeatableReviews].[ParentFormFieldID] AS [ParentFormFieldID], 
+    [ResponseRepeatableReviews].[parentForm_id] AS [parentForm_id], 
+    [ResponseRepeatableReviews].[label] AS [label], 
+    [ResponseRepeatableReviews].[name] AS [name], 
+    [ResponseRepeatableReviews].[survey_id] AS [survey_id], 
+    [ResponseRepeatableReviews].[positionIndex] AS [positionIndex], 
+    [ResponseRepeatableReviews].[SurveyElementIndex] AS [SurveyElementIndex], 
+    [ResponseRepeatableReviews].[type] AS [type], 
+    [ResponseRepeatableReviews].[ResponseStatusID] AS [ResponseStatusID], 
+    [ResponseRepeatableReviews].[nvalue] AS [nvalue], 
+    [ResponseRepeatableReviews].[dvalue] AS [dvalue]
+    FROM [dbo].[ResponseRepeatableReviews] AS [ResponseRepeatableReviews]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="SurveyListAPI" EntityType="Self.SurveyListAPI" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1877,6 +1981,8 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
           <Property Name="ReportFieldAggregate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReportFieldLegend" Type="Int32" />
           <Property Name="ReportFieldTableData" Type="Int32" />
+          <Property Name="ReportFieldTitle" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ReportFieldNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Report">
           <Key>
@@ -2042,28 +2148,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
           </Key>
           <Property Name="id" Type="Decimal" Precision="19" Scale="0" Nullable="false" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="FormFieldExport">
-          <Key>
-            <PropertyRef Name="id" />
-            <PropertyRef Name="name" />
-            <PropertyRef Name="positionIndex" />
-          </Key>
-          <Property Name="id" Type="Decimal" Precision="19" Scale="0" Nullable="false" />
-          <Property Name="label" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="positionIndex" Type="Int32" Nullable="false" />
-          <Property Name="required" Type="Byte" />
-          <Property Name="type" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="x_form" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="form_id" Type="Decimal" Precision="19" Scale="0" />
-          <Property Name="survey_id" Type="Decimal" Precision="19" Scale="0" />
-          <Property Name="isReadOnly" Type="Byte" />
-          <Property Name="numberOfRep" Type="Int32" />
-          <Property Name="FFCreateDate" Type="DateTime" Precision="3" />
-          <Property Name="FormFieldParentID" Type="Decimal" Precision="19" Scale="0" />
-          <Property Name="calculated" Type="Byte" />
-          <Property Name="formula" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ResponseDetails">
           <Key>
@@ -2452,7 +2536,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
           <EntitySet Name="FormResponseCoords_ResponseValue" EntityType="Self.FormResponseCoords_ResponseValue" />
           <EntitySet Name="BindingRules" EntityType="Self.BindingRules" />
           <EntitySet Name="Detail_Form_Response" EntityType="Self.Detail_Form_Response" />
-          <EntitySet Name="FormFieldExport" EntityType="Self.FormFieldExport" />
           <EntitySet Name="ResponseDetails" EntityType="Self.ResponseDetails" />
           <EntitySet Name="ResponseMapping" EntityType="Self.ResponseMapping" />
           <EntitySet Name="SurveyListAPI" EntityType="Self.SurveyListAPI" />
@@ -2587,7 +2670,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
             <End Role="IndexField" EntitySet="IndexFields" />
             <End Role="IndexField1" EntitySet="IndexFields" />
           </AssociationSet>
-          <EntitySet Name="FormFieldExt" EntityType="GRASPModel.FormFieldExt" />
           <EntitySet Name="FormFieldExtDependencies" EntityType="GRASPModel.FormFieldExtDependencies" />
           <EntitySet Name="ResponseValueExt" EntityType="GRASPModel.ResponseValueExt" />
           <EntitySet Name="FormResponseReviews" EntityType="GRASPModel.FormResponseReviews" />
@@ -2597,11 +2679,16 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
             <End Role="Roles" EntitySet="Roles" />
             <End Role="User_Credential" EntitySet="User_Credential" />
           </AssociationSet>
-          <EntitySet Name="UserToFormResponses" EntityType="GRASPModel.UserToFormResponses" />
           <EntitySet Name="UserFilters" EntityType="GRASPModel.UserFilters" />
           <EntitySet Name="ResponseValueReviews" EntityType="GRASPModel.ResponseValueReviews" />
           <EntitySet Name="ResponseRepeatable" EntityType="GRASPModel.ResponseRepeatable" />
           <EntitySet Name="FormResponseStatus" EntityType="GRASPModel.FormResponseStatus" />
+          <EntitySet Name="UserToFormResponses" EntityType="GRASPModel.UserToFormResponses" />
+          <EntitySet Name="FormFieldExt" EntityType="GRASPModel.FormFieldExt" />
+          <EntitySet Name="FormFieldExport" EntityType="GRASPModel.FormFieldExport" />
+          <EntitySet Name="RolesToResponseStatus" EntityType="GRASPModel.RolesToResponseStatus" />
+          <EntitySet Name="FormFieldResponsesReviews" EntityType="GRASPModel.FormFieldResponsesReviews" />
+          <EntitySet Name="ResponseRepeatableReviews" EntityType="GRASPModel.ResponseRepeatableReviews" />
         </EntityContainer>
         <EntityType Name="IndexHASH">
           <Key>
@@ -2659,18 +2746,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="FormFieldExt">
-          <Key>
-            <PropertyRef Name="FormFieldExtID" />
-          </Key>
-          <Property Name="FormFieldExtID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FormID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
-          <Property Name="FormFieldExtFormula" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="FormFieldExtName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="FormFieldExtLabel" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="PositionIndex" Type="Int32" />
-          <Property Name="FormFieldID" Type="Decimal" Precision="19" Scale="0" />
-        </EntityType>
         <EntityType Name="FormFieldExtDependencies">
           <Key>
             <PropertyRef Name="FFEDID" />
@@ -2710,7 +2785,7 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
             <PropertyRef Name="ResponseStatusID" />
           </Key>
           <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
-          <Property Name="value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="value" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <Property Name="RVRepeatCount" Type="Int32" />
           <Property Name="FormResponseID" Type="Int32" />
           <Property Name="RVCreateDate" Type="DateTime" Precision="3" />
@@ -2758,15 +2833,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="UserToFormResponses">
-          <Key>
-            <PropertyRef Name="UserToFormResponsesID" />
-          </Key>
-          <Property Name="UserToFormResponsesID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="userID" Type="Int32" Nullable="false" />
-          <Property Name="formResponseID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
-          <Property Name="formID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
-        </EntityType>
         <EntityType Name="UserFilters">
           <Key>
             <PropertyRef Name="UserFilterID" />
@@ -2823,6 +2889,106 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
           <Property Name="ResponseStatusName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ResponseStatusIndex" Type="Int32" />
           <Property Name="ResponseStatusDependency" Type="Int32" />
+        </EntityType>
+        <EntityType Name="UserToFormResponses">
+          <Key>
+            <PropertyRef Name="UserToFormResponsesID" />
+          </Key>
+          <Property Name="UserToFormResponsesID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" Nullable="false" />
+          <Property Name="formResponseID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="formID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+        </EntityType>
+        <EntityType Name="FormFieldExt">
+          <Key>
+            <PropertyRef Name="FormFieldExtID" />
+          </Key>
+          <Property Name="FormFieldExtID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FormID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="FormFieldExtFormula" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FormFieldExtName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FormFieldExtLabel" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PositionIndex" Type="Int32" />
+          <Property Name="FormFieldID" Type="Decimal" Precision="19" Scale="0" />
+        </EntityType>
+        <EntityType Name="FormFieldExport">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="label" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="positionIndex" Type="Int32" Nullable="false" />
+          <Property Name="required" Type="Byte" />
+          <Property Name="type" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="x_form" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="form_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="survey_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="isReadOnly" Type="Byte" />
+          <Property Name="numberOfRep" Type="Int32" />
+          <Property Name="FFCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="FormFieldParentID" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="calculated" Type="Byte" />
+          <Property Name="formula" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RolesToResponseStatus">
+          <Key>
+            <PropertyRef Name="RoleToRespStatusID" />
+          </Key>
+          <Property Name="RoleID" Type="Int32" Nullable="false" />
+          <Property Name="ResponseStatusID" Type="Int32" Nullable="false" />
+          <Property Name="RoleToRespStatusID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleToRespStatusTypeID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FormFieldResponsesReviews">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+            <PropertyRef Name="ResponseStatusID" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="RVRepeatCount" Type="Int32" />
+          <Property Name="FormResponseID" Type="Int32" />
+          <Property Name="formFieldId" Type="Int32" />
+          <Property Name="parentForm_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="label" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="type" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="survey_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="positionIndex" Type="Int32" Nullable="false" />
+          <Property Name="senderMsisdn" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FRCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="ResponseStatusID" Type="Int32" Nullable="false" />
+          <Property Name="nvalue" Type="Double" />
+          <Property Name="dvalue" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="ResponseRepeatableReviews">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="name" />
+            <PropertyRef Name="positionIndex" />
+            <PropertyRef Name="ResponseStatusID" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FormResponseID" Type="Int32" />
+          <Property Name="RVRepeatCount" Type="Int32" />
+          <Property Name="formFieldId" Type="Int32" />
+          <Property Name="ParentFormFieldID" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="parentForm_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="label" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="survey_id" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="positionIndex" Type="Int32" Nullable="false" />
+          <Property Name="SurveyElementIndex" Type="Int32" />
+          <Property Name="type" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ResponseStatusID" Type="Int32" Nullable="false" />
+          <Property Name="nvalue" Type="Double" />
+          <Property Name="dvalue" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -3120,6 +3286,8 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
           <EntitySetMapping Name="ReportFields">
             <EntityTypeMapping TypeName="GRASPModel.ReportField">
               <MappingFragment StoreEntitySet="ReportFields">
+                <ScalarProperty Name="ReportFieldNote" ColumnName="ReportFieldNote" />
+                <ScalarProperty Name="ReportFieldTitle" ColumnName="ReportFieldTitle" />
                 <ScalarProperty Name="ReportFieldID" ColumnName="ReportFieldID" />
                 <ScalarProperty Name="ReportID" ColumnName="ReportID" />
                 <ScalarProperty Name="ReportFieldLabel" ColumnName="ReportFieldLabel" />
@@ -3290,27 +3458,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="FormFieldExport">
-            <EntityTypeMapping TypeName="GRASPModel.FormFieldExport">
-              <MappingFragment StoreEntitySet="FormFieldExport">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="label" ColumnName="label" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
-                <ScalarProperty Name="required" ColumnName="required" />
-                <ScalarProperty Name="type" ColumnName="type" />
-                <ScalarProperty Name="x_form" ColumnName="x_form" />
-                <ScalarProperty Name="form_id" ColumnName="form_id" />
-                <ScalarProperty Name="survey_id" ColumnName="survey_id" />
-                <ScalarProperty Name="isReadOnly" ColumnName="isReadOnly" />
-                <ScalarProperty Name="numberOfRep" ColumnName="numberOfRep" />
-                <ScalarProperty Name="FFCreateDate" ColumnName="FFCreateDate" />
-                <ScalarProperty Name="FormFieldParentID" ColumnName="FormFieldParentID" />
-                <ScalarProperty Name="calculated" ColumnName="calculated" />
-                <ScalarProperty Name="formula" ColumnName="formula" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ResponseDetails">
             <EntityTypeMapping TypeName="GRASPModel.ResponseDetails">
               <MappingFragment StoreEntitySet="ResponseDetails">
@@ -3416,19 +3563,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="FormFieldExt">
-            <EntityTypeMapping TypeName="GRASPModel.FormFieldExt">
-              <MappingFragment StoreEntitySet="FormFieldExt">
-                <ScalarProperty Name="FormFieldID" ColumnName="FormFieldID" />
-                <ScalarProperty Name="PositionIndex" ColumnName="PositionIndex" />
-                <ScalarProperty Name="FormFieldExtLabel" ColumnName="FormFieldExtLabel" />
-                <ScalarProperty Name="FormFieldExtName" ColumnName="FormFieldExtName" />
-                <ScalarProperty Name="FormFieldExtFormula" ColumnName="FormFieldExtFormula" />
-                <ScalarProperty Name="FormID" ColumnName="FormID" />
-                <ScalarProperty Name="FormFieldExtID" ColumnName="FormFieldExtID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="FormFieldExtDependencies">
             <EntityTypeMapping TypeName="GRASPModel.FormFieldExtDependencies">
               <MappingFragment StoreEntitySet="FormFieldExtDependencies">
@@ -3507,16 +3641,6 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserToFormResponses">
-            <EntityTypeMapping TypeName="GRASPModel.UserToFormResponses">
-              <MappingFragment StoreEntitySet="UserToFormResponses">
-                <ScalarProperty Name="formID" ColumnName="formID" />
-                <ScalarProperty Name="formResponseID" ColumnName="formResponseID" />
-                <ScalarProperty Name="userID" ColumnName="userID" />
-                <ScalarProperty Name="UserToFormResponsesID" ColumnName="UserToFormResponsesID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="UserFilters">
             <EntityTypeMapping TypeName="GRASPModel.UserFilters">
               <MappingFragment StoreEntitySet="UserFilters">
@@ -3574,6 +3698,104 @@ warning 6002: The table/view 'GRASP_UNDP3.dbo.SurveyListAPI' does not have a pri
                 <ScalarProperty Name="ResponseStatusIndex" ColumnName="ResponseStatusIndex" />
                 <ScalarProperty Name="ResponseStatusName" ColumnName="ResponseStatusName" />
                 <ScalarProperty Name="ResponseStatusID" ColumnName="ResponseStatusID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserToFormResponses">
+            <EntityTypeMapping TypeName="GRASPModel.UserToFormResponses">
+              <MappingFragment StoreEntitySet="UserToFormResponses">
+                <ScalarProperty Name="formID" ColumnName="formID" />
+                <ScalarProperty Name="formResponseID" ColumnName="formResponseID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="UserToFormResponsesID" ColumnName="UserToFormResponsesID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormFieldExt">
+            <EntityTypeMapping TypeName="GRASPModel.FormFieldExt">
+              <MappingFragment StoreEntitySet="FormFieldExt">
+                <ScalarProperty Name="FormFieldID" ColumnName="FormFieldID" />
+                <ScalarProperty Name="PositionIndex" ColumnName="PositionIndex" />
+                <ScalarProperty Name="FormFieldExtLabel" ColumnName="FormFieldExtLabel" />
+                <ScalarProperty Name="FormFieldExtName" ColumnName="FormFieldExtName" />
+                <ScalarProperty Name="FormFieldExtFormula" ColumnName="FormFieldExtFormula" />
+                <ScalarProperty Name="FormID" ColumnName="FormID" />
+                <ScalarProperty Name="FormFieldExtID" ColumnName="FormFieldExtID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormFieldExport">
+            <EntityTypeMapping TypeName="GRASPModel.FormFieldExport">
+              <MappingFragment StoreEntitySet="FormFieldExport">
+                <ScalarProperty Name="formula" ColumnName="formula" />
+                <ScalarProperty Name="calculated" ColumnName="calculated" />
+                <ScalarProperty Name="FormFieldParentID" ColumnName="FormFieldParentID" />
+                <ScalarProperty Name="FFCreateDate" ColumnName="FFCreateDate" />
+                <ScalarProperty Name="numberOfRep" ColumnName="numberOfRep" />
+                <ScalarProperty Name="isReadOnly" ColumnName="isReadOnly" />
+                <ScalarProperty Name="survey_id" ColumnName="survey_id" />
+                <ScalarProperty Name="form_id" ColumnName="form_id" />
+                <ScalarProperty Name="x_form" ColumnName="x_form" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="required" ColumnName="required" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="label" ColumnName="label" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RolesToResponseStatus">
+            <EntityTypeMapping TypeName="GRASPModel.RolesToResponseStatus">
+              <MappingFragment StoreEntitySet="RolesToResponseStatus">
+                <ScalarProperty Name="RoleToRespStatusTypeID" ColumnName="RoleToRespStatusTypeID" />
+                <ScalarProperty Name="RoleToRespStatusID" ColumnName="RoleToRespStatusID" />
+                <ScalarProperty Name="ResponseStatusID" ColumnName="ResponseStatusID" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormFieldResponsesReviews">
+            <EntityTypeMapping TypeName="GRASPModel.FormFieldResponsesReviews">
+              <MappingFragment StoreEntitySet="FormFieldResponsesReviews">
+                <ScalarProperty Name="dvalue" ColumnName="dvalue" />
+                <ScalarProperty Name="nvalue" ColumnName="nvalue" />
+                <ScalarProperty Name="ResponseStatusID" ColumnName="ResponseStatusID" />
+                <ScalarProperty Name="FRCreateDate" ColumnName="FRCreateDate" />
+                <ScalarProperty Name="senderMsisdn" ColumnName="senderMsisdn" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+                <ScalarProperty Name="survey_id" ColumnName="survey_id" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="label" ColumnName="label" />
+                <ScalarProperty Name="parentForm_id" ColumnName="parentForm_id" />
+                <ScalarProperty Name="formFieldId" ColumnName="formFieldId" />
+                <ScalarProperty Name="FormResponseID" ColumnName="FormResponseID" />
+                <ScalarProperty Name="RVRepeatCount" ColumnName="RVRepeatCount" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ResponseRepeatableReviews">
+            <EntityTypeMapping TypeName="GRASPModel.ResponseRepeatableReviews">
+              <MappingFragment StoreEntitySet="ResponseRepeatableReviews">
+                <ScalarProperty Name="dvalue" ColumnName="dvalue" />
+                <ScalarProperty Name="nvalue" ColumnName="nvalue" />
+                <ScalarProperty Name="ResponseStatusID" ColumnName="ResponseStatusID" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="SurveyElementIndex" ColumnName="SurveyElementIndex" />
+                <ScalarProperty Name="positionIndex" ColumnName="positionIndex" />
+                <ScalarProperty Name="survey_id" ColumnName="survey_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="label" ColumnName="label" />
+                <ScalarProperty Name="parentForm_id" ColumnName="parentForm_id" />
+                <ScalarProperty Name="ParentFormFieldID" ColumnName="ParentFormFieldID" />
+                <ScalarProperty Name="formFieldId" ColumnName="formFieldId" />
+                <ScalarProperty Name="RVRepeatCount" ColumnName="RVRepeatCount" />
+                <ScalarProperty Name="FormResponseID" ColumnName="FormResponseID" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
