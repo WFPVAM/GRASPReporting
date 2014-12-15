@@ -19,7 +19,21 @@ public static class ServerSideCalculatedField
                       select f).OrderBy(f=>f.FormFieldID);
             foreach(var f in ffe)
             {
-                CalculateFormulaPL(formID, f.FormFieldExtFormula, 0, f.FormFieldExtID, false, formResponseID);
+                CalculateFormulaPL(formID, f.FormFieldExtFormula, 0, f.FormFieldExtID, false, formResponseID,0);
+            }
+
+        }
+    }
+
+    public static void GenerateFrom(int startFromFormResponseID)
+    {
+        using(GRASPEntities db = new GRASPEntities())
+        {
+            var ffe = (from f in db.FormFieldExt
+                       select f).OrderBy(f => f.FormFieldID);
+            foreach(var f in ffe)
+            {
+                CalculateFormulaPL((int)f.FormID, f.FormFieldExtFormula, 0, f.FormFieldExtID, false, 0, startFromFormResponseID);
             }
 
         }
@@ -43,10 +57,10 @@ public static class ServerSideCalculatedField
 
     public static string CalculateFormulaPL(int formID, string formula, int iteration, int? formFieldExtID, bool test)
     {
-        return CalculateFormulaPL(formID, formula, iteration, formFieldExtID, test, 0);
+        return CalculateFormulaPL(formID, formula, iteration, formFieldExtID, test, 0,0);
     }
 
-    public static string CalculateFormulaPL(int formID, string formula, int iteration, int? formFieldExtID, bool test, int formResponseID)
+    public static string CalculateFormulaPL(int formID, string formula, int iteration, int? formFieldExtID, bool test, int formResponseID, int startFromFormResponseID)
     {
         string outResult = "";
         int formFieldID = 0;
@@ -73,11 +87,11 @@ public static class ServerSideCalculatedField
 
             if(formFieldExtID != null)
             {
-                if(formResponseID == 0) //Delete all the existing results for a particular formField
+                if(formResponseID == 0 && startFromFormResponseID==0) //Delete all the existing results for a particular formField
                 {
                     db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE formFieldID = " + formFieldID);
                 }
-                else //delete only the calculated field for the current responseID
+                else if (formResponseID>0 && startFromFormResponseID==0) //delete only the calculated field for the current responseID
                 {
                     db.Database.ExecuteSqlCommand("DELETE FROM ResponseValueExt WHERE FormResponseID = " + formResponseID + " AND formFieldID = " + formFieldID);
                 }
@@ -101,14 +115,27 @@ public static class ServerSideCalculatedField
                             select new { name = fe.FormFieldExtName });
 
 
-
-        var respValues = (from rv in db.FormFieldResponses
+        List<RespValForCalc> respValues;
+        List<FormResponse> frmResponses;
+        if(startFromFormResponseID == 0)
+        {
+            respValues = (from rv in db.FormFieldResponses
                           where rv.parentForm_id == formID && (rv.type == "NUMERIC_TEXT_FIELD" || rv.type == "SERVERSIDE-CALCULATED")
                             && formula.Contains(rv.name) && (formResponseID == 0 || rv.FormResponseID == formResponseID)
-                          select new { name = rv.name, value = rv.value, formResponseID = rv.FormResponseID }).ToList();
+                          select new RespValForCalc { Name = rv.name, Value = rv.value, FormResponseID = rv.FormResponseID.Value }).ToList();
 
-        var frmResponses = db.FormResponse.Where(w => w.parentForm_id == formID && (w.id == formResponseID || formResponseID == 0)).ToList();
-        
+            frmResponses = db.FormResponse.Where(w => w.parentForm_id == formID && (w.id == formResponseID || formResponseID == 0)).ToList();
+        }
+        else
+        {
+            respValues = (from rv in db.FormFieldResponses
+                          where rv.parentForm_id == formID && (rv.type == "NUMERIC_TEXT_FIELD" || rv.type == "SERVERSIDE-CALCULATED")
+                            && formula.Contains(rv.name) && (rv.FormResponseID >=startFromFormResponseID)
+                          select new RespValForCalc { Name = rv.name, Value = rv.value, FormResponseID = rv.FormResponseID.Value }).ToList();
+
+            frmResponses = db.FormResponse.Where(w => w.parentForm_id == formID && (w.id >=startFromFormResponseID)).ToList();
+        }
+
         foreach(var r in frmResponses.AsParallel())
         {
             CalcEngine.CalcEngine ce = new CalcEngine.CalcEngine();
@@ -120,16 +147,16 @@ public static class ServerSideCalculatedField
                 dct[ff.name] = 0;
             }
 
-            foreach(var rv in respValues.ToList().AsParallel().Where(re => re.formResponseID == r.id))
+            foreach(var rv in respValues.ToList().AsParallel().Where(re => re.FormResponseID == r.id))
             {
-                if(rv.value.Length > 0)
+                if(rv.Value.Length > 0)
                 {
                     decimal val = 0;
-                    Decimal.TryParse(rv.value, out val);
+                    Decimal.TryParse(rv.Value, out val);
                     object exVal = 0;
-                    dct.TryGetValue(rv.name, out exVal);
+                    dct.TryGetValue(rv.Name, out exVal);
                     decimal exvald = Convert.ToDecimal(exVal);
-                    dct[rv.name] = exvald + val;
+                    dct[rv.Name] = exvald + val;
                 }
             }
             string eval = "";
@@ -316,4 +343,11 @@ public class CalcDictionary : IDictionary<string, object>
     }
 
     #endregion
+}
+
+public class RespValForCalc
+{
+    public int FormResponseID { get; set; }
+    public string Name { get; set; }
+    public string Value { get; set; }
 }

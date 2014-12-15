@@ -51,7 +51,7 @@
         <div class="col-lg-8">
             <div class="alert alert-dismissable alert-success">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Well Done!</strong> You successfully add a report. Add a<asp:Button ID="btnNewLabel" runat="server" OnClick="btnNewLabel_Click" Text="new label for this Form" ForeColor="#3a87ad" BackColor="Transparent" BorderColor="Transparent" />, or <a href="CreateReport.aspx">Create New Report</a>.
+                <strong>Chart successfully added. </strong> You successfully add a report. Add <asp:Button ID="btnNewLabel" runat="server" OnClick="btnNewLabel_Click" Text="another chart" ForeColor="#3a87ad" BackColor="Transparent" BorderColor="Transparent" />, or <a href="CreateReport.aspx">Create a New Report</a>.
             </div>
         </div>
     </div>
@@ -146,7 +146,7 @@
                     </asp:Panel>
                     <asp:Panel ID="pnlBar" runat="server" Visible="false">
                         <div class="form-group">
-                            <label>Select Series Name</label>
+                            <label>Aggregate data by</label>
                             <telerik:RadComboBox ID="ddlSerieField" runat="server" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White" EnableLoadOnDemand="true"
                                 CloseDropDownOnBlur="true" EmptyMessage="Select a field">
                             </telerik:RadComboBox>

@@ -66,7 +66,7 @@ public partial class Admin_Dashboard : System.Web.UI.Page
         string roleUser = User_Credential.getRoleForUser(loggedUser);
         if(roleUser == "SuperAdministrator")
         {
-            //PnlResponseProcessing.Visible = true;
+            PnlResponseProcessing.Visible = true;
         }
 
         RadProgressArea.Localization.UploadedFiles = "Processed Response: ";
@@ -102,6 +102,12 @@ public partial class Admin_Dashboard : System.Web.UI.Page
 
         double ms = 0;
         Stopwatch sw = new Stopwatch();
+
+        int formToProc = files.Length;
+        if(formToProc > 10)
+        {
+            formToProc = 10;
+        }
         for(int i = 0; i < files.Length; i++)
         {
             sw.Reset();
@@ -128,6 +134,30 @@ public partial class Admin_Dashboard : System.Web.UI.Page
 
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts2.Hours, ts2.Minutes, ts2.Seconds);
             ProgressContex.TimeEstimated = elapsedTime;
+        }
+        ProgressContex.CurrentOperationText = "Insert Done. Pleas Wait...";
+        Thread.Sleep(2000);
+        ProgressContex.CurrentOperationText = "Calculating Indexes. Pleas Wait...";
+        Thread.Sleep(1100);
+        incomProc.GenerateIndexesHash();
+        ProgressContex.CurrentOperationText = "Calculating Server Side Calulated Fields. Please Wait...";
+        Thread.Sleep(1100);
+        incomProc.GenerateCalculatedField();
+        ProgressContex.CurrentOperationText = "Validating User to Response Permission. Please Wait...";
+        Thread.Sleep(1100);
+        incomProc.GenerateUserToFormResponseAssociation();
+
+
+        files = Directory.GetFiles(Utility.GetResponseFilesFolderName() + "incoming");
+        if(files.Length > 0)
+        {
+            BtnProcessIncomingResponse.Enabled = true;
+            LitIncomingInfo.Text = "New Form Response(s): " + files.Length;
+        }
+        else
+        {
+            BtnProcessIncomingResponse.Enabled = false;
+            LitIncomingInfo.Text = "All Responses have been processed.";
         }
 
     }

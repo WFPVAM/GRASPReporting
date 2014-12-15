@@ -47,7 +47,7 @@ public partial class Admin_Statistics_ViewChart : System.Web.UI.Page
         IEnumerable<ReportField> repFlds = ReportField.getReportFields(ReportID);
         Literal1.Text="<script>function createCharts(){";
 
-        foreach (ReportField rep in repFlds)
+        foreach (ReportField rep in repFlds.OrderBy(o=>o.ReportFieldOrder))
         {
             switch (rep.ChartType)
             {

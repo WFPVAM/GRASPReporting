@@ -26,7 +26,6 @@
         <EntityTypeShape EntityType="GRASPModel.keywordaction" Width="1.5" PointX="3" PointY="16.625" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.message" Width="1.5" PointX="7.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.reminder" Width="1.5" PointX="3" PointY="24.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="GRASPModel.ReportField" Width="1.5" PointX="11.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.Report" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.ResponseValue" Width="1.5" PointX="7.5" PointY="8.125" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.Roles" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
@@ -95,6 +94,7 @@
         <EntityTypeShape EntityType="GRASPModel.RolesToResponseStatus" Width="1.5" PointX="20.375" PointY="3.75" />
         <EntityTypeShape EntityType="GRASPModel.FormFieldResponsesReviews" Width="1.5" PointX="21.375" PointY="16.75" />
         <EntityTypeShape EntityType="GRASPModel.ResponseRepeatableReviews" Width="1.5" PointX="21.375" PointY="21.75" />
+        <EntityTypeShape EntityType="GRASPModel.ReportField" Width="1.5" PointX="22.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

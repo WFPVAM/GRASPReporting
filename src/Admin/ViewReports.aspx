@@ -56,7 +56,7 @@
                             <asp:ImageButton ID="btnDelete" runat="server" AlternateText="Delete Report"
                                 
                                  CommandName="Delete" ImageUrl="../_images/Cross.png" />--%>
-                            <%# "<a style=\"color:#0058B1; margin-right:5px;\" href=\"ReportDetails.aspx?id=" + Eval("ReportID") + "\"><i class=\"fa fa-eye fa-2\"></i>View Details</a>"%>
+                            <%# "<a style=\"color:#0058B1; margin-right:5px;\" href=\"ReportDetails.aspx?id=" + Eval("ReportID") + "\"><i class=\"fa fa-eye fa-2\"></i>Edit</a>"%>
                             <asp:LinkButton ID="LinkButton1" runat="server" OnClientClick="javascript:if(!confirm('This action will delete the selected report. Are you sure?')){return false;}"
                                 CommandName="Delete"><i class="color fa fa-trash-o fa-2"></i><span class="color">Delete Report</span></asp:LinkButton>
                         </ItemTemplate>

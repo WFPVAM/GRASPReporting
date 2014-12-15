@@ -52,7 +52,7 @@ public partial class _uc_barChart : System.Web.UI.UserControl
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
-        
+
         List<string> categories = new List<string>();
         List<double> data = new List<double>();
         Dictionary<string, double> axisValues = new Dictionary<string, double>();
@@ -82,11 +82,17 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         if(ReportData.ReportFieldTableData == 1)
             table = "true";
 
+            var deleteRespStatusID = (from rs in db.FormResponseStatus
+                                      where rs.ResponseStatusName == "Deleted"
+                                      select new { rs.ResponseStatusID }).FirstOrDefault();
+
         if(aggregate == "count" || aggregate == "")
         {
-            var items = from rv in db.ResponseValue
-                        where rv.formFieldId == serieID
-                        group rv by rv.value into g
+            var items = from ffr in db.FormFieldResponses
+                        where ffr.formFieldId == serieID
+                             && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) 
+                             && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
+                        group ffr by ffr.value into g
                         select new
                         {
                             category = g.Key,
@@ -102,12 +108,11 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         }
         else
         {
-            var deleteRespStatusID = (from rs in db.FormResponseStatus
-                                       where rs.ResponseStatusName == "Deleted"
-                                       select new { rs.ResponseStatusID }).FirstOrDefault();
+
 
             var resVal = from ffr in db.FormFieldResponses
-                         where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) && ffr.ResponseStatusID!=deleteRespStatusID.ResponseStatusID
+                         where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) 
+                            && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
                             && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
                          select new { ffr.value, ffr.formFieldId, ffr.nvalue };
 
@@ -160,8 +165,12 @@ public partial class _uc_barChart : System.Web.UI.UserControl
                     }
                     catch(Exception ex)
                     {
-                        countAverage.Add(tmpValueKey, 1);
+                        if(aggregate != "max" && aggregate != "min")
+                        {
+                            countAverage.Add(tmpValueKey, 1);
+                        }
                         axisValues.Add(tmpValueKey, Convert.ToDouble(r.value));
+
                         if(aggregate == "stdev")
                         {
                             List<double> list;
@@ -175,7 +184,7 @@ public partial class _uc_barChart : System.Web.UI.UserControl
 
             }
 
-            
+
             foreach(var item in axisValues.ToList())
             {
                 if(aggregate == "average")

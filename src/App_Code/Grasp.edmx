@@ -410,6 +410,7 @@ warning 6002: The table/view 'GRASP.dbo.message_FrontlineMultimediaMessagePart' 
           <Property Name="ReportFieldTableData" Type="int" />
           <Property Name="ReportFieldTitle" Type="nvarchar" MaxLength="500" />
           <Property Name="ReportFieldNote" Type="nvarchar(max)" />
+          <Property Name="ReportFieldOrder" Type="int" />
         </EntityType>
         <EntityType Name="Reports">
           <Key>
@@ -1966,24 +1967,6 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <Property Name="emailAccount_id" Type="Decimal" Precision="19" Scale="0" />
           <NavigationProperty Name="EmailAccount" Relationship="Self.FKE116C0723D2C2C41" FromRole="reminder" ToRole="EmailAccount" />
         </EntityType>
-        <EntityType Name="ReportField">
-          <Key>
-            <PropertyRef Name="ReportFieldID" />
-          </Key>
-          <Property Name="ReportFieldID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ReportID" Type="Int32" Nullable="false" />
-          <Property Name="ReportFieldLabel" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="FormFieldID" Type="Decimal" Precision="19" Scale="0" Nullable="false" />
-          <Property Name="ReportFieldCreateDate" Type="DateTime" Precision="3" />
-          <Property Name="ChartType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReportFieldValueLabel" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ValueFormFieldID" Type="Decimal" Precision="19" Scale="0" />
-          <Property Name="ReportFieldAggregate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ReportFieldLegend" Type="Int32" />
-          <Property Name="ReportFieldTableData" Type="Int32" />
-          <Property Name="ReportFieldTitle" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ReportFieldNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
         <EntityType Name="Report">
           <Key>
             <PropertyRef Name="ReportID" />
@@ -2521,7 +2504,6 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <EntitySet Name="keywordaction" EntityType="Self.keywordaction" />
           <EntitySet Name="message" EntityType="Self.message" />
           <EntitySet Name="reminder" EntityType="Self.reminder" />
-          <EntitySet Name="ReportFields" EntityType="GRASPModel.ReportField" />
           <EntitySet Name="Reports" EntityType="GRASPModel.Report" />
           <EntitySet Name="ResponseValue" EntityType="Self.ResponseValue" />
           <EntitySet Name="Roles" EntityType="Self.Roles" />
@@ -2689,6 +2671,7 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <EntitySet Name="RolesToResponseStatus" EntityType="GRASPModel.RolesToResponseStatus" />
           <EntitySet Name="FormFieldResponsesReviews" EntityType="GRASPModel.FormFieldResponsesReviews" />
           <EntitySet Name="ResponseRepeatableReviews" EntityType="GRASPModel.ResponseRepeatableReviews" />
+          <EntitySet Name="ReportFields" EntityType="GRASPModel.ReportField" />
         </EntityContainer>
         <EntityType Name="IndexHASH">
           <Key>
@@ -2990,6 +2973,25 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <Property Name="nvalue" Type="Double" />
           <Property Name="dvalue" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="ReportField">
+          <Key>
+            <PropertyRef Name="ReportFieldID" />
+          </Key>
+          <Property Name="ReportFieldID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReportID" Type="Int32" Nullable="false" />
+          <Property Name="ReportFieldLabel" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FormFieldID" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
+          <Property Name="ReportFieldCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="ChartType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReportFieldValueLabel" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ValueFormFieldID" Type="Decimal" Precision="19" Scale="0" />
+          <Property Name="ReportFieldAggregate" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ReportFieldLegend" Type="Int32" />
+          <Property Name="ReportFieldTableData" Type="Int32" />
+          <Property Name="ReportFieldTitle" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ReportFieldNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ReportFieldOrder" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3280,25 +3282,6 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
                 <ScalarProperty Name="subject" ColumnName="subject" />
                 <ScalarProperty Name="type" ColumnName="type" />
                 <ScalarProperty Name="emailAccount_id" ColumnName="emailAccount_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ReportFields">
-            <EntityTypeMapping TypeName="GRASPModel.ReportField">
-              <MappingFragment StoreEntitySet="ReportFields">
-                <ScalarProperty Name="ReportFieldNote" ColumnName="ReportFieldNote" />
-                <ScalarProperty Name="ReportFieldTitle" ColumnName="ReportFieldTitle" />
-                <ScalarProperty Name="ReportFieldID" ColumnName="ReportFieldID" />
-                <ScalarProperty Name="ReportID" ColumnName="ReportID" />
-                <ScalarProperty Name="ReportFieldLabel" ColumnName="ReportFieldLabel" />
-                <ScalarProperty Name="FormFieldID" ColumnName="FormFieldID" />
-                <ScalarProperty Name="ReportFieldCreateDate" ColumnName="ReportFieldCreateDate" />
-                <ScalarProperty Name="ChartType" ColumnName="ChartType" />
-                <ScalarProperty Name="ReportFieldValueLabel" ColumnName="ReportFieldValueLabel" />
-                <ScalarProperty Name="ValueFormFieldID" ColumnName="ValueFormFieldID" />
-                <ScalarProperty Name="ReportFieldAggregate" ColumnName="ReportFieldAggregate" />
-                <ScalarProperty Name="ReportFieldLegend" ColumnName="ReportFieldLegend" />
-                <ScalarProperty Name="ReportFieldTableData" ColumnName="ReportFieldTableData" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3796,6 +3779,26 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
                 <ScalarProperty Name="FormResponseID" ColumnName="FormResponseID" />
                 <ScalarProperty Name="value" ColumnName="value" />
                 <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReportFields">
+            <EntityTypeMapping TypeName="GRASPModel.ReportField">
+              <MappingFragment StoreEntitySet="ReportFields">
+                <ScalarProperty Name="ReportFieldOrder" ColumnName="ReportFieldOrder" />
+                <ScalarProperty Name="ReportFieldNote" ColumnName="ReportFieldNote" />
+                <ScalarProperty Name="ReportFieldTitle" ColumnName="ReportFieldTitle" />
+                <ScalarProperty Name="ReportFieldTableData" ColumnName="ReportFieldTableData" />
+                <ScalarProperty Name="ReportFieldLegend" ColumnName="ReportFieldLegend" />
+                <ScalarProperty Name="ReportFieldAggregate" ColumnName="ReportFieldAggregate" />
+                <ScalarProperty Name="ValueFormFieldID" ColumnName="ValueFormFieldID" />
+                <ScalarProperty Name="ReportFieldValueLabel" ColumnName="ReportFieldValueLabel" />
+                <ScalarProperty Name="ChartType" ColumnName="ChartType" />
+                <ScalarProperty Name="ReportFieldCreateDate" ColumnName="ReportFieldCreateDate" />
+                <ScalarProperty Name="FormFieldID" ColumnName="FormFieldID" />
+                <ScalarProperty Name="ReportFieldLabel" ColumnName="ReportFieldLabel" />
+                <ScalarProperty Name="ReportID" ColumnName="ReportID" />
+                <ScalarProperty Name="ReportFieldID" ColumnName="ReportFieldID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

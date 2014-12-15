@@ -44,7 +44,6 @@ public partial class GRASPEntities : DbContext
     public virtual DbSet<keywordaction> keywordaction { get; set; }
     public virtual DbSet<message> message { get; set; }
     public virtual DbSet<reminder> reminder { get; set; }
-    public virtual DbSet<ReportField> ReportFields { get; set; }
     public virtual DbSet<Report> Reports { get; set; }
     public virtual DbSet<ResponseValue> ResponseValue { get; set; }
     public virtual DbSet<Roles> Roles { get; set; }
@@ -80,4 +79,5 @@ public partial class GRASPEntities : DbContext
     public virtual DbSet<RolesToResponseStatus> RolesToResponseStatus { get; set; }
     public virtual DbSet<FormFieldResponsesReviews> FormFieldResponsesReviews { get; set; }
     public virtual DbSet<ResponseRepeatableReviews> ResponseRepeatableReviews { get; set; }
+    public virtual DbSet<ReportField> ReportFields { get; set; }
 }

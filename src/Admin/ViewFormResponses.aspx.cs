@@ -180,10 +180,20 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
                            from rv1 in db.ResponseValue
                            from rv2 in db.ResponseValue
                            from rs in db.FormResponseStatus
-                           where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID && r.ResponseStatusID==rs.ResponseStatusID &&
+                           where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID && r.ResponseStatusID == rs.ResponseStatusID &&
                                    rv1.formFieldId == ffidCompileDate && rv2.formFieldId == ffidEnumerator && r.parentForm_id == formID
                            orderby r.id descending
-                           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, CompileDate = rv1.value, Enumerator = rv2.value, ResponseStatus=rs.ResponseStatusName });
+                           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, CompileDate = rv1.value, Enumerator = rv2.value, ResponseStatus = rs.ResponseStatusName });
+
+
+                //var res = (from r in responses
+                //           from rv2 in db.ResponseValue
+                //           from rs in db.FormResponseStatus
+                //           where r.id == rv2.FormResponseID && r.ResponseStatusID == rs.ResponseStatusID &&
+                //                   rv2.formFieldId == ffidEnumerator && r.parentForm_id == formID
+                //           orderby r.id descending
+                //           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, Enumerator = rv2.value });
+
 
                 //Build the Custom Paging values for better performance
 

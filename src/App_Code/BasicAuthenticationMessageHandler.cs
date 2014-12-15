@@ -52,8 +52,8 @@ public class BasicAuthenticationMessageHandler : DelegatingHandler
         }
 
         var encodedUserPass = authHeader.Parameter.Trim();
-        //var userPass = Encoding.ASCII.GetString(Convert.FromBase64String(encodedUserPass));
-        var parts = encodedUserPass.Split(":".ToCharArray());
+        var userPass = Encoding.ASCII.GetString(Convert.FromBase64String(encodedUserPass));
+        var parts = userPass.Split(":".ToCharArray());
         var username = parts[0];
         var password = parts[1];
 

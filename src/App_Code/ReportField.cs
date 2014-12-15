@@ -86,6 +86,27 @@ public partial class ReportField
             return Convert.ToInt32(ffID);
         else return 0;
     }
+
+    public static ReportField GetReportField(GRASPEntities db, int reportFieldId)
+    {
+        var item = (from rf in db.ReportFields
+                    where rf.ReportFieldID == reportFieldId
+                    select rf).FirstOrDefault();
+        return item;
+    }
+
+    public static void ReorderReportField(GRASPEntities db,int reportFieldId, int startIdx, int endIdx,int step)
+    {
+        var items = (from rf in db.ReportFields
+                    where rf.ReportFieldOrder >= startIdx && rf.ReportFieldOrder<= endIdx && rf.ReportFieldID!=reportFieldId
+                    select rf);
+        foreach(ReportField i in items)
+        {
+            i.ReportFieldOrder = i.ReportFieldOrder + step;
+        }
+    }
+
+
     /// <summary>
     /// </summary>
     /// <param name="ReportID">the id of the report</param>

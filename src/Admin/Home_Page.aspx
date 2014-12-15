@@ -13,7 +13,7 @@
     </div>
     <div class="row">
 
-        <div runat="server" id="PnlResponseProcessing" class="col-lg-4">
+        <div runat="server" id="PnlResponseProcessing" class="col-lg-6">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="row">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-6">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="row">
@@ -72,7 +72,7 @@
                     <asp:HyperLink ID="lnkdwnload" runat="server" NavigateUrl="~/public/GraspMobile.apk">
                         <div class="row">
                             <div class="col-xs-6">
-                                Download GRASP APK
+                                Download GRASP Mobile APK
                             </div>
                             <div class="col-xs-6 text-right">
                                 <i class="fa fa-download"></i>
@@ -84,7 +84,7 @@
                     <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/public/BarcodeScanner.apk">
                         <div class="row">
                             <div class="col-xs-8">
-                                Download BARCODE SCANNER
+                                Download Barcode Scanner
                             </div>
                             <div class="col-xs-4 text-right">
                                 <i class="fa fa-download"></i>
@@ -97,6 +97,18 @@
                             <asp:Literal ID="Literal1" runat="server"></asp:Literal>
                         </div>
                     </div>
+                </div>
+                <div class="panel-footer announcement-bottom">
+                    <asp:HyperLink ID="HyperLink2" runat="server" NavigateUrl="~/public/FolderSyncLite.apk">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                Download Folder Sync Lite
+                            </div>
+                            <div class="col-xs-4 text-right">
+                                <i class="fa fa-download"></i>
+                            </div>
+                        </div>
+                    </asp:HyperLink>
                 </div>
             </div>
 

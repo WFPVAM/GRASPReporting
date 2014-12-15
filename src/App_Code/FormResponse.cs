@@ -261,13 +261,13 @@ public partial class FormResponse
                     case "EMAIL_FIELD":
                         if(r.value.Length != 0)
                         {
-                            sb.AppendLine("\"" + r.name + "\": \"" + r.value.Replace("\\", "") + "\",");
+                            sb.AppendLine("\"" + r.name + "\": \"" + r.value.Replace("\\", "").Replace("\"", "\\\"") + "\",");
                         }
                         break;
                     case "DROP_DOWN_LIST":
                         if(r.value.Length != 0)
                         {
-                            sb.AppendLine("\"" + r.name + "\": {\"value\":\"" + r.value + "\"},");
+                            sb.AppendLine("\"" + r.name + "\": {\"value\":\"" + r.value.Replace("\\", "").Replace("\"", "\\\"") + "\"},");
                         }
                         break;
                     case "NUMERIC_TEXT_FIELD":
@@ -314,8 +314,21 @@ public partial class FormResponse
                             //tmp = tmp.Substring(0, tmp.Length - 2);
                             //sbRep.Clear();
                             //sbRep.Append(tmp);
-                            repFields = repFields.Substring(0, repFields.Length - 1); //remove last comma
-                            repFields = repFields + ("},{"); //close previous and open new one
+
+                            //******* ERROR ON 25124 UNDP
+
+                            if(repFields.LastOrDefault() == ',')
+                            {
+                                repFields = repFields.Substring(0, repFields.Length - 1); //remove last comma
+                            }
+                            if(repFields.Length != 0)
+                            {
+                                repFields = repFields + ("},{"); //close previous and open new one
+                            }
+                            //else
+                            //{
+                            //    repFields = repFields + ("{"); //previous was totally empty. open the new one as the first one.
+                            //}
                         }
                     }
                     else
@@ -334,13 +347,13 @@ public partial class FormResponse
                         case "EMAIL_FIELD":
                             if(r.value.Length != 0)
                             {
-                                repFields = repFields + ("\"" + r.name + "\": \"" + r.value + "\",");
+                                repFields = repFields + ("\"" + r.name + "\": \"" + r.value.Replace("\\", "").Replace("\"", "\\\"") + "\",");
                             }
                             break;
                         case "DROP_DOWN_LIST":
                             if(r.value.Length != 0)
                             {
-                                repFields = repFields + ("\"" + r.name + "\": {\"value\":\"" + r.value + "\"},");
+                                repFields = repFields + ("\"" + r.name + "\": {\"value\":\"" + r.value.Replace("\\", "").Replace("\"", "\\\"") + "\"},");
                             }
                             break;
                         case "NUMERIC_TEXT_FIELD":
@@ -360,7 +373,14 @@ public partial class FormResponse
                 }
                 //cycle on repeatable fields finished. Close the Repeatable.
                 repFields = repFields.Substring(0, repFields.Length - 1); //remove comma
-                sbRep.AppendLine(repFields + "}]");                
+                if(repFields.Length == 0 || repFields.Last()==',')
+                {
+                    sbRep.AppendLine(repFields + "{}]");
+                }
+                else
+                {
+                    sbRep.AppendLine(repFields + "}]");
+                }
             }
         }
         if(sbRep.Length == 0)

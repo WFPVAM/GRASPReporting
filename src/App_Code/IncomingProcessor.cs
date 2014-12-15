@@ -12,33 +12,21 @@ using System.Xml;
 /// </summary>
 public class IncomingProcessor
 {
-	public IncomingProcessor()
-	{
+    public int firstFormResponseID;
 
-	}
-
-    public bool ProcessResponse(string text, string sender)
+    public IncomingProcessor()
     {
-        return ProcessResponse(text, sender,"");
+        firstFormResponseID = 0;
     }
 
-    public bool ProcessResponse(string text, string sender, string fileName)
+    public string ProcessResponse(string text, string sender)
     {
-        byte[] encodedText = Convert.FromBase64String(text);
+        return ProcessResponse(text, sender, "");
+    }
 
-        Stream stream = new MemoryStream(encodedText);
-        GZipStream a = new GZipStream(stream, CompressionMode.Decompress);
-        MemoryStream output = new MemoryStream();
+    public string ProcessResponse(string text, string sender, string fileName)
+    {
 
-        stream.Position = 0;
-        StreamReader sr = new StreamReader(a);
-        string tmp = sr.ReadToEnd();
-        int index = tmp.IndexOf("</data>?");
-        string fileContent = tmp.Substring(0, index + 7);
-        XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.LoadXml(fileContent);
-        string xpath = "data";
-        var nodes = xmlDoc.SelectNodes(xpath);
         string[,] fieldTypeMapping = null;
         int fIDX = -1;
         int formParentID = 0;
@@ -49,6 +37,37 @@ public class IncomingProcessor
         int ffIdRoster = 0;
         int repCount = 0;
         bool previousRoster = false;
+        string fileContent="";
+
+        try
+        {
+            if(text.Length != 0)
+            {
+                byte[] encodedText = Convert.FromBase64String(text);
+                Stream stream = new MemoryStream(encodedText);
+                GZipStream zipStream = new GZipStream(stream, CompressionMode.Decompress);
+
+                stream.Position = 0;
+                StreamReader sr = new StreamReader(zipStream);
+                string tmp = sr.ReadToEnd();
+                int index = tmp.IndexOf("</data>?");
+                fileContent = tmp.Substring(0, index + 7);
+            }
+            else
+            {
+                WriteErrorLog(null, fileName, text);
+                return "ko";
+            }
+        }
+        catch(Exception ex)
+        {
+            WriteErrorLog(ex, fileName, text);
+            return "ko";
+        }
+        XmlDocument xmlDoc = new XmlDocument();
+        xmlDoc.LoadXml(fileContent);
+        var nodes = xmlDoc.SelectNodes("data");
+
         try
         {
             using(GRASPEntities db = new GRASPEntities())
@@ -66,7 +85,13 @@ public class IncomingProcessor
                             fieldTypeMapping = FormField.getFormFieldTypeMap(formParentID); //idx= 0:name; 1:id; 2:type; 3:positionIndex
 
                             if(formResponseID == 0)
-                                return false;
+                            {
+                                return "ko";
+                            }
+                            if(firstFormResponseID == 0)
+                            {
+                                firstFormResponseID = formResponseID;
+                            }
                         }
                         else if(child.Name.Contains('_'))
                         {
@@ -256,35 +281,30 @@ public class IncomingProcessor
 
                     db.Database.ExecuteSqlCommand("DELETE FormResponse WHERE id=" + formResponseID);
                     SaveErrorResponse(fileContent, fileName);
-                    return false;
+                    if(fileName.Length > 0)
+                    {
+                        File.Delete(Utility.GetResponseFilesFolderName() + "incoming\\" + fileName);
+                    }
+                    return "ko";
                 }
 
                 FormResponse.updateClientVersion(formResponseID, clientVersion);
                 //Index.GenerateIndexesHASH(formParentID, formResponseID);
                 //ServerSideCalculatedField.GenerateSingle(formParentID, formResponseID);
                 //UserToFormResponses.GenerateAssociationForAllUsers(formParentID, formResponseID);
-                return true;
+
+                SaveProcessedResponse(fileContent, formResponseID.ToString().PadLeft(9, '0'));
+                if(fileName.Length > 0)
+                {
+                    File.Delete(Utility.GetResponseFilesFolderName() + "incoming\\" + fileName);
+                }
+                return "ok";
             }
         }
         catch(Exception ex)
         {
-            string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
-            if(!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-            StreamWriter file = new StreamWriter(folderPath + "\\MobileConnection.txt", true);
-            //file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            //file.WriteLine(text);
-            file.WriteLine("____________________________________________________________________________");
-            file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " Error on " + fileName);
-            file.WriteLine(ex.Message);
-            file.WriteLine(ex.StackTrace);
-            file.WriteLine("____________________________________________________________________________");
-            file.Close();
-
-            SaveErrorResponse(fileContent, fileName);
-            return false;
+            WriteErrorLog(ex, fileName, fileContent);
+            return "ko";
         }
         finally
         {
@@ -308,7 +328,7 @@ public class IncomingProcessor
                 file.Write(data);
                 file.Close();
             }
-            return "1";
+            return "ok";
         }
         catch(Exception ex)
         {
@@ -324,7 +344,7 @@ public class IncomingProcessor
             file.WriteLine(ex.StackTrace);
             file.WriteLine("____________________________________________________________________________");
             file.Close();
-            return "0";
+            return "ko";
         }
     }
 
@@ -341,4 +361,66 @@ public class IncomingProcessor
             file.Close();
         }
     }
+
+    public void SaveProcessedResponse(string data, string fileName)
+    {
+        string folderPath = Utility.GetResponseFilesFolderName() + "processed\\";
+        if(!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+        using(StreamWriter file = new StreamWriter(folderPath + fileName, true))
+        {
+            file.Write(data);
+            file.Close();
+        }
+    }
+
+    public void GenerateIndexesHash()
+    {
+        if(firstFormResponseID > 0)
+        {
+            Index.GenerateIndexesHASH(this.firstFormResponseID);
+        }
+    }
+    public void GenerateCalculatedField()
+    {
+        if(firstFormResponseID > 0)
+        {
+            ServerSideCalculatedField.GenerateFrom(this.firstFormResponseID);
+        }
+    }
+    public void GenerateUserToFormResponseAssociation()
+    {
+        if(firstFormResponseID > 0)
+        {
+            UserToFormResponses.GenerateAssociationForAllUsersFrom(this.firstFormResponseID);
+        }
+    }
+
+    public void WriteErrorLog(Exception ex, string fileName, string fileContent)
+    {
+        string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
+        if(!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+        StreamWriter file = new StreamWriter(folderPath + "\\MobileConnection.txt", true);
+        file.WriteLine("____________________________________________________________________________");
+        file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " Error on " + fileName);
+        if(ex != null)
+        {
+            file.WriteLine(ex.Message);
+            file.WriteLine(ex.StackTrace);
+        }
+        file.WriteLine("____________________________________________________________________________");
+        file.Close();
+
+        SaveErrorResponse(fileContent, fileName);
+        if(fileName.Length > 0)
+        {
+            File.Delete(Utility.GetResponseFilesFolderName() + "incoming\\" + fileName);
+        }
+    }
+
 }

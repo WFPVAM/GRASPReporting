@@ -2,12 +2,47 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <script type="text/javascript">
+        //<![CDATA[
+        function onRowDropping(sender, args) {
+            if (sender.get_id() == "<%=rgReports.ClientID %>") {
+                    var node = args.get_destinationHtmlElement();
+                    if (!isChildOf('<%=rgReports.ClientID %>', node) && !isChildOf('<%=rgReports.ClientID %>', node)) {
+                        args.set_cancel(true);
+                    }
+                }
+                else {
+                    var node = args.get_destinationHtmlElement();
+                    if (!isChildOf('trashCan', node)) {
+                        args.set_cancel(true);
+                    }
+                    else {
+                        if (confirm("Are you sure you want to delete this order?"))
+                            args.set_destinationHtmlElement($get('trashCan'));
+                        else
+                            args.set_cancel(true);
+                    }
+                }
+            }
+
+            function isChildOf(parentId, element) {
+                while (element) {
+                    if (element.id && element.id.indexOf(parentId) > -1) {
+                        return true;
+                    }
+                    element = element.parentNode;
+                }
+                return false;
+            }
+            //]]>
+        </script>
     <style type="text/css">
         .color {
             color: #0058B1;
             margin-left: 5px;
         }
     </style>
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphBody1" Runat="Server">
     <div class="row">
@@ -21,9 +56,11 @@
         </div>
     </div>
     <div>
-        <telerik:RadGrid ID="rgReports" runat="server" DataSourceID="ldsReport" CellSpacing="0" GridLines="None" Skin="MetroTouch" OnDeleteCommand="rgReports_DeleteCommand"
-            ForeColor="#0058B1" BorderColor="White" AlternatingItemStyle-BackColor="#CCE6FF" HeaderStyle-BackColor="#0058B1" HeaderStyle-ForeColor="White">
-            <MasterTableView AutoGenerateColumns="False" DataKeyNames="ReportID" DataSourceID="ldsReport">
+        <telerik:RadGrid ID="rgReports" runat="server" CellSpacing="0" GridLines="None" Skin="Metro" 
+            OnDeleteCommand="rgReports_DeleteCommand" OnRowDrop="rgReports_RowDrop"
+            ForeColor="#0058B1" BorderColor="White" AlternatingItemStyle-BackColor="#CCE6FF" HeaderStyle-BackColor="#0058B1" HeaderStyle-ForeColor="White" OnNeedDataSource="rgReports_NeedDataSource">
+            
+            <MasterTableView AutoGenerateColumns="False" DataKeyNames="ReportFieldID" >                
                 <Columns>
                     <telerik:GridBoundColumn DataField="ChartType" HeaderText="Chart Type" ReadOnly="True"
                         UniqueName="ChartType">
@@ -48,9 +85,15 @@
                     </telerik:GridTemplateColumn>
                 </Columns>
             </MasterTableView>
+
+            
+                <ClientSettings AllowRowsDragDrop="True">
+                    <Selecting AllowRowSelect="True" EnableDragToSelectRows="false"></Selecting>
+                    <ClientEvents OnRowDropping="onRowDropping"></ClientEvents>
+                </ClientSettings>
         </telerik:RadGrid>
         <telerik:RadButton ID="BtnAddNewChart" runat="server" Text=" Add New Chart " OnClick="BtnAddNewChart_Click" Skin="Metro"></telerik:RadButton>
-        <asp:LinqDataSource ID="ldsReport" runat="server" OnSelecting="ldsReport_Selecting" OrderBy="CreateDate"></asp:LinqDataSource>
+
     </div>
 </asp:Content>
 

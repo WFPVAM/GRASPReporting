@@ -216,7 +216,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
              ") x pivot ( max(value) for fn in (" + columnList + ") ) p) AS X";
 
         //var result = db.Database.SqlQuery<IEnumerable<string>>(sqlCmd).ToList();
-
+        //check: http://michaeljswart.com/2011/06/forget-about-pivot/
 
         SqlConnection sqlConnection1 = new SqlConnection(System.Configuration.ConfigurationManager.
                                                         ConnectionStrings["GRASP_MemberShip"].ConnectionString);

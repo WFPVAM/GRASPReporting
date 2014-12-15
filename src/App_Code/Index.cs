@@ -40,13 +40,26 @@ public partial class Index
                                 select i).ToList();
             foreach(Index i in idxs)
             {
-                GenerateIndexHASHes(i.IndexID, formResponseID);
+                GenerateIndexHASHes(i.IndexID, formResponseID,0);
             }
             return idxs.Count;
         }
 
     }
 
+    public static int GenerateIndexesHASH(int fromFormResponseIDs)
+    {
+        using(GRASPEntities db = new GRASPEntities())
+        {
+            List<Index> idxs = (from i in db.Indexes
+                                select i).ToList();
+            foreach(Index i in idxs)
+            {
+                GenerateIndexHASHes(i.IndexID, 0, fromFormResponseIDs);
+            }
+            return idxs.Count;
+        }
+    }
     public static int GenerateIndexesHASH(int formID, Array formResponseIDs)
     {
         using(GRASPEntities db = new GRASPEntities())
@@ -59,7 +72,7 @@ public partial class Index
                 for(int n = 0; n < formResponseIDs.GetLength(0); n++)
                 {
                     int formResponseID = (int)formResponseIDs.GetValue(n);
-                    GenerateIndexHASHes(i.IndexID, formResponseID);
+                    GenerateIndexHASHes(i.IndexID, formResponseID,0);
                 }
             }
             return idxs.Count;
@@ -68,9 +81,9 @@ public partial class Index
     }
     public static int GenerateIndexHASHes(int indexID)
     {
-        return GenerateIndexHASHes(indexID, 0);
+        return GenerateIndexHASHes(indexID, 0,0);
     }
-    public static int GenerateIndexHASHes(int indexID, int formResponseID)
+    public static int GenerateIndexHASHes(int indexID, int formResponseID, int startFromFormResponseID)
     {
         StringBuilder sb = new StringBuilder();
         string filter = "";
@@ -79,7 +92,7 @@ public partial class Index
 
         using(GRASPEntities db = new GRASPEntities())
         {
-            if(formResponseID == 0)
+            if(formResponseID == 0 && startFromFormResponseID==0)
             {
                 //Delete the previously created HASHes            
                 IndexHASH.DeleteHASHes(indexID);
@@ -102,7 +115,13 @@ public partial class Index
                                            where (r.FormResponseID == formResponseID || formResponseID == 0)
                                            orderby r.FormResponseID, r.formFieldId
                                            select new { r.value, r.FormResponseID });
-
+                if(formResponseID == 0 && startFromFormResponseID > 0)
+                {
+                    filteredResponseIDs = (from r in db.ResponseValue.Where(filter)
+                                           where (r.FormResponseID >= startFromFormResponseID)
+                                           orderby r.FormResponseID, r.formFieldId
+                                           select new { r.value, r.FormResponseID });
+                }
                 string insertSQLcmd = "INSERT INTO IndexHASHes (IndexID,FormResponseID,IndexHASHString) VALUES(" + indexID + ",";
                 //Generate the HASHes for each response value
                 foreach(var rv in filteredResponseIDs)

@@ -581,6 +581,7 @@ public partial class ReportField
     public Nullable<int> ReportFieldTableData { get; set; }
     public string ReportFieldTitle { get; set; }
     public string ReportFieldNote { get; set; }
+    public Nullable<int> ReportFieldOrder { get; set; }
 }
 
 public partial class ResponseDetails

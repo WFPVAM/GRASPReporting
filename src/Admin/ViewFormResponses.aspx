@@ -82,21 +82,21 @@
                             <ModelErrorMessage Text=""></ModelErrorMessage>
                         </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
-                    <telerik:GridBoundColumn DataField="CompileDate" DataType="System.DateTime" HeaderText="Compiled on">
+<%--                    <telerik:GridBoundColumn DataField="CompileDate" DataType="System.DateTime" HeaderText="Compiled on">
                         <ColumnValidationSettings>
                             <ModelErrorMessage Text=""></ModelErrorMessage>
                         </ColumnValidationSettings>
-                    </telerik:GridBoundColumn>
+                    </telerik:GridBoundColumn>--%>
                     <telerik:GridBoundColumn DataField="senderMsisdn" DataType="System.String" HeaderText="Sender">
                         <ColumnValidationSettings>
                             <ModelErrorMessage Text=""></ModelErrorMessage>
                         </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
-                    <telerik:GridBoundColumn DataField="Enumerator" DataType="System.String" HeaderText="Enumerator">
+<%--                    <telerik:GridBoundColumn DataField="Enumerator" DataType="System.String" HeaderText="Enumerator">
                         <ColumnValidationSettings>
                             <ModelErrorMessage Text=""></ModelErrorMessage>
                         </ColumnValidationSettings>
-                    </telerik:GridBoundColumn>
+                    </telerik:GridBoundColumn>--%>
                     <telerik:GridBoundColumn DataField="clientVersion" DataType="System.String" HeaderText="Client">
                         <ColumnValidationSettings>
                             <ModelErrorMessage Text=""></ModelErrorMessage>
