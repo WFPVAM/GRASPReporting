@@ -13,6 +13,7 @@ using Ionic.Zip;
 using GRASPModel;
 using Telerik.Web.UI;
 using System.Diagnostics;
+using System.Data.Entity.Infrastructure;
 
 public partial class Admin_ViewFormResponses : System.Web.UI.Page
 {
@@ -69,7 +70,7 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
 
             using(GRASPEntities db = new GRASPEntities())
             {
-
+                
                 IQueryable<FormResponse> responses;
                 if(filter.Length > 0)
                 {
@@ -194,10 +195,10 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
                 //           orderby r.id descending
                 //           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, Enumerator = rv2.value });
 
-
+                ((IObjectContextAdapter)db).ObjectContext.CommandTimeout = 180;
                 //Build the Custom Paging values for better performance
-
-                RadGrid1.VirtualItemCount = res.Count();
+                var recCount = res;
+                RadGrid1.VirtualItemCount = recCount.Count();
                 RadGrid1.DataSource = res.Skip(startRowIndex).Take(maximumRows).ToList();
             }
         }
