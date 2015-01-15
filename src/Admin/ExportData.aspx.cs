@@ -425,7 +425,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                            where r.FormResponseID == fr.id && r.parentForm_id == formID && r.RVRepeatCount > 0
                                 && r.FormResponseID > startFormResponseID
                                 && (responseStatusID == 0 || fr.ResponseStatusID == responseStatusID)
-                           orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId
+                           //orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId
                            select r).ToList();
         }
         string columnHeader = "";
@@ -454,7 +454,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         }
         pffid = 0; //reset var for next cycle
 
-        foreach(ResponseRepeatable r in repeatables)
+        foreach(ResponseRepeatable r in repeatables.OrderBy(o=>o.FormResponseID).ThenBy(o=>o.RVRepeatCount).ThenBy(o=>o.formFieldId))
         {
             //WriteTextFile(r.FormResponseID.ToString() + "," + r.RVRepeatCount.ToString() + "," + r.ParentFormFieldID.ToString() + "," + r.formFieldId + "\r\n", filePath + "\\temp.txt");
             //if(r.ParentFormFieldID == null || (r.ParentFormFieldID != null && pffid != 0 && pffid != r.ParentFormFieldID))
