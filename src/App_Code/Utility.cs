@@ -300,8 +300,13 @@ public class Utility
 
         }
 
-
+        
         return canAccess;
 
     }
+
+    //public static string GetResponseFilesFolderPathByName(GeneralEnums folderName)
+    //{ 
+        
+    //}
 }

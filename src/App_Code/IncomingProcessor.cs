@@ -72,7 +72,6 @@ public class IncomingProcessor
         {
             using(GRASPEntities db = new GRASPEntities())
             {
-
                 foreach(XmlNode childrenNode in nodes)
                 {
                     foreach(XmlNode child in childrenNode.ChildNodes)
@@ -312,11 +311,22 @@ public class IncomingProcessor
         }
     }
 
-    public string SaveFileResponse(string data, string sender)
+    public string SaveFileResponse(string data, string sender, string formName)
     {
+        string formInstanceName = string.Empty;
+        
         try
         {
             string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff_") + sender.Replace("+", "");
+            formInstanceName = GetFileName(sender, formName);
+            bool isFileAlreadySaved = FormResponseServerStatus.IsFormSaved(formInstanceName);
+
+            if (isFileAlreadySaved)
+            {
+                SaveDuplicateForm(data, formInstanceName);
+                return "ok";
+            }
+
             string folderPath = Utility.GetResponseFilesFolderName() + "incoming\\";
             if(!Directory.Exists(folderPath))
             {
@@ -328,10 +338,13 @@ public class IncomingProcessor
                 file.Write(data);
                 file.Close();
             }
+
+            FormResponseServerStatus.InsertOrUpdateStatus(formInstanceName, true);
             return "ok";
         }
         catch(Exception ex)
         {
+            FormResponseServerStatus.InsertOrUpdateStatus(formInstanceName, false);
             string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
             if(!Directory.Exists(folderPath))
             {
@@ -346,6 +359,52 @@ public class IncomingProcessor
             file.Close();
             return "ko";
         }
+    }
+
+    private bool SaveDuplicateForm(string data, string fileName)
+    {
+        bool isSuccess = false;
+
+        try
+        {
+            string folderPath = Utility.GetResponseFilesFolderName() + "duplicate\\";
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            fileName += "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+            using (StreamWriter file = new StreamWriter(folderPath + fileName, true))
+            {
+                file.Write(data);
+                file.Close();
+            }
+            isSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            StreamWriter file = new StreamWriter(folderPath + "\\MobileConnection.txt", true);
+            file.WriteLine("____________________________________________________________________________");
+            file.WriteLine("------ ERROR in Saving Duplicate Form Instance: '" + fileName + "' on " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            file.WriteLine(ex.Message);
+            file.WriteLine(ex.StackTrace);
+            file.WriteLine("____________________________________________________________________________");
+            file.Close();
+        }
+
+        return isSuccess;
+    }
+
+    private string GetFileName(string sender, string formName)
+    {
+        string fileName = formName + "_" + sender.Replace("+", "");
+        return fileName;
     }
 
     public void SaveErrorResponse(string data, string fileName)

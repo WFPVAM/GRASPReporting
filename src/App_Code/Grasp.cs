@@ -396,6 +396,13 @@ public partial class FormResponseReviews
     public Nullable<int> FormResponseReviewSeqNo { get; set; }
 }
 
+public partial class FormResponseServerStatus
+{
+    public decimal Id { get; set; }
+    public string InstanceUniqueIdentifier { get; set; }
+    public bool IsSavedToServer { get; set; }
+}
+
 public partial class FormResponseStatus
 {
     public int ResponseStatusID { get; set; }

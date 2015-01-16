@@ -53,13 +53,15 @@ public partial class MobileConnection : System.Web.UI.Page
         string senderF = "";
         string data = "";
         string imei = "";
+        string formName = string.Empty;
 
         System.Collections.Specialized.NameValueCollection postedValues = Request.Form;
         senderF = postedValues[0];
         data = Server.HtmlDecode(postedValues[1]);
+
         try
         {
-            imei = Server.HtmlDecode(postedValues[2]);
+            imei = Server.HtmlDecode(postedValues[3]);
         }
         catch(Exception ex)
         {
@@ -79,6 +81,7 @@ public partial class MobileConnection : System.Web.UI.Page
                     handleTestRequest(senderF);
                     break;
                 case "response":
+                    formName = postedValues[2];
                     if(senderF == null || senderF == "")
                     {
                         Response.Clear();
@@ -86,7 +89,7 @@ public partial class MobileConnection : System.Web.UI.Page
                         Response.Write("ERROR:Client phone number not received");
                         break;
                     }
-                    handleResponseRequest(data, senderF);
+                    handleResponseRequest(data, senderF, formName);
                     break;
                 case "sync":
                     if(senderF == null || senderF == "")
@@ -122,13 +125,13 @@ public partial class MobileConnection : System.Web.UI.Page
         Response.Write(User_Credential.checkUserFromNumber(senderF));
     }
 
-    private void handleResponseRequest(string data, string senderF)
+    private void handleResponseRequest(string data, string senderF, string formName)
     {
         Response.Clear();
         Response.ContentType = "text/plain";
         IncomingProcessor incomProc = new IncomingProcessor();
         //Response.Write(incomProc.ProcessResponse(data, senderF));
-        Response.Write(incomProc.SaveFileResponse(data, senderF));
+        Response.Write(incomProc.SaveFileResponse(data, senderF, formName));
     }
 
     private void handleSyncRequest(string data, string sender)

@@ -101,7 +101,7 @@
           <Property Name="isHidden" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.Form_FormField' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.Form_FormField' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Form_FormField">
           <Key>
             <PropertyRef Name="Form_id" />
@@ -158,7 +158,7 @@ warning 6002: The table/view 'GRASP.dbo.Form_FormField' does not have a primary 
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.FormField_FormResponse' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.FormField_FormResponse' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormField_FormResponse">
           <Key>
             <PropertyRef Name="FormField_id" />
@@ -213,7 +213,7 @@ warning 6002: The table/view 'GRASP.dbo.FormField_FormResponse' does not have a 
           <Property Name="ResponseStatusID" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.FormResponse_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.FormResponse_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormResponse_ResponseValue">
           <Key>
             <PropertyRef Name="FormResponse_id" />
@@ -234,7 +234,7 @@ warning 6002: The table/view 'GRASP.dbo.FormResponse_ResponseValue' does not hav
           <Property Name="FRCoordGeometry" Type="geometry" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.FormResponseCoords_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.FormResponseCoords_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormResponseCoords_ResponseValue">
           <Key>
             <PropertyRef Name="FormResponseCoords_FRCoordID" />
@@ -255,6 +255,14 @@ warning 6002: The table/view 'GRASP.dbo.FormResponseCoords_ResponseValue' does n
           <Property Name="FormResponseCurrentStatusID" Type="int" Nullable="false" />
           <Property Name="FormResponseReviewDetail" Type="nvarchar(max)" />
           <Property Name="FormResponseReviewSeqNo" Type="int" />
+        </EntityType>
+        <EntityType Name="FormResponseServerStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="numeric" Precision="19" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InstanceUniqueIdentifier" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="IsSavedToServer" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="FormResponseStatus">
           <Key>
@@ -369,7 +377,7 @@ warning 6002: The table/view 'GRASP.dbo.FormResponseCoords_ResponseValue' does n
           <Property Name="subject" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.message_FrontlineMultimediaMessagePart' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.message_FrontlineMultimediaMessagePart' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="message_FrontlineMultimediaMessagePart">
           <Key>
             <PropertyRef Name="message_id" />
@@ -439,7 +447,7 @@ warning 6002: The table/view 'GRASP.dbo.message_FrontlineMultimediaMessagePart' 
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.ResponseValue_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.ResponseValue_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseValue_ResponseValue">
           <Key>
             <PropertyRef Name="ResponseValue_id" />
@@ -605,7 +613,7 @@ warning 6002: The table/view 'GRASP.dbo.ResponseValue_ResponseValue' does not ha
           <Property Name="formID" Type="numeric" Precision="19" Scale="0" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.BindingRules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.BindingRules' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="BindingRules">
           <Key>
             <PropertyRef Name="FormField_id" />
@@ -631,7 +639,7 @@ warning 6002: The table/view 'GRASP.dbo.BindingRules' does not have a primary ke
           <Property Name="required" Type="tinyint" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.Detail_Form_Response' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.Detail_Form_Response' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Detail_Form_Response">
           <Key>
             <PropertyRef Name="id" />
@@ -641,7 +649,7 @@ warning 6002: The table/view 'GRASP.dbo.Detail_Form_Response' does not have a pr
           <Property Name="name" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.FormFieldExport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.FormFieldExport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormFieldExport">
           <Key>
             <PropertyRef Name="id" />
@@ -665,7 +673,7 @@ warning 6002: The table/view 'GRASP.dbo.FormFieldExport' does not have a primary
           <Property Name="formula" Type="varchar" MaxLength="255" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.FormFieldResponses' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.FormFieldResponses' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormFieldResponses">
           <Key>
             <PropertyRef Name="id" />
@@ -690,7 +698,7 @@ warning 6002: The table/view 'GRASP.dbo.FormFieldResponses' does not have a prim
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.FormFieldResponsesReviews' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.FormFieldResponsesReviews' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="FormFieldResponsesReviews">
           <Key>
             <PropertyRef Name="id" />
@@ -716,7 +724,7 @@ warning 6002: The table/view 'GRASP.dbo.FormFieldResponsesReviews' does not have
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.ResponseDetails' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.ResponseDetails' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseDetails">
           <Key>
             <PropertyRef Name="id" />
@@ -725,11 +733,11 @@ warning 6002: The table/view 'GRASP.dbo.ResponseDetails' does not have a primary
           <Property Name="FRCreateDate" Type="datetime" />
           <Property Name="fromDataEntry" Type="tinyint" />
           <Property Name="parentForm_id" Type="numeric" Precision="19" Scale="0" />
-          <Property Name="Date" Type="nvarchar" MaxLength="255" />
-          <Property Name="enumerator" Type="nvarchar" MaxLength="255" />
+          <Property Name="Date" Type="nvarchar" MaxLength="4000" />
+          <Property Name="enumerator" Type="nvarchar" MaxLength="4000" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.ResponseMapping' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.ResponseMapping' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseMapping">
           <Key>
             <PropertyRef Name="ResponseID" />
@@ -741,14 +749,14 @@ warning 6002: The table/view 'GRASP.dbo.ResponseMapping' does not have a primary
           <Property Name="FRCoordGeometry" Type="geometry" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.ResponseRepeatable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.ResponseRepeatable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseRepeatable">
           <Key>
             <PropertyRef Name="id" />
             <PropertyRef Name="ResponseStatusID" />
           </Key>
           <Property Name="id" Type="numeric" Precision="19" Scale="0" Nullable="false" />
-          <Property Name="value" Type="nvarchar" MaxLength="255" />
+          <Property Name="value" Type="nvarchar" MaxLength="4000" />
           <Property Name="FormResponseID" Type="int" />
           <Property Name="RVRepeatCount" Type="int" />
           <Property Name="formFieldId" Type="int" />
@@ -765,7 +773,7 @@ warning 6002: The table/view 'GRASP.dbo.ResponseRepeatable' does not have a prim
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.ResponseRepeatableReviews' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.ResponseRepeatableReviews' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ResponseRepeatableReviews">
           <Key>
             <PropertyRef Name="id" />
@@ -791,7 +799,7 @@ warning 6002: The table/view 'GRASP.dbo.ResponseRepeatableReviews' does not have
           <Property Name="dvalue" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="SurveyListAPI">
           <Key>
             <PropertyRef Name="id" />
@@ -1275,6 +1283,7 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <EntitySet Name="FormResponse" EntityType="Self.FormResponse" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FormResponseCoords" EntityType="Self.FormResponseCoords" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FormResponseReviews" EntityType="Self.FormResponseReviews" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FormResponseServerStatus" EntityType="Self.FormResponseServerStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FormResponseStatus" EntityType="Self.FormResponseStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="frontline_group" EntityType="Self.frontline_group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FrontlineMultimediaMessagePart" EntityType="Self.FrontlineMultimediaMessagePart" Schema="dbo" store:Type="Tables" />
@@ -2140,8 +2149,8 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <Property Name="FRCreateDate" Type="DateTime" Precision="3" />
           <Property Name="fromDataEntry" Type="Byte" />
           <Property Name="parentForm_id" Type="Decimal" Precision="19" Scale="0" />
-          <Property Name="Date" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="enumerator" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="enumerator" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ResponseMapping">
           <Key>
@@ -2672,6 +2681,7 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <EntitySet Name="FormFieldResponsesReviews" EntityType="GRASPModel.FormFieldResponsesReviews" />
           <EntitySet Name="ResponseRepeatableReviews" EntityType="GRASPModel.ResponseRepeatableReviews" />
           <EntitySet Name="ReportFields" EntityType="GRASPModel.ReportField" />
+          <EntitySet Name="FormResponseServerStatus" EntityType="GRASPModel.FormResponseServerStatus" />
         </EntityContainer>
         <EntityType Name="IndexHASH">
           <Key>
@@ -2848,7 +2858,7 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
             <PropertyRef Name="ResponseStatusID" />
           </Key>
           <Property Name="id" Type="Decimal" Nullable="false" Precision="19" Scale="0" />
-          <Property Name="value" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="value" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <Property Name="FormResponseID" Type="Int32" />
           <Property Name="RVRepeatCount" Type="Int32" />
           <Property Name="formFieldId" Type="Int32" />
@@ -2991,6 +3001,14 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
           <Property Name="ReportFieldTitle" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="ReportFieldNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ReportFieldOrder" Type="Int32" />
+        </EntityType>
+        <EntityType Name="FormResponseServerStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="19" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InstanceUniqueIdentifier" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IsSavedToServer" Type="Boolean" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -3799,6 +3817,15 @@ warning 6002: The table/view 'GRASP.dbo.SurveyListAPI' does not have a primary k
                 <ScalarProperty Name="ReportFieldLabel" ColumnName="ReportFieldLabel" />
                 <ScalarProperty Name="ReportID" ColumnName="ReportID" />
                 <ScalarProperty Name="ReportFieldID" ColumnName="ReportFieldID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FormResponseServerStatus">
+            <EntityTypeMapping TypeName="GRASPModel.FormResponseServerStatus">
+              <MappingFragment StoreEntitySet="FormResponseServerStatus">
+                <ScalarProperty Name="IsSavedToServer" ColumnName="IsSavedToServer" />
+                <ScalarProperty Name="InstanceUniqueIdentifier" ColumnName="InstanceUniqueIdentifier" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

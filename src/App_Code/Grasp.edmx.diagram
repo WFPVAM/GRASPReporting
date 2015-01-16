@@ -95,6 +95,7 @@
         <EntityTypeShape EntityType="GRASPModel.FormFieldResponsesReviews" Width="1.5" PointX="21.375" PointY="16.75" />
         <EntityTypeShape EntityType="GRASPModel.ResponseRepeatableReviews" Width="1.5" PointX="21.375" PointY="21.75" />
         <EntityTypeShape EntityType="GRASPModel.ReportField" Width="1.5" PointX="22.375" PointY="0.75" />
+        <EntityTypeShape EntityType="GRASPModel.FormResponseServerStatus" Width="1.5" PointX="22.375" PointY="4.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
