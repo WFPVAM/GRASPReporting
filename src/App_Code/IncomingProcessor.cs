@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -55,13 +57,13 @@ public class IncomingProcessor
             }
             else
             {
-                WriteErrorLog(null, fileName, text);
+                LogUtils.WriteFileErrorLog(null, fileName, text);
                 return "ko";
             }
         }
         catch(Exception ex)
         {
-            WriteErrorLog(ex, fileName, text);
+            LogUtils.WriteFileErrorLog(ex, fileName, text);
             return "ko";
         }
         XmlDocument xmlDoc = new XmlDocument();
@@ -197,9 +199,17 @@ public class IncomingProcessor
                                         child.InnerText = sender.Replace('+', ' ').Trim() + "\\" + child.InnerText.Split('/').Last();
                                     }
                                     //------------------------------
+                                    string imageFilePath = string.Empty;
+                                    if (child.InnerText.Contains("\\"))
+                                    {
+                                        string imageFileName = Path.GetFileNameWithoutExtension(child.InnerText.Split('\\')[1]);
+                                        //fileName PartialDmgGaza_2014-09-18_10-59-04_101
+                                        imageFilePath = Utility.GetGRASPImagesVirtualDirectory() + GetImageFileFullPath(fileName, imageFileName);
+                                    }
+                                    else
+                                        imageFilePath = Utility.GetGRASPImagesVirtualDirectory() + Utility.GetImagesFolderName() + "\\" + child.InnerText;
 
-                                    string imagePthValue = Utility.GetImageFolderName() + "\\" + child.InnerText;
-                                    ResponseValue.createResponseValue(db, imagePthValue, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                    ResponseValue.createResponseValue(db, imageFilePath, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
                                     break;
 
                                 case "GEOLOCATION":
@@ -279,7 +289,7 @@ public class IncomingProcessor
                     file.Close();
 
                     db.Database.ExecuteSqlCommand("DELETE FormResponse WHERE id=" + formResponseID);
-                    SaveErrorResponse(fileContent, fileName);
+                    Utility.SaveErrorResponse(fileContent, fileName);
                     if(fileName.Length > 0)
                     {
                         File.Delete(Utility.GetResponseFilesFolderName() + "incoming\\" + fileName);
@@ -292,7 +302,8 @@ public class IncomingProcessor
                 //ServerSideCalculatedField.GenerateSingle(formParentID, formResponseID);
                 //UserToFormResponses.GenerateAssociationForAllUsers(formParentID, formResponseID);
 
-                SaveProcessedResponse(fileContent, formResponseID.ToString().PadLeft(9, '0'));
+                //SaveProcessedResponse(fileContent, formResponseID.ToString().PadLeft(9, '0'));
+                SaveProcessedResponse(fileContent, fileName);
                 if(fileName.Length > 0)
                 {
                     File.Delete(Utility.GetResponseFilesFolderName() + "incoming\\" + fileName);
@@ -302,12 +313,34 @@ public class IncomingProcessor
         }
         catch(Exception ex)
         {
-            WriteErrorLog(ex, fileName, fileContent);
+            LogUtils.WriteFileErrorLog(ex, fileName, fileContent);
             return "ko";
         }
         finally
         {
             //file.Close();
+        }
+    }
+
+    private string GetImageFileFullPath(string formNameWithSender, string imageFileName)
+    {
+        try
+        {
+            //PartialDmgGaza_2014-09-18_10-59-04_101
+            string senderNumber = formNameWithSender.GetSubstringAfterLastChar('_');
+            string formName = formNameWithSender.Split('_')[0];
+            string formInstanceName = formNameWithSender.GetSubstringBeforeLastChar('_');
+            string imageFilePath = Utility.GetImagesFolderName() + Utility.GetFilePathSeparator()
+                + senderNumber + Utility.GetFilePathSeparator()
+                + formName + Utility.GetFilePathSeparator()
+                + formInstanceName + Utility.GetFilePathSeparator()
+                + imageFileName + Utility.GetImageFileType();
+            return imageFilePath;
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.Message);
+            return null;
         }
     }
 
@@ -317,10 +350,29 @@ public class IncomingProcessor
         
         try
         {
-            string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff_") + sender.Replace("+", "");
-            formInstanceName = GetFileName(sender, formName);
-            bool isFileAlreadySaved = FormResponseServerStatus.IsFormSaved(formInstanceName);
+            string fileType = formName.GetSubstringAfterLastChar('_');
+            
+            //Checks whether the file is image. The image file name structure is [FormName]_[Date]_[Time]_[ImgaeFileName]_[image]
+            // ex.: "PartialDmgGaza_2014-09-18_10-59-04_1411027216475.jpg_image"
+            if (!string.IsNullOrEmpty(fileType) 
+                && fileType.Equals("image"))
+            {
+                //get file without _image type
+                formName = formName.GetSubstringBeforeLastChar('_'); //"PartialDmgGaza_2014-09-18_10-59-04_1411027216475.jpg"
+                //without image name
+                formInstanceName = formName.GetSubstringBeforeLastChar('_'); //"PartialDmgGaza_2014-09-18_10-59-04"
+                string imageFileName = Path.GetFileNameWithoutExtension(formName.Split('_')[3]); //"1411027216475"
+                bool imageSavedSucceeded = SaveIncommingImage(data, sender, formInstanceName, imageFileName);
+                if (imageSavedSucceeded)
+                {
+                    return "ok"; //s3* ok
+                }else
+                    return "ko";
+            }
 
+            //string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff_") + sender.Replace("+", "");
+            formInstanceName = GetFileName(sender, formName);
+            bool isFileAlreadySaved = FormResponseServerStatus.IsFormSaved(formInstanceName); //s3* 
             if (isFileAlreadySaved)
             {
                 SaveDuplicateForm(data, formInstanceName);
@@ -333,7 +385,7 @@ public class IncomingProcessor
                 Directory.CreateDirectory(folderPath);
             }
 
-            using(StreamWriter file = new StreamWriter(folderPath + fileName, true))
+            using (StreamWriter file = new StreamWriter(folderPath + formInstanceName, true))
             {
                 file.Write(data);
                 file.Close();
@@ -358,6 +410,168 @@ public class IncomingProcessor
             file.WriteLine("____________________________________________________________________________");
             file.Close();
             return "ko";
+        }
+    }
+
+    private bool SaveIncommingImage(string data, string sender, string formInstanceName, string imageFileName)
+    {
+        try
+        {
+            string imagesFolderFullPath = Utility.GetImagesFolderFullPath();
+            if (!Directory.Exists(imagesFolderFullPath))
+            {
+                Directory.CreateDirectory(imagesFolderFullPath);
+            }
+            var imageBytes = Convert.FromBase64String(data);
+            byte[] decompressedImage = Decompress(imageBytes);          
+            string incommingImagePathWithFile = GetImagePathWithFileName(sender, formInstanceName, imageFileName);
+            if (!File.Exists(incommingImagePathWithFile))
+            {
+                using (FileStream imageFile = new FileStream(incommingImagePathWithFile, FileMode.Create))
+                {
+                    imageFile.Write(decompressedImage, 0, decompressedImage.Length);
+                    imageFile.Flush();
+                }
+            }
+            else
+            {
+                //s3 Duplicate img
+            }
+
+            //using (StreamWriter file = new StreamWriter(folderPath + fileName, true))
+            //{
+            //    file.Write(data);
+            //    file.Close();
+            //}
+
+            //using (var imageFile = new FileStream(folderPath + "\\" + v.Key + ".jpg", FileMode.Create))
+            //{
+            //    imageFile.Write(bytes, 0, bytes.Length);
+            //    imageFile.Flush();
+            //}
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.Message);
+            return false;
+        }
+    }
+
+    private byte[] Decompress(byte[] compressedBytes)
+    {
+        using (var ms = new MemoryStream())
+        {
+            using (var bs = new MemoryStream(compressedBytes))
+            {
+                //bs.Seek(0, SeekOrigin.Begin);
+                using (var z = new GZipStream(bs, CompressionMode.Decompress))
+                {
+                    //z.Seek(0, SeekOrigin.Begin);
+                    z.CopyTo(ms);
+                }
+            }
+            return ms.ToArray();
+        }
+    }
+
+    //public static string UnZip(string value)
+    //{
+    //    //Transform string into byte[]
+    //    byte[] byteArray = new byte[value.Length];
+    //    int indexBA = 0;
+    //    foreach (char item in value.ToCharArray())
+    //    {
+    //        byteArray[indexBA++] = (byte)item;
+    //    }
+
+    //    //Prepare for decompress
+    //    System.IO.MemoryStream ms = new System.IO.MemoryStream(byteArray);
+    //    System.IO.Compression.GZipStream sr = new System.IO.Compression.GZipStream(ms,
+    //        System.IO.Compression.CompressionMode.Decompress);
+
+    //    //Reset variable to collect uncompressed result
+    //    byteArray = new byte[byteArray.Length];
+
+    //    //Decompress
+    //    int rByte = sr.Read(byteArray, 0, byteArray.Length);
+
+    //    //Transform byte[] unzip data to string
+    //    System.Text.StringBuilder sB = new System.Text.StringBuilder(rByte);
+    //    //Read the number of bytes GZipStream red and do not a for each bytes in
+    //    //resultByteArray;
+    //    for (int i = 0; i < rByte; i++)
+    //    {
+    //        sB.Append((char)byteArray[i]);
+    //    }
+    //    sr.Close();
+    //    ms.Close();
+    //    sr.Dispose();
+    //    ms.Dispose();
+    //    return sB.ToString();
+    //}
+
+    ///// <span class="code-SummaryComment"><summary></span>
+    ///// Gets the uncompressed image. If the image is compressed, 
+    ///// it will be uncompressed first.
+    ///// <span class="code-SummaryComment"></summary></span>
+    //public Image GetDecompressedImage()
+    //{
+    //    if (decompressed == null)
+    //    {
+    //        stream.Seek(0, SeekOrigin.Begin);
+    //        decompressed = new Bitmap(stream);
+    //    }
+    //    return decompressed;
+    //}
+
+    ///// <span class="code-SummaryComment"><summary></span>
+    ///// Clears the uncompressed image, leaving the compressed one in memory.
+    ///// <span class="code-SummaryComment"></summary></span>
+    //public void ClearDecompressedImage()
+    //{
+    //    if (decompressed != null)
+    //    {
+    //        if (stream == null)
+    //        {
+    //            stream = new MemoryStream();
+    //            decompressed.Save(stream, format);
+    //        }
+    //        decompressed = null;
+    //    }
+    //}
+
+    private string GetImagePathWithFileName(string sender, string formInstanceName, string imageFileName)
+    {
+        try
+        {
+            //Creates image path. Path Example: GRASPImages\[senderNumber]\[FormName]\[FormInstanceName]\imagefile
+            string senderPath = Utility.GetImagesFolderFullPath() + Utility.GetFilePathSeparator() + Utility.GetSenderNumber(sender);
+            if (!Directory.Exists(senderPath))
+            {
+                Directory.CreateDirectory(senderPath);
+            }
+
+            string formName = formInstanceName.Split('_')[0]; //"PartialDmgGaza"
+            string formNamePath = senderPath + Utility.GetFilePathSeparator() + formName; //GRASPImages\\101\\PartialDmgGaza"
+            if (!Directory.Exists(formNamePath))
+            {
+                Directory.CreateDirectory(formNamePath);
+            }
+
+            string imageInstanceFormPath = formNamePath + Utility.GetFilePathSeparator() + formInstanceName;//RASPImages\101\PartialDmgGaza\PartialDmgGaza_2014-09-18_10-59-04
+            if (!Directory.Exists(imageInstanceFormPath))
+            {
+                Directory.CreateDirectory(imageInstanceFormPath);
+            }
+
+            string incommingImagePathWithFile = imageInstanceFormPath + Utility.GetFilePathSeparator() + imageFileName + Utility.GetImageFileType();
+            return incommingImagePathWithFile; //GRASPImages\\101\\PartialDmgGaza\\PartialDmgGaza_2014-09-18_10-59-04\\1411027216475.jpg"
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.Message);
+            return null;
         }
     }
 
@@ -407,20 +621,6 @@ public class IncomingProcessor
         return fileName;
     }
 
-    public void SaveErrorResponse(string data, string fileName)
-    {
-        string folderPath = Utility.GetResponseFilesFolderName() + "error\\";
-        if(!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-        using(StreamWriter file = new StreamWriter(folderPath + fileName, true))
-        {
-            file.Write(data);
-            file.Close();
-        }
-    }
-
     public void SaveProcessedResponse(string data, string fileName)
     {
         string folderPath = Utility.GetResponseFilesFolderName() + "processed\\";
@@ -442,6 +642,7 @@ public class IncomingProcessor
             Index.GenerateIndexesHASH(this.firstFormResponseID);
         }
     }
+
     public void GenerateCalculatedField()
     {
         if(firstFormResponseID > 0)
@@ -449,6 +650,7 @@ public class IncomingProcessor
             ServerSideCalculatedField.GenerateFrom(this.firstFormResponseID);
         }
     }
+
     public void GenerateUserToFormResponseAssociation()
     {
         if(firstFormResponseID > 0)
@@ -456,30 +658,4 @@ public class IncomingProcessor
             UserToFormResponses.GenerateAssociationForAllUsersFrom(this.firstFormResponseID);
         }
     }
-
-    public void WriteErrorLog(Exception ex, string fileName, string fileContent)
-    {
-        string folderPath = HttpContext.Current.Server.MapPath("~/LogFiles/");
-        if(!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-        StreamWriter file = new StreamWriter(folderPath + "\\MobileConnection.txt", true);
-        file.WriteLine("____________________________________________________________________________");
-        file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " Error on " + fileName);
-        if(ex != null)
-        {
-            file.WriteLine(ex.Message);
-            file.WriteLine(ex.StackTrace);
-        }
-        file.WriteLine("____________________________________________________________________________");
-        file.Close();
-
-        SaveErrorResponse(fileContent, fileName);
-        if(fileName.Length > 0)
-        {
-            File.Delete(Utility.GetResponseFilesFolderName() + "incoming\\" + fileName);
-        }
-    }
-
 }

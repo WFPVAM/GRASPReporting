@@ -50,24 +50,93 @@ public class Utility
 
     public static string getVersion()
     {
-        return "1.1.3";
+        return "1.1.4";
     }
 
-    public static string GetWEBDAVRoot()
+    private static bool IsGRASPImagesFolderNotUnderReportingFolder()
     {
-        return ConfigurationManager.AppSettings["WEBDAVRoot"];
+        if (ConfigurationManager.AppSettings["IsGRASPImagesFolderNotUnderReportingFolder"].ToLower().Equals("no"))
+            return false;
+        else
+            return true;
     }
 
-    public static string GetImageFolderName()
+    public static string GetImagesFolderPath()
     {
-        return ConfigurationManager.AppSettings["ImageFolderName"];
+        if (!IsGRASPImagesFolderNotUnderReportingFolder())
+        {
+            return ConfigurationManager.AppSettings["GRASPReportingPath"];
+        }
+        else
+            return ConfigurationManager.AppSettings["GRASPImagesFolderPath"];
     }
+
+    public static string GetImagesFolderName()
+    {
+        if (!IsGRASPImagesFolderNotUnderReportingFolder())
+        {
+            return "GRASPImage";
+        }
+        else 
+            return ConfigurationManager.AppSettings["ImageFolderName"];
+    }
+
+    public static string GetGRASPImagesVirtualDirectory()
+    {
+        if (!IsGRASPImagesFolderNotUnderReportingFolder())
+            return ConfigurationManager.AppSettings["GRASPReportingVirtualDirectoryName"] + "\\";
+        else //GRASPImages has it's own virtual directory.
+            return string.Empty; 
+    }
+
     public static string GetResponseFilesFolderName()
     {
-        return ConfigurationManager.AppSettings["FileResponseFolder"];
+        return ConfigurationManager.AppSettings["ResponseFilesFolderPath"];
     }
 
+    public static string GetImagesFolderFullPath()
+    {
+        return GetImagesFolderPath() + GetImagesFolderName();
+    }
 
+    public static string GetFilePathSeparator()
+    {
+        return "\\";
+    }
+
+    public static string GetImageFileType()
+    {
+        try
+        {
+            string imageFileType = ConfigurationManager.AppSettings["ImagesFileType"];
+            if (!string.IsNullOrEmpty(imageFileType))
+            {
+                if (imageFileType.StartsWith("."))
+                {
+                    return imageFileType;
+                }
+                else
+                    return "." + imageFileType;
+            }
+            else //Default type.
+                return ".jpg";
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.Message);
+            return null;
+        }
+
+    }
+
+    /// <summary>
+    /// Gets sender number without +
+    /// </summary>
+    /// <returns></returns>
+    public static string GetSenderNumber(string senderNumber)
+    {
+        return senderNumber.Replace("+", "");
+    }
 
     public static string getFormForMobileByPhoneNumber(string phone, List<string> downloadedForms)
     {
@@ -150,24 +219,18 @@ public class Utility
         return name;
     }
 
-    public static void writeErrorLog(string errorInfo)
+    public static void SaveErrorResponse(string data, string fileName)
     {
-        string path = HttpContext.Current.Server.MapPath("~/ErrorLog.txt");
-        if(!File.Exists(path))
+        string folderPath = Utility.GetResponseFilesFolderName() + "error\\";
+        if (!Directory.Exists(folderPath))
         {
-            // Create a file to write to. 
-            using(StreamWriter sw = File.CreateText(path))
-            {
-                sw.WriteLine("");
-            }
+            Directory.CreateDirectory(folderPath);
         }
-        using(StreamWriter sw = File.AppendText(path))
+        using (StreamWriter file = new StreamWriter(folderPath + fileName, true))
         {
-
-            sw.WriteLine("\r\n ------ " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " : Error ------- \r\n");
-            sw.WriteLine(errorInfo + "\r\n\r\n");
+            file.Write(data);
+            file.Close();
         }
-
     }
 
     /// <summary>
@@ -305,8 +368,5 @@ public class Utility
 
     }
 
-    //public static string GetResponseFilesFolderPathByName(GeneralEnums folderName)
-    //{ 
-        
-    //}
+
 }
