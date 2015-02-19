@@ -1814,9 +1814,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 else if(FormField.isImage(ffID) == -1)
                 {
-
-
-                    string folderPath = Utility.GetWEBDAVRoot() + Utility.GetImageFolderName() + "\\WEB\\" + formResponseID;
+                    string folderPath = Utility.GetImagesFolderPath() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID;
                     string value = v.Value.ToString().Substring(v.Value.ToString().IndexOf("base64") + 7);
                     var bytes = Convert.FromBase64String(value);
 
@@ -1830,7 +1828,7 @@ public partial class DataEntry : System.Web.UI.Page
                         imageFile.Flush();
                     }
 
-                    string imagePthValue = Utility.GetImageFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
+                    string imagePthValue = Utility.GetGRASPImagesVirtualDirectory() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
                     ResponseValue.createResponseValue(imagePthValue, formResponseID, ffID, 0);
                 }
                 else
@@ -1951,7 +1949,7 @@ public partial class DataEntry : System.Web.UI.Page
 
                             break;
                         case "IMAGE":
-                            string folderPath = Utility.GetWEBDAVRoot() + Utility.GetImageFolderName() + "\\WEB\\" + formResponseID;
+                            string folderPath = Utility.GetImagesFolderPath() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID;
                             string value = v.Value.ToString().Substring(v.Value.ToString().IndexOf("base64") + 7);
                             var bytes = Convert.FromBase64String(value);
 
@@ -1965,7 +1963,7 @@ public partial class DataEntry : System.Web.UI.Page
                                 imageFile.Flush();
                             }
 
-                            string imagePthValue = Utility.GetImageFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
+                            string imagePthValue = Utility.GetGRASPImagesVirtualDirectory() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
                             ResponseValue.createResponseValue(db, imagePthValue, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
                             break;
                         case "DROP_DOWN_LIST":

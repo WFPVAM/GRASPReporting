@@ -1,0 +1,81 @@
+____________________________________________________________________________
+------ ERROR from +101 on 2015-02-09 15:25:18.439
+The magic number in GZip header is not correct. Make sure you are passing in a GZip stream.
+   at System.IO.Compression.GZipDecoder.ReadHeader(InputBuffer input)
+   at System.IO.Compression.Inflater.Decode()
+   at System.IO.Compression.Inflater.Inflate(Byte[] bytes, Int32 offset, Int32 length)
+   at System.IO.Compression.DeflateStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Compression.GZipStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Stream.InternalCopyTo(Stream destination, Int32 bufferSize)
+   at System.IO.Stream.CopyTo(Stream destination)
+   at IncomingProcessor.Decompress(Byte[] b) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 444
+   at IncomingProcessor.SaveIncommingImage(String data, String sender, String imageName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 434
+   at IncomingProcessor.SaveFileResponse(String data, String sender, String formName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 328
+____________________________________________________________________________
+____________________________________________________________________________
+------ ERROR from +101 on 2015-02-10 11:23:39.719
+The magic number in GZip header is not correct. Make sure you are passing in a GZip stream.
+   at System.IO.Compression.GZipDecoder.ReadHeader(InputBuffer input)
+   at System.IO.Compression.Inflater.Decode()
+   at System.IO.Compression.Inflater.Inflate(Byte[] bytes, Int32 offset, Int32 length)
+   at System.IO.Compression.DeflateStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Compression.GZipStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Stream.InternalCopyTo(Stream destination, Int32 bufferSize)
+   at System.IO.Stream.CopyTo(Stream destination)
+   at IncomingProcessor.Decompress(Byte[] b) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 528
+   at IncomingProcessor.SaveIncommingImage(String data, String sender, String imageName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 439
+   at IncomingProcessor.SaveFileResponse(String data, String sender, String formName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 328
+____________________________________________________________________________
+____________________________________________________________________________
+------ ERROR from +101 on 2015-02-10 11:37:04.066
+The magic number in GZip header is not correct. Make sure you are passing in a GZip stream.
+   at System.IO.Compression.GZipDecoder.ReadHeader(InputBuffer input)
+   at System.IO.Compression.Inflater.Decode()
+   at System.IO.Compression.Inflater.Inflate(Byte[] bytes, Int32 offset, Int32 length)
+   at System.IO.Compression.DeflateStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Compression.GZipStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at IncomingProcessor.UnZip(String value) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 555
+   at IncomingProcessor.SaveIncommingImage(String data, String sender, String imageName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 440
+   at IncomingProcessor.SaveFileResponse(String data, String sender, String formName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 328
+____________________________________________________________________________
+____________________________________________________________________________
+------ ERROR from +101 on 2015-02-10 11:46:42.755
+The magic number in GZip header is not correct. Make sure you are passing in a GZip stream.
+   at System.IO.Compression.GZipDecoder.ReadHeader(InputBuffer input)
+   at System.IO.Compression.Inflater.Decode()
+   at System.IO.Compression.Inflater.Inflate(Byte[] bytes, Int32 offset, Int32 length)
+   at System.IO.Compression.DeflateStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Compression.GZipStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Stream.InternalCopyTo(Stream destination, Int32 bufferSize)
+   at System.IO.Stream.CopyTo(Stream destination)
+   at IncomingProcessor.Decompress(Byte[] b) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 532
+   at IncomingProcessor.SaveIncommingImage(String data, String sender, String imageName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 440
+   at IncomingProcessor.SaveFileResponse(String data, String sender, String formName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 328
+____________________________________________________________________________
+____________________________________________________________________________
+------ ERROR from +101 on 2015-02-10 11:49:15.729
+This operation is not supported.
+   at System.IO.Compression.GZipStream.Seek(Int64 offset, SeekOrigin origin)
+   at IncomingProcessor.Decompress(Byte[] b) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 533
+   at IncomingProcessor.SaveIncommingImage(String data, String sender, String imageName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 440
+   at IncomingProcessor.SaveFileResponse(String data, String sender, String formName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 328
+____________________________________________________________________________
+____________________________________________________________________________
+------ ERROR from +101 on 2015-02-10 11:50:52.427
+The magic number in GZip header is not correct. Make sure you are passing in a GZip stream.
+   at System.IO.Compression.GZipDecoder.ReadHeader(InputBuffer input)
+   at System.IO.Compression.Inflater.Decode()
+   at System.IO.Compression.Inflater.Inflate(Byte[] bytes, Int32 offset, Int32 length)
+   at System.IO.Compression.DeflateStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Compression.GZipStream.Read(Byte[] array, Int32 offset, Int32 count)
+   at System.IO.Stream.InternalCopyTo(Stream destination, Int32 bufferSize)
+   at System.IO.Stream.CopyTo(Stream destination)
+   at IncomingProcessor.Decompress(Byte[] b) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 534
+   at IncomingProcessor.SaveIncommingImage(String data, String sender, String imageName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 440
+   at IncomingProcessor.SaveFileResponse(String data, String sender, String formName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 328
+____________________________________________________________________________
+____________________________________________________________________________
+2015-02-13 14:24:09 Error on PartialDmgGaza_2014-09-18_10-59-04_101
+Index was outside the bounds of the array.
+   at IncomingProcessor.ProcessResponse(String text, String sender, String fileName) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 202
+____________________________________________________________________________

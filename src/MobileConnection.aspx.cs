@@ -48,6 +48,7 @@ public partial class MobileConnection : System.Web.UI.Page
 
         return sbText.ToString();
     }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         string senderF = "";

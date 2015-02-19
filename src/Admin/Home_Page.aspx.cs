@@ -39,7 +39,7 @@ public partial class Admin_Dashboard : System.Web.UI.Page
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
-        string path = Server.MapPath("~/public/GraspMobile.apk");
+       string path = Server.MapPath("~/public/GraspMobile.apk");
         FileInfo fi1 = new FileInfo(path);
 
         if(fi1.Exists)
@@ -114,7 +114,7 @@ public partial class Admin_Dashboard : System.Web.UI.Page
             sw.Start();
             string filePath = files[i];
             string fileName = Path.GetFileNameWithoutExtension(filePath);
-            string senderNo = "+" + fileName.Substring(18);
+            string senderNo = fileName.GetSubstringAfterLastChar('_');//"+" + fileName.Substring(18);
             using(StreamReader sr = File.OpenText(files[i]))
             {
                 string s = sr.ReadToEnd();

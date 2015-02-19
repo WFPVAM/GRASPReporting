@@ -1800,9 +1800,7 @@ public partial class DataEdit : System.Web.UI.Page
                 }
                 else if(FormField.isImage(ffID) == -1)
                 {
-
-
-                    string folderPath = Utility.GetWEBDAVRoot() + Utility.GetImageFolderName() + "\\WEB\\" + formResponseID;
+                    string folderPath = Utility.GetImagesFolderPath() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID;
                     string value = v.Value.ToString().Substring(v.Value.ToString().IndexOf("base64") + 7);
                     var bytes = Convert.FromBase64String(value);
 
@@ -1816,7 +1814,7 @@ public partial class DataEdit : System.Web.UI.Page
                         imageFile.Flush();
                     }
 
-                    string imagePthValue = Utility.GetImageFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
+                    string imagePthValue = Utility.GetGRASPImagesVirtualDirectory() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
                     ResponseValue.createResponseValue(imagePthValue, formResponseID, ffID, 0);
                 }
                 else
@@ -2000,7 +1998,7 @@ public partial class DataEdit : System.Web.UI.Page
                         case "IMAGE":
                             if(v.Value.ToString().Length > 0)
                             {
-                                string folderPath = Utility.GetWEBDAVRoot() + Utility.GetImageFolderName() + "\\WEB\\" + formResponseID;
+                                string folderPath = Utility.GetImagesFolderPath() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID;
                                 string value = v.Value.ToString().Substring(v.Value.ToString().IndexOf("base64") + 7);
                                 var bytes = Convert.FromBase64String(value);
 
@@ -2014,7 +2012,7 @@ public partial class DataEdit : System.Web.UI.Page
                                     imageFile.Flush();
                                 }
 
-                                string imagePthValue = Utility.GetImageFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
+                                string imagePthValue = Utility.GetGRASPImagesVirtualDirectory() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
                                 if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
                                 {
                                     ResponseValue.updateResponseValue(db, imagePthValue, formResponseID, formFieldID, positionIndex, 0);

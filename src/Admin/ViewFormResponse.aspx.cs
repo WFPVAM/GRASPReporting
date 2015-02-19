@@ -133,7 +133,7 @@ public partial class Admin_ViewFormResponse : System.Web.UI.Page
                             //if (FormField.isImage((int)resVal.formFieldId) == -1)
                             if(ff.type=="IMAGE")
                             {
-                                string FilePath = Utility.GetWEBDAVRoot() + resVal.value;
+                                string FilePath = Utility.GetImagesFolderPath() + resVal.value;
                                 bool isExists = System.IO.File.Exists(FilePath);
                                 if (isExists)
                                 {
