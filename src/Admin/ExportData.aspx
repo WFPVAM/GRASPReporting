@@ -18,6 +18,7 @@
         .errMsg { color: #f00; background: #eee; padding: 4px; font-size: 11px; }
         .form-group { clear: xboth; }
         .controls-group { width: 450px; }
+            .controls-group label[for=RdbCsv],.controls-group label[for=RdbSpss] { display: inline;margin-right:15px; }
     </style>
 
     <script src="../_js/jquery.min.js"></script>
@@ -151,9 +152,9 @@
                     <asp:RequiredFieldValidator ID="rfvddlReviewStatus" runat="server" CssClass="errMsg" ErrorMessage="Select a Review Status" ControlToValidate="ddlReviewStatus"></asp:RequiredFieldValidator>
                     </div>
                     <div class="controls-group">
-                    <label>Type:</label><input type="radio" name="type" id="CSV" value="CSV" checked />CSV
-                        <input type="radio" name="type" id="SPSS" value="SPSS" disabled />SPSS
-                    
+                    <label>Type:</label>
+                        <asp:RadioButton id="RdbCsv" Text="CSV" Checked="True" GroupName="ExportType" runat="server"/>
+                        <asp:RadioButton id="RdbSpss" Text="SPSS" GroupName="ExportType" runat="server"/>                    
                     </div>
 <%--                    <input type="checkbox" name="linear" value="Tables on a single record" />
                     <i class="fa fa-info-circle" id="linear"></i>

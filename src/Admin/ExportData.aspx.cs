@@ -32,6 +32,8 @@ using Ionic.Zip;
 /// </summary>
 public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 {
+    List<dynamic> surveyList = new List<dynamic>();
+
     public string formID = "";
     public string name = "";
 
@@ -167,10 +169,12 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                          where ff.form_id == formID && ff.type != "SEPARATOR" && ff.type != "TRUNCATED_TEXT" &&
                             ff.type != "WRAPPED_TEXT" && ff.type != "REPEATABLES_BASIC" && ff.type != "REPEATABLES" &&
                             ff.FormFieldParentID == null
-                         select new { ff.name, ff.positionIndex }).Union(
+                         select new { ff.name, ff.positionIndex, sid = ff.survey_id }).Union(
                                        from fe in db.FormFieldExt
                                        where fe.FormID == formID
-                                       select new { name = fe.FormFieldExtName, positionIndex = fe.PositionIndex.Value });
+                                       select new { name = fe.FormFieldExtName, positionIndex = fe.PositionIndex.Value, sid = new Nullable<decimal>() });
+
+        var arField = fieldList.OrderBy(o => o.positionIndex).ToArray();
 
         foreach(var f in fieldList.OrderBy(o => o.positionIndex))
         {
@@ -216,14 +220,14 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
              ") x pivot ( max(value) for fn in (" + columnList + ") ) p) AS X";
 
         //var result = db.Database.SqlQuery<IEnumerable<string>>(sqlCmd).ToList();
-        //check: http://michaeljswart.com/2011/06/forget-about-pivot/
+
 
         SqlConnection sqlConnection1 = new SqlConnection(System.Configuration.ConfigurationManager.
                                                         ConnectionStrings["GRASP_MemberShip"].ConnectionString);
         SqlCommand cmd = new SqlCommand();
         SqlDataReader reader;
 
-        
+
         cmd.CommandTimeout = 3000;
         cmd.CommandText = sqlCmd;
         cmd.CommandType = CommandType.Text;
@@ -233,10 +237,27 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
         reader = cmd.ExecuteReader();
 
-        // Data is accessible through the DataReader object here.
-        if(filter.Length != 0)
+        using(db = new GRASPEntities())
         {
-            using(db = new GRASPEntities())
+
+            
+            if(RdbSpss.Checked)
+            {
+                surveyList = (from sl in db.SurveyListAPI
+                              from ff in db.FormField
+                              where ff.survey_id != null && sl.id == ff.survey_id && ff.form_id == formID
+                              orderby sl.id, sl.positionIndex
+                              select new
+                              {
+                                  id = (int)sl.id,
+                                  name = sl.name,
+                                  value = sl.value,
+                                  positionIndex = sl.positionIndex,
+                                  fieldName = ff.name
+                              }).Distinct().OrderBy(s => s.id).ThenBy(s => s.positionIndex).ToList<dynamic>();
+            }
+
+            if(filter.Length != 0)
             {
                 int fc = Convert.ToInt32(filterCount);
                 var respUnion = (from r in db.ResponseValue
@@ -253,21 +274,95 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                                            where grp.Count() == fc
                                            select grp.Key).ToList();
 
-                while(reader.Read())
+                if(RdbSpss.Checked)
                 {
-                    int respID = reader.GetInt32(0);
-                    if(filteredResponseIDs.Contains(respID))
+                    while(reader.Read())
+                    {
+                        int respID = reader.GetInt32(0);
+                        if(filteredResponseIDs.Contains(respID))
+                        {
+                            StringBuilder sb2 = new StringBuilder();
+                            IDataRecord record = (IDataRecord)reader;
+
+                            for(int i = 0; i < record.FieldCount; i++)
+                            {
+                                if(i >= 3 && i < arField.Length)
+                                {
+                                    var x = arField[i - 3];
+                                    if(x.sid != null || x.sid > 0)
+                                    {
+                                        string tmp = record[i].ToString();
+                                        int surveyId = (int)x.sid.Value;
+                                        int? respListCode = surveyList.Where(s => s.id == surveyId && s.value == tmp).Select(s => s.positionIndex).FirstOrDefault();
+                                        sb2.Append(respListCode.ToString() + separator);
+                                    }
+                                    else
+                                    {
+                                        sb2.Append(record[i].ToString().Replace("\n", " ") + separator);
+                                    }
+                                }
+                                else
+                                {
+                                    sb2.Append(record[i].ToString().Replace("\n", " ") + separator);
+                                }
+                            }
+                            sb.Append(sb2.ToString().Substring(0, sb2.ToString().Length - 1) + "\r\n");
+                        }
+                    }
+                }
+                else
+                {
+                    while(reader.Read())
+                    {
+                        int respID = reader.GetInt32(0);
+                        if(filteredResponseIDs.Contains(respID))
+                        {
+                            sb.Append(ReadSingleRow((IDataRecord)reader, separator));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if(RdbSpss.Checked)
+                {
+                    while(reader.Read())
+                    {
+                        StringBuilder sb2 = new StringBuilder();
+                        IDataRecord record = (IDataRecord)reader;
+
+                        for(int i = 0; i < record.FieldCount; i++)
+                        {
+                            if(i >= 3 && i < arField.Length)
+                            {
+                                var x = arField[i - 3];
+                                if(x.sid != null || x.sid > 0)
+                                {
+                                    string tmp = record[i].ToString();
+                                    int surveyId = (int)x.sid.Value;
+                                    int? respListCode = surveyList.Where(s => s.id == surveyId && s.value == tmp).Select(s => s.positionIndex).FirstOrDefault();
+                                    sb2.Append(respListCode.ToString() + separator);
+                                }
+                                else
+                                {
+                                    sb2.Append(record[i].ToString().Replace("\n", " ") + separator);
+                                }
+                            }
+                            else
+                            {
+                                sb2.Append(record[i].ToString().Replace("\n", " ") + separator);
+                            }
+                        }
+                        sb.Append(sb2.ToString().Substring(0, sb2.ToString().Length - 1) + "\r\n");
+                    }
+                }
+                else
+                {
+                    while(reader.Read())
                     {
                         sb.Append(ReadSingleRow((IDataRecord)reader, separator));
                     }
                 }
-            }
-        }
-        else
-        {
-            while(reader.Read())
-            {
-                sb.Append(ReadSingleRow((IDataRecord)reader, separator));
             }
         }
 
@@ -291,6 +386,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         string surveyFilePath = "";
         string fileContent = "";
         int sid = 0;
+        string fieldName = "";
 
         GRASPEntities db = new GRASPEntities();
 
@@ -309,7 +405,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
         foreach(var s in surveyList)
         {
-            if(sid != (int)s.id)
+            if(sid != (int)s.id || fieldName!=s.fieldName)
             {
                 //new list
                 if(fileContent.Length > 0)
@@ -319,8 +415,9 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                 fileContent = "";
             }
             sid = (int)s.id;
+            fieldName = s.fieldName;
 
-            surveyFilePath = filePath + "\\Survey" + sid.ToString() + "_" + s.fieldName + ".csv";
+            surveyFilePath = filePath + "\\Survey_" + sid.ToString() + "_" + s.fieldName + ".csv";
             fileContent += s.positionIndex.ToString() + separator + s.value + "\r\n";
         }
         if(fileContent.Length > 0)
@@ -454,7 +551,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         }
         pffid = 0; //reset var for next cycle
 
-        foreach(ResponseRepeatable r in repeatables.OrderBy(o=>o.FormResponseID).ThenBy(o=>o.RVRepeatCount).ThenBy(o=>o.formFieldId))
+        foreach(ResponseRepeatable r in repeatables.OrderBy(o => o.FormResponseID).ThenBy(o => o.RVRepeatCount).ThenBy(o => o.formFieldId))
         {
             //WriteTextFile(r.FormResponseID.ToString() + "," + r.RVRepeatCount.ToString() + "," + r.ParentFormFieldID.ToString() + "," + r.formFieldId + "\r\n", filePath + "\\temp.txt");
             //if(r.ParentFormFieldID == null || (r.ParentFormFieldID != null && pffid != 0 && pffid != r.ParentFormFieldID))
@@ -488,11 +585,44 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
             if(newRow)
             {
-                fileContent += r.FormResponseID + separator + r.value.Replace("\n", " ") + separator;
+                if(RdbSpss.Checked)
+                {
+                    if(r.survey_id.HasValue)
+                    {
+                        int surveyId = (int)r.survey_id.Value;
+                        int? respListCode = surveyList.Where(s => s.id == surveyId && s.value == r.value).Select(s => s.positionIndex).FirstOrDefault();
+                        fileContent += r.FormResponseID + separator + respListCode + separator;
+                    }
+                    else
+                    {
+                        fileContent += r.FormResponseID + separator + r.value.Replace("\n", " ") + separator;
+                    }
+                }
+                else
+                {
+                    fileContent += r.FormResponseID + separator + r.value.Replace("\n", " ") + separator;
+                }
             }
             else
             {
-                fileContent += r.value.Replace("\n", " ") + separator;
+                if(RdbSpss.Checked)
+                {
+                    if(r.survey_id.HasValue)
+                    {
+                        int surveyId = (int)r.survey_id.Value;
+                        int? respListCode = surveyList.Where(s => s.id == surveyId && s.value == r.value).Select(s => s.positionIndex).FirstOrDefault();
+                        fileContent += respListCode + separator;
+                    }
+                    else
+                    {
+                        fileContent += r.value.Replace("\n", " ") + separator;
+                    }
+
+                }
+                else
+                {
+                    fileContent += r.value.Replace("\n", " ") + separator;
+                }
             }
 
             pffid = (int)r.ParentFormFieldID;
