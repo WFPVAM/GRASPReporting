@@ -8,6 +8,12 @@ using System.Web;
 /// </summary>
 public class GeneralEnums
 {
+    public enum FieldTypes
+    {
+        NUMERIC_TEXT_FIELD,
+        DROP_DOWN_LIST
+    }
+
     public enum ResponseFilesFolderNames
     {
         incoming,

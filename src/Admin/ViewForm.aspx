@@ -42,6 +42,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
+        <a ti></a>
     <telerik:RadScriptManager ID="RadScriptManager1" runat="server">
         <Scripts>
             <asp:ScriptReference Assembly="Telerik.Web.UI" Name="Telerik.Web.UI.Common.Core.js"></asp:ScriptReference>

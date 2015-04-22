@@ -153,7 +153,7 @@
                     </div>
                     <div class="controls-group">
                     <label>Type:</label>
-                        <asp:RadioButton id="RdbCsv" Text="CSV" Checked="True" GroupName="ExportType" runat="server"/>
+                        <asp:RadioButton id="RdbCsv" Text="Excel" Checked="True" GroupName="ExportType" runat="server" />
                         <asp:RadioButton id="RdbSpss" Text="SPSS" GroupName="ExportType" runat="server"/>                    
                     </div>
 <%--                    <input type="checkbox" name="linear" value="Tables on a single record" />

@@ -138,11 +138,9 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         }
     }
 
-
-
-
     public void ExportData(int formID, int startFormResponseID, DateTime? fromDate, string senderMsisdn,
         string filePath, string separator, string filter, string filterCount, int responseStatusID)
+    
     {
         string responseStatusFilter = "";
         string sqlCmd = "";
@@ -179,7 +177,12 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         foreach(var f in fieldList.OrderBy(o => o.positionIndex))
         {
             sb.Append("[" + (1000 + f.positionIndex).ToString() + "_" + f.name + "1],");
-            sbColHeader.Append(f.name + separator);
+            
+            //Build the column headers for SPSS file.
+            if (RdbSpss.Checked)
+            {
+                sbColHeader.Append(f.name + separator);   
+            }
         }
         columnList = sb.ToString();
         columnList = columnList.Substring(0, columnList.Length - 1);
@@ -189,9 +192,26 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
         Debug.WriteLine("1: " + elapsedTime);
 
-        db.Dispose();
+        //Build ColumnHeader to use in the CSV file. In case of csv (Excel), the column headers are the fields labels.
+        if (RdbCsv.Checked)
+        {
+            var fieldsLabels = (from f in db.FormField
+                                where f.type != "SEPARATOR" && f.type != "TRUNCATED_TEXT" && f.type != "WRAPPED_TEXT" &&
+                                f.type != "REPEATABLES_BASIC" && f.type != "REPEATABLES" && f.form_id == formID &&
+                                !(from ffff in db.FormField_FormField
+                                  select ffff.repetableFormFields_id).Contains(f.id)
+                                select new { f.name, f.label, f.positionIndex }).Distinct().OrderBy(o => o.positionIndex);
+            sbColHeader.Clear();
+            string columnHeaderLabel = string.Empty;
+            foreach (var f in fieldsLabels)
+            {
+                //Take the label, but if there is no label take the field name.
+                columnHeaderLabel = !string.IsNullOrEmpty(f.label) ? f.label : f.name;
+                sbColHeader.Append(columnHeaderLabel + separator);
+            }   
+        }
 
-        //Build ColumnHeader to use in the CSV file.
+        db.Dispose();
         string columnHeader = sbColHeader.ToString();
 
         //columnHeader = columnHeader.Substring(0, columnHeader.Length - 1);
@@ -239,8 +259,6 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
         using(db = new GRASPEntities())
         {
-
-            
             if(RdbSpss.Checked)
             {
                 surveyList = (from sl in db.SurveyListAPI
@@ -262,11 +280,11 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                 int fc = Convert.ToInt32(filterCount);
                 var respUnion = (from r in db.ResponseValue
                                  from fr in db.FormResponse
-                                 where fr.id == r.FormResponseID && fr.parentForm_id == 1
+                                 where fr.id == r.FormResponseID && fr.parentForm_id == formID
                                  select new { FormResponseID = r.FormResponseID.Value, Value = r.value, nvalue = r.nvalue.Value, formFieldID = r.formFieldId.Value }).Union(
                  from re in db.ResponseValueExt
                  from fr in db.FormResponse
-                 where fr.id == re.FormResponseID && fr.parentForm_id == 1
+                 where fr.id == re.FormResponseID && fr.parentForm_id == formID
                  select new { FormResponseID = re.FormResponseID, Value = "", nvalue = re.nvalue.Value, formFieldID = re.FormFieldID.Value });
 
                 var filteredResponseIDs = (from r in respUnion.Where(filter)
@@ -356,7 +374,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                         sb.Append(sb2.ToString().Substring(0, sb2.ToString().Length - 1) + "\r\n");
                     }
                 }
-                else
+                else //Excel (CSV).
                 {
                     while(reader.Read())
                     {
@@ -535,7 +553,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             if(columnHeader.Length > 1 && pffid != ch.ParentFormFieldID)
             {
                 repFilePathName = filePath + "\\Repeatable-" + pffid + ".csv";
-                WriteTextFile("ResponseID|" + columnHeader.Substring(0, columnHeader.Length - 1) + "\r\n", repFilePathName);
+                WriteTextFile("ResponseID" + separator + columnHeader.Substring(0, columnHeader.Length - 1) + "\r\n", repFilePathName);
                 columnHeader = "";
             }
             columnHeader += ch.name + separator;

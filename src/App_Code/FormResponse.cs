@@ -372,8 +372,10 @@ public partial class FormResponse
                     repCount = r.RVRepeatCount.Value;
                 }
                 //cycle on repeatable fields finished. Close the Repeatable.
-                repFields = repFields.Substring(0, repFields.Length - 1); //remove comma
-                if(repFields.Length == 0 || repFields.Last()==',')
+                if (!string.IsNullOrEmpty(repFields))
+                    repFields = repFields.Substring(0, repFields.Length - 1); //remove comma   
+                
+                if (repFields.Length == 0 || repFields.Last() == ',')
                 {
                     sbRep.AppendLine(repFields + "{}]");
                 }

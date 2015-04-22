@@ -1929,7 +1929,6 @@ public partial class DataEntry : System.Web.UI.Page
                             JArray rVal;
                             try
                             {
-                                string a = null;
                                 rVal = (JArray)values[v.Key];
 
                                 foreach(var r in rVal)
@@ -1942,7 +1941,7 @@ public partial class DataEntry : System.Web.UI.Page
                             {
                                 isSaved = "false";
                             }
-                            if(!isEmpty)
+                            if(!isEmpty) //s3 what is this for?
                             {
                                 ResponseValue.createResponseValue(db, i.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
                             }
@@ -2083,7 +2082,7 @@ public partial class DataEntry : System.Web.UI.Page
         foreach(var rv in rVal)
         {
             int fIDX = 0;
-            for(int i = 0; i < fieldTypeMapping.Length; i++)
+            for (int i = 0; i < fieldTypeMapping.GetLength(0); i++)
             {
                 if(rv.Key == fieldTypeMapping[i, 0])
                 {

@@ -38,8 +38,8 @@ public partial class Admin_Dashboard : System.Web.UI.Page
     /// <param name="sender"></param>
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
-    {
-       string path = Server.MapPath("~/public/GraspMobile.apk");
+    {     
+        string path = Server.MapPath("~/public/GraspMobile.apk");
         FileInfo fi1 = new FileInfo(path);
 
         if(fi1.Exists)
@@ -75,90 +75,12 @@ public partial class Admin_Dashboard : System.Web.UI.Page
         RadProgressArea.Localization.Uploaded = "";
         RadProgressArea.Localization.Total = "";
         RadProgressArea.Localization.TransferSpeed = "";
-        string[] files = Directory.GetFiles(Utility.GetResponseFilesFolderName() + "incoming");
-        if(files.Length > 0)
-        {
-            BtnProcessIncomingResponse.Enabled = true;
-            LitIncomingInfo.Text = "New Form Response(s): " + files.Length;
-        }
-        else
-        {
-            BtnProcessIncomingResponse.Enabled = false;
-            LitIncomingInfo.Text = "All Responses have been processed.";
-        }
-
+        IncomingProcessor.CheckProcessIncomingFormsStatus(BtnProcessIncomingResponse, LitIncomingInfo);
     }
+
     protected void BtnProcessIncomingResponse_Click(object sender, EventArgs e)
     {
-        string[] files = Directory.GetFiles(Utility.GetResponseFilesFolderName() + "incoming");
-        double step = 100.0000 / (double)files.Length;
-
-        RadProgressContext ProgressContex = RadProgressContext.Current;
-        ProgressContex.PrimaryTotal = files.Length;
-        ProgressContex.PrimaryValue = 0;
-        ProgressContex.PrimaryPercent = 0;
-
-        IncomingProcessor incomProc = new IncomingProcessor();
-
-        double ms = 0;
-        Stopwatch sw = new Stopwatch();
-
-        int formToProc = files.Length;
-        if(formToProc > 10)
-        {
-            formToProc = 10;
-        }
-        for(int i = 0; i < files.Length; i++)
-        {
-            sw.Reset();
-            sw.Start();
-            string filePath = files[i];
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
-            string senderNo = fileName.GetSubstringAfterLastChar('_');//"+" + fileName.Substring(18);
-            using(StreamReader sr = File.OpenText(files[i]))
-            {
-                string s = sr.ReadToEnd();
-                sr.Close();
-                incomProc.ProcessResponse(s, senderNo, fileName);
-            }
-
-            ProgressContex.CurrentOperationText = "Processing " + fileName;
-            ProgressContex.PrimaryValue = (i + 1).ToString();
-            ProgressContex.PrimaryPercent = (step * (i + 1)).ToString("00.##");
-            sw.Stop();
-
-            TimeSpan ts = sw.Elapsed;
-            ms += ts.TotalMilliseconds;
-            TimeSpan ts2 = TimeSpan.FromMilliseconds((ms/ (double)(i + 1)) * (files.Length - (i + 1)));
-            ts.Add(ts2);
-
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}", ts2.Hours, ts2.Minutes, ts2.Seconds);
-            ProgressContex.TimeEstimated = elapsedTime;
-        }
-        ProgressContex.CurrentOperationText = "Insert Done. Pleas Wait...";
-        Thread.Sleep(2000);
-        ProgressContex.CurrentOperationText = "Calculating Indexes. Pleas Wait...";
-        Thread.Sleep(1100);
-        incomProc.GenerateIndexesHash();
-        ProgressContex.CurrentOperationText = "Calculating Server Side Calulated Fields. Please Wait...";
-        Thread.Sleep(1100);
-        incomProc.GenerateCalculatedField();
-        ProgressContex.CurrentOperationText = "Validating User to Response Permission. Please Wait...";
-        Thread.Sleep(1100);
-        incomProc.GenerateUserToFormResponseAssociation();
-
-
-        files = Directory.GetFiles(Utility.GetResponseFilesFolderName() + "incoming");
-        if(files.Length > 0)
-        {
-            BtnProcessIncomingResponse.Enabled = true;
-            LitIncomingInfo.Text = "New Form Response(s): " + files.Length;
-        }
-        else
-        {
-            BtnProcessIncomingResponse.Enabled = false;
-            LitIncomingInfo.Text = "All Responses have been processed.";
-        }
-
+        IncomingProcessor.ProcessIncommingForms(BtnProcessIncomingResponse, LitIncomingInfo);
+        //LitIncomingInfo.Text = "test2";
     }
 }

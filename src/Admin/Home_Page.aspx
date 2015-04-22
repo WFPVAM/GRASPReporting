@@ -33,6 +33,7 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <telerik:RadButton ID="BtnProcessIncomingResponse" runat="server" Text=" Process Responses " SingleClick="true" SingleClickText=" Processing - Please Wait " Skin="Metro" OnClick="BtnProcessIncomingResponse_Click"></telerik:RadButton>
+                            <asp:Literal ID="litLastProcess" runat="server"></asp:Literal>
                         </div>
                         <div class="col-xs-6 text-right">
                             <i class="fa fa-download"></i>
@@ -98,7 +99,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer announcement-bottom">
+                <%--<div class="panel-footer announcement-bottom">
                     <asp:HyperLink ID="HyperLink2" runat="server" NavigateUrl="~/public/FolderSyncLite.apk">
                         <div class="row">
                             <div class="col-xs-8">
@@ -109,7 +110,7 @@
                             </div>
                         </div>
                     </asp:HyperLink>
-                </div>
+                </div>--%>
             </div>
 
         </div>

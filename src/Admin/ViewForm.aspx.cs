@@ -16,10 +16,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+
 /// <summary>
 /// Used to create the HTML structure of all the FormResponse of a Form
 /// </summary>
@@ -196,7 +200,7 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                         }
                         if((f.type == "IMAGE") && (respValue != "GRASPImage\\"))
                         {
-                            respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+                            WriteImageField(ref respValue);                          
                         }
                         if(respValue != "GRASPImage\\")
                         {
@@ -270,6 +274,56 @@ public partial class Admin_ViewForm : System.Web.UI.Page
         }
     }
 
+    private void WriteImageField(ref string respValue)
+    {
+        //Checks if the file extension is three or more (ex: jpg) and the path should has at least two slashes (\\).
+        if (!string.IsNullOrEmpty(respValue.GetSubstringAfterLastChar('.'))
+            && respValue.GetSubstringAfterLastChar('.').Length >= 3
+            && respValue.Split('\\').Count() >= 2)
+        {
+            //Check whether the image is exist in its physical path.
+            string imageVirtualDirectoryName = respValue.Split('\\')[0];
+            if (!string.IsNullOrEmpty(imageVirtualDirectoryName)
+                && imageVirtualDirectoryName.Equals(Utility.GetGRASPReportingVirtualDirectoryName()))
+            {
+                string imagePhysicalPath = respValue.Replace(imageVirtualDirectoryName, Utility.GetGRASPReportingPath());
+                if (File.Exists(imagePhysicalPath))
+                {
+                    respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+                }
+                else //add tool tip "picture is deleted or moved".
+                    respValue = "<a href=\"/" + respValue + "\" title=\"Picture is deleted or moved.\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+            }
+            else
+                respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+        }else
+            respValue = "Empty";
+
+        //s3 cover the other cases, where old images in GRASPImage folder not under GRASPReporting
+        //                         ServerManager serverManager = new ServerManager();
+
+        // get the site (e.g. default)
+        //Site site = serverManager.Sites.Where(s => s.Name == "Default Web Site")
+        //                                        .FirstOrDefault();
+        // get the application that you are interested in
+        //Application myApp = site.Applications["/Dev1"];
+
+        // get the physical path of the virtual directory
+        //Console.WriteLine(myApp.VirtualDirectories[0].PhysicalPath);
+
+        //int iisNumber = 2;
+
+        //using (ServerManager serverManager = new ServerManager())
+        //{
+        //    var site = serverManager.Sites.Where(s => s.Id == iisNumber).Single();
+        //    var applicationRoot =
+        //             site.Applications.Where(a => a.Path == "/").Single();
+        //    var virtualRoot =
+        //             applicationRoot.VirtualDirectories.Where(v => v.Path == "/").Single();
+        //    //Console.WriteLine(virtualRoot.PhysicalPath);
+        //}  
+    }
+
     protected void ShowResponse(int resID, int selVerID)
     {
         int rosterCount = 0;
@@ -334,7 +388,7 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                         }
                         if((f.ff.type == "IMAGE") && (respValue != "GRASPImage\\"))
                         {
-                            respValue = "<a href=\"/" + respValue + "\" target=\"_blank\"><img src=\"/" + respValue + "\" /></a>";
+                            WriteImageField(ref respValue);
                         }
                         if(respValue != "GRASPImage\\")
                         {

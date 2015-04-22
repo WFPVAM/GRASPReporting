@@ -1,0 +1,1251 @@
+
+ ------ 2015-03-09 14:55:22 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 14:55:22 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:00:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:00:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:05:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:05:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:10:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:10:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:15:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:15:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:20:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:20:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:25:17 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:25:17 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:30:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-09 15:30:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:08:49 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:08:49 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:10:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:10:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:15:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:15:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:20:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:20:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:25:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:25:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:30:17 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:30:17 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:35:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:35:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:40:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:40:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:45:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:45:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:50:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:50:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:55:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 08:55:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:00:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:00:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:05:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:05:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:10:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:10:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:15:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:15:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:20:17 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:20:17 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:25:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:25:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:36:53 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:36:53 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:40:17 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:40:17 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:45:17 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:45:17 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:52:42 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 09:52:42 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 10:00:39 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 10:00:39 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 10:00:46 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True
+
+
+
+ ------ 2015-03-10 10:00:51 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:00:51 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:01:19 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True - btn = null
+
+
+
+ ------ 2015-03-10 10:01:21 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 10:01:21 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - btn = null
+
+
+
+ ------ 2015-03-10 10:01:26 : Error ------- 
+
+System.IO.FileNotFoundException: Could not find file 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-24_09-19-44_101'.
+File name: 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-24_09-19-44_101'
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path, Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path)
+   at System.IO.File.OpenText(String path)
+   at IncomingProcessor.ProcessIncommingForms(RadButton btnProcessIncomingResponse, Literal litIncomingInfo) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 406
+
+
+
+ ------ 2015-03-10 10:01:26 : Error ------- 
+
+System.IO.FileNotFoundException: Could not find file 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-24_09-19-44_101'.
+File name: 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-24_09-19-44_101'
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path, Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path)
+   at System.IO.File.OpenText(String path)
+   at IncomingProcessor.ProcessIncommingForms(RadButton btnProcessIncomingResponse, Literal litIncomingInfo) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 406
+
+
+
+ ------ 2015-03-10 10:04:00 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:04:00 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+***********************************
+ ------ 2015-03-10 10:10:22 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:10:22 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:14:26 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:14:26 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:14:36 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True
+
+
+
+ ------ 2015-03-10 10:14:55 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:14:55 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:15:04 : Error ------- 
+
+System.IO.FileNotFoundException: Could not find file 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-22_11-56-32_101'.
+File name: 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-22_11-56-32_101'
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path, Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path)
+   at System.IO.File.OpenText(String path)
+   at IncomingProcessor.ProcessIncommingForms(RadButton btnProcessIncomingResponse, Literal litIncomingInfo) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 406
+
+
+*************************
+
+ ------ 2015-03-10 10:20:43 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:20:43 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:25:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:25:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:26:01 : Error ------- 
+
+System.IO.FileNotFoundException: Could not find file 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-16_13-12-45_101'.
+File name: 'D:\Projects\GRASPReportingPal\src\ResponseFiles\incoming\PartialDmgGaza_2014-09-16_13-12-45_101'
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path, Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path)
+   at System.IO.File.OpenText(String path)
+   at IncomingProcessor.ProcessIncommingForms(RadButton btnProcessIncomingResponse, Literal litIncomingInfo) in d:\Projects\GRASPReportingPal\src\App_Code\IncomingProcessor.cs:line 406
+
+
+
+  ***********************
+  
+ ------ 2015-03-10 10:29:05 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:29:13 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:29:22 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True
+
+
+
+ ------ 2015-03-10 10:35:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:35:28 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+************************
+
+ ------ 2015-03-10 10:42:58 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:43:03 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:43:06 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True
+
+
+
+ ------ 2015-03-10 10:45:01 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:45:04 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:45:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True
+
+
+*****************
+ ------ 2015-03-10 10:47:25 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:47:25 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:47:32 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True
+
+
+
+ ------ 2015-03-10 10:50:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True - By Scheduler
+
+
+
+ ------ 2015-03-10 10:55:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 10:55:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+***********************
+
+ ------ 2015-03-10 10:56:56 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:56:56 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:57:03 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True - By Scheduler
+
+
+***********************
+ ------ 2015-03-10 10:58:28 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:58:28 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 10:58:37 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True - By Scheduler
+
+
+
+ ------ 2015-03-10 10:58:43 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True - By Scheduler
+
+
+
+ ------ 2015-03-10 11:00:56 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:00:56 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:01:01 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: True
+
+
+
+ ------ 2015-03-10 11:05:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:05:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:10:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:10:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:15:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:15:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:20:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:20:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:25:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:25:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:30:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:30:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:35:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:35:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:40:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:40:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:45:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:45:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:50:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:50:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:55:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 11:55:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:00:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:00:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:05:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:05:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:10:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:10:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:15:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:15:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:20:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:20:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:25:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:25:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:30:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:30:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:35:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:35:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:40:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:40:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:45:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:45:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:50:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:50:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:55:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 12:55:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:00:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:00:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:05:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:05:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:10:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:10:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:15:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:15:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:20:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:20:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:25:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:25:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:30:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:30:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:35:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:35:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:40:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:40:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:45:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:45:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:50:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:50:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:55:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 13:55:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:00:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:00:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:05:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:05:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:08:26 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:08:26 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:10:33 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:10:33 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+**********************
+ ------ 2015-03-10 14:11:21 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:11:21 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+************
+ ------ 2015-03-10 14:13:30 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:13:30 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:18:22 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:18:22 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False - By Scheduler
+
+
+
+ ------ 2015-03-10 14:18:35 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-10 14:18:35 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+****************************
+
+ ------ 2015-03-13 13:38:15 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-13 13:38:18 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-13 13:51:18 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-13 13:51:19 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-13 13:52:20 : Error ------- 
+
+ 1- GlobalVariables.IsProcessIncomingRunning: False
+
+
+
+ ------ 2015-03-13 13:52:22 : Error ------- 
+
+2- GlobalVariables.IsProcessIncomingRunning: False
+
+

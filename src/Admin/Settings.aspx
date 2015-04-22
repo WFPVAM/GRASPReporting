@@ -38,11 +38,10 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <telerik:RadMultiPage ID="MpSettings" runat="server">
-                    <telerik:RadPageView ID="PvHomePageContent" runat="server" Selected="true">
+                    <telerik:RadPageView ID="PvHomePageContent" runat="server">
                         <h3>HomePage Content</h3>
                         <telerik:RadEditor ID="RadEditor1" Skin="Metro" runat="server" ContentAreaCssFile="~/_css/RadEditorCustomCss.css"></telerik:RadEditor>
                         <telerik:RadButton ID="saveInfo" runat="server" Skin="MetroTouch" BackColor="White" Text="Save" OnClick="saveInfo_Click"></telerik:RadButton>
-
                     </telerik:RadPageView>
                     <telerik:RadPageView ID="PvRoles" runat="server">
                         <h3>Roles</h3>

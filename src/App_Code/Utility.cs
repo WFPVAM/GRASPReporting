@@ -50,7 +50,7 @@ public class Utility
 
     public static string getVersion()
     {
-        return "1.1.4";
+        return "1.1.5";
     }
 
     private static bool IsGRASPImagesFolderNotUnderReportingFolder()
@@ -60,6 +60,33 @@ public class Utility
         else
             return true;
     }
+
+    //public static bool SetWebConfigProperty(string propertyKey, string propertyValue)
+    //{
+    //    try
+    //    {
+    //        System.Configuration.Configuration config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
+
+    //        System.Configuration.KeyValueConfigurationElement setting = config.AppSettings.Settings["MyValue"];
+
+    //        config.AppSettings.Settings. ["MyValue"].Value 
+    //        if (null != setting)
+    //        {
+    //            config.AppSettings.Settings["MyValue"].Value = textboxValue.Text;
+    //        }
+    //        else
+    //        {
+    //            config.AppSettings.Settings.Add("MyValue", textboxValue.Text);
+    //        }
+
+    //        config.Save();
+    //    }
+    //    catch (Exception)
+    //    {
+
+    //        throw;
+    //    }
+    //}
 
     public static string GetImagesFolderPath()
     {
@@ -87,6 +114,16 @@ public class Utility
             return ConfigurationManager.AppSettings["GRASPReportingVirtualDirectoryName"] + "\\";
         else //GRASPImages has it's own virtual directory.
             return string.Empty; 
+    }
+
+    public static string GetGRASPReportingPath()
+    {
+        return ConfigurationManager.AppSettings["GRASPReportingPath"];
+    }
+
+    public static string GetGRASPReportingVirtualDirectoryName()
+    {
+        return ConfigurationManager.AppSettings["GRASPReportingVirtualDirectoryName"];
     }
 
     public static string GetResponseFilesFolderName()
@@ -366,6 +403,33 @@ public class Utility
         
         return canAccess;
 
+    }
+
+    /// <summary>
+    /// Checks whether the given string represents a decimal number or integer, for example if the string is 1.0 it returns 1 (without .0) but if it is 1.5 it returns 1.5 . 
+    /// </summary>
+    /// <param name="stringNumber">A string represents a number.</param>
+    /// <returns></returns>
+    public static string GetIntegerNumberFromString(string stringNumber)
+    {
+        try
+        {
+            string decimalNumber = stringNumber.GetSubstringAfterLastChar('.'); //"1287543.0" will return false for a long 
+            if (!string.IsNullOrEmpty(decimalNumber))
+            {
+                int numberAfterPoint = 0;
+                bool canConvert = int.TryParse(decimalNumber, out numberAfterPoint);
+                if (canConvert)
+                    if (numberAfterPoint == 0)
+                        stringNumber = stringNumber.GetSubstringBeforeLastChar('.');
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return stringNumber;
     }
 
 
