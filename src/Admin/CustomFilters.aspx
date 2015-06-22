@@ -40,21 +40,33 @@
             <asp:ScriptReference Assembly="Telerik.Web.UI" Name="Telerik.Web.UI.Common.jQueryInclude.js"></asp:ScriptReference>
         </Scripts>
     </telerik:RadScriptManager>
-    <telerik:RadAjaxManager ID="RadAjaxManager1" runat="server" UpdatePanelsRenderMode="Inline">
-        <AjaxSettings>
+    <telerik:RadAjaxManager ID="RadAjaxManager1" runat="server" > <%--UpdatePanelsRenderMode="Inline"--%>
+       <%-- <AjaxSettings>
             <telerik:AjaxSetting AjaxControlID="ddlFormFields">
                 <UpdatedControls>
                     <telerik:AjaxUpdatedControl ControlID="ddlOperator" UpdatePanelCssClass="" />
                     <telerik:AjaxUpdatedControl ControlID="txtFilterVal" LoadingPanelID="RadAjaxLoadingPanel1" UpdatePanelCssClass="" />
                     <telerik:AjaxUpdatedControl ControlID="litFieldInfo" UpdatePanelCssClass="" />
                     <telerik:AjaxUpdatedControl ControlID="ddlSurveyValues" LoadingPanelID="RadAjaxLoadingPanel1" UpdatePanelCssClass="" />
+                    <telerik:AjaxUpdatedControl ControlID="dateFieldValue" LoadingPanelID="RadAjaxLoadingPanel1" UpdatePanelCssClass="" />
+                    <telerik:AjaxUpdatedControl ControlID="btnAddFilter" LoadingPanelID="RadAjaxLoadingPanel1" UpdatePanelCssClass="" />
+                    <telerik:AjaxUpdatedControl ControlID="RequiredFieldValidator1" LoadingPanelID="RadAjaxLoadingPanel1" UpdatePanelCssClass="" />
                 </UpdatedControls>
             </telerik:AjaxSetting>
-        </AjaxSettings>
+           <%--<telerik:AjaxSetting AjaxControlID="btnAddFilter">
+            <UpdatedControls>
+                <telerik:AjaxUpdatedControl ControlID="lblFilter" LoadingPanelID="RadAjaxLoadingPanel1" />
+                <telerik:AjaxUpdatedControl ControlID="infoField" LoadingPanelID="RadAjaxLoadingPanel1" />
+                <telerik:AjaxUpdatedControl ControlID="lblFilterSummary" LoadingPanelID="RadAjaxLoadingPanel1" />
+            </UpdatedControls>
+        </telerik:AjaxSetting>
+        </AjaxSettings>--%>
     </telerik:RadAjaxManager>        
-    <telerik:RadAjaxLoadingPanel ID="RadAjaxLoadingPanel1" runat="server">
+        <%--<telerik:RadSkinManager ID="RadSkinManager1" runat="server" ShowChooser="true" />--%>
+    <%--<telerik:RadAjaxLoadingPanel ID="RadAjaxLoadingPanel1" runat="server" >
         <img src="../_images/preloader1.gif" />
-    </telerik:RadAjaxLoadingPanel>
+    </telerik:RadAjaxLoadingPanel>--%>
+        <telerik:RadAjaxPanel ID="RadAjaxPanel1" runat="server" >
     <div> 
            <asp:Literal ID="litInfo" runat="server"></asp:Literal>
 
@@ -63,7 +75,7 @@
             <div id="filterBox">
                 <telerik:RadComboBox ID="ddlSQLOperator" runat="server" Skin="Metro" Width="90px" Visible="false">
                 </telerik:RadComboBox>
-                <telerik:RadComboBox ID="ddlFormFields" runat="server" DataTextField="name" EmptyMessage="Select a form field" AutoPostBack="true"
+                <telerik:RadComboBox ID="ddlFormFields" runat="server" CausesValidation="false" DataTextField="name" EmptyMessage="Select a form field" AutoPostBack="true" 
                     DataValueField="id" Skin="Metro" ForeColor="#222" HighlightTemplatedItems="true" DropDownWidth="600px" Width="250px" OnSelectedIndexChanged="ddlFormFields_SelectedIndexChanged">
                     <HeaderTemplate>
                         <ul>
@@ -82,19 +94,25 @@
                                 <asp:Label ID="lblType" runat="server" Text='<%# Eval("type") %>'></asp:Label></li>
                         </ul>
                     </ItemTemplate>
-                    
                 </telerik:RadComboBox>
                 <telerik:RadComboBox ID="ddlOperator" runat="server" Skin="Metro" Width="100px">
                 </telerik:RadComboBox>
                 <asp:TextBox ID="txtFilterVal" runat="server"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="reqTextField" runat="server" ControlToValidate="txtFilterVal" ForeColor="Red">*</asp:RequiredFieldValidator>
                 <telerik:RadComboBox ID="ddlSurveyValues" runat="server" Skin="Metro" Width="150px" DataTextField="value">
                 </telerik:RadComboBox>
-                <telerik:RadButton ID="btnAddFilter" runat="server" Text="Add Filter" OnClick="btnAddFilter_Click"></telerik:RadButton>
+                <telerik:RadDatePicker ID="dateFieldValue" width="150px" Skin="Metro" runat="server">
+                    <DateInput DateFormat="yyyy-MM-dd"> 
+                    </DateInput>
+                </telerik:RadDatePicker>
+                <asp:RequiredFieldValidator ID="reqDate" runat="server" ControlToValidate="dateFieldValue" ForeColor="Red">*</asp:RequiredFieldValidator>
+                <telerik:RadButton ID="btnAddFilter" runat="server" CausesValidation="true" Text="Add Filter" OnClick="btnAddFilter_Click"></telerik:RadButton>
             </div>
+            
             <div id="infoField">
                 <asp:Literal ID="litFieldInfo" runat="server"></asp:Literal>
             </div>
-            <div style="display: none;">
+            <div id="dsdsds" style="display: none;">
                 <asp:Label ID="lblFilter" runat="server" Text=""></asp:Label>
             </div>
             <div id="filterSummary">
@@ -108,7 +126,7 @@
             <asp:Label ID="lblTestResult" runat="server" Text="" Visible="false" CssClass="testResult"></asp:Label>
         </div>
     </div>
-    <asp:Panel ID="pnlExportView" runat="server" CssClass="pnlExportView" Visible="false">
+                <asp:Panel ID="pnlExportView" runat="server" CssClass="pnlExportView" Visible="false">
 
     <telerik:RadButton ID="btnExportData" runat="server" OnClick="btnExportData_Click" Text="Export Data">
     </telerik:RadButton>
@@ -116,6 +134,8 @@
     </telerik:RadButton>
 
     </asp:Panel>
+            </telerik:RadAjaxPanel>
+
 
     </form>
 </body>

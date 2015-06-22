@@ -28,8 +28,13 @@
     void Application_Error(object sender, EventArgs e)
     {
         // Code that runs when an unhandled error occurs
-        //Server.Transfer("~/errors/default.aspx", true);
-
+        
+        //// Get the exception object.
+        Exception exc = Server.GetLastError();
+        Guid errorID = LogUtils.WriteErrorLog(exc.ToString());
+        Session["errorID"] = errorID;
+        Server.Transfer("~/CustomErrorPage.aspx", true);
+        //Server.ClearError();
     }
 
     void Session_Start(object sender, EventArgs e)

@@ -25,6 +25,9 @@
                             <p class="announcement-text">
                                 <asp:Literal ID="LitIncomingInfo" runat="server"></asp:Literal>
                             </p>
+                            <p>
+                                <asp:Literal ID="litLastProcessIncomingTime" runat="server"></asp:Literal>
+                            </p>
                         </div>
                     </div>
                 </div>

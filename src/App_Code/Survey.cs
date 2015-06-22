@@ -88,4 +88,17 @@ public partial class Survey
 
         return surveyel;
     }
+
+    public static IEnumerable<SurveyElement> GetSurveyListElements(int p)
+    {
+        GRASPEntities db = new GRASPEntities();
+
+        IEnumerable<SurveyElement> list = from s in db.Survey
+                                          join sse in db.Survey_SurveyElement on s.id equals sse.Survey_id
+                                          join se in db.SurveyElement on sse.values_id equals se.id
+                                          where s.id == p
+                                          select se;
+
+        return list;
+    }
 }

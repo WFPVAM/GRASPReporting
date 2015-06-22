@@ -38,7 +38,8 @@ public partial class Admin_Dashboard : System.Web.UI.Page
     /// <param name="sender"></param>
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
-    {     
+    {
+        SetLastProcessFormResponsesTime();
         string path = Server.MapPath("~/public/GraspMobile.apk");
         FileInfo fi1 = new FileInfo(path);
 
@@ -81,6 +82,11 @@ public partial class Admin_Dashboard : System.Web.UI.Page
     protected void BtnProcessIncomingResponse_Click(object sender, EventArgs e)
     {
         IncomingProcessor.ProcessIncommingForms(BtnProcessIncomingResponse, LitIncomingInfo);
-        //LitIncomingInfo.Text = "test2";
+        SetLastProcessFormResponsesTime();
+    }
+
+    private void SetLastProcessFormResponsesTime()
+    {
+        litLastProcessIncomingTime.Text = GlobalVariables.LastProcessFormResponsesTime;
     }
 }

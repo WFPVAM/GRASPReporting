@@ -152,6 +152,7 @@ public partial class DataEntry : System.Web.UI.Page
 
 
     }
+
     /// <summary>
     /// Creates the HTML structure of the field passed in input.
     /// Each field is created using AngularJS directives.
@@ -159,39 +160,38 @@ public partial class DataEntry : System.Web.UI.Page
     /// <param name="FormF">FormField to analyze</param>
     private void switchDataEntry(FormFieldExport FormF)
     {
-
         string filedLabe = "";
         string filedBody = "";
-        switch(FormF.type)
+        switch (FormF.type)
         {
             case "DATE_FIELD":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
                     filedLabe = FormF.label;
                     filedBody = "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
                         }
@@ -207,20 +207,20 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
                     filedLabe = FormF.label;
 
                     filedBody += "<input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
                         }
@@ -232,7 +232,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
 
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -244,10 +244,10 @@ public partial class DataEntry : System.Web.UI.Page
             case "BARCODE":
             case "TEXT_FIELD":
 
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -255,27 +255,27 @@ public partial class DataEntry : System.Web.UI.Page
                 }
 
                 outVal = "";
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
 
                     filedLabe = FormF.label;
 
 
-                    if(relevant.TryGetValue((int)FormF.id, out outVal))
+                    if (relevant.TryGetValue((int)FormF.id, out outVal))
                     {
                         angJSForm.Text += outVal;
                     }
 
                     filedBody += "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -294,7 +294,7 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                     {
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
                     }
@@ -302,21 +302,21 @@ public partial class DataEntry : System.Web.UI.Page
                     filedLabe = FormF.label;
 
 
-                    if(relevant.TryGetValue((int)FormF.id, out outVal))
+                    if (relevant.TryGetValue((int)FormF.id, out outVal))
                     {
                         angJSForm.Text += outVal.Replace("currForm", "rb_" + repVal);
                     }
 
                     filedBody += "  <input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"rb_" + repVal + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -334,7 +334,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
 
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -342,34 +342,34 @@ public partial class DataEntry : System.Web.UI.Page
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "TEXT_AREA":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
 
                     filedLabe = FormF.label;
                     filedBody += "<textarea rows=\"2\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
                         }
@@ -382,21 +382,21 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
 
                     filedLabe = FormF.label;
                     filedBody += "<textarea rows=\"2\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
                         }
@@ -410,7 +410,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
 
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -419,41 +419,31 @@ public partial class DataEntry : System.Web.UI.Page
                 break;
             case "CURRENCY_FIELD":
             case "NUMERIC_TEXT_FIELD":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     filedLabe = FormF.label;
                     ngModelName.Add(FormF.name);
-                    filedBody += "<input type=\"number\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
-                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    filedBody += "<input type=\"number\" ng-pattern=\"/^[0-9]+(\\.[0-9]+)?$/\" step=\"any\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    constr = "";
-                    List<FieldConstraintRel> currFieldConstraints = (from fc in fieldConstraintRel
-                                                                     where fc.FormFieldID == (int)FormF.id
-                                                                     select fc).ToList();
-                    foreach(FieldConstraintRel fcr in currFieldConstraints)
-                    {
-                        if(constraint.TryGetValue(fcr.ConstraintID, out constr))
-                        {
-                            filedBody += constr;
-                        }
-                    }
-                    if(FormF.required == 1)
+                    AddFieldConstrains(ref filedBody, FormF);
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
                         //constr = "";
@@ -461,38 +451,38 @@ public partial class DataEntry : System.Web.UI.Page
                         //{
                         //    angJSForm.Text += constr;
                         //}
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             ltlScript.Text += "$scope." + model + FormF.name + " = 0;";
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
                         else filedBody += " required />\n";
-                        if(constr != null && constr != "")
+                        if (constr != null && constr != "")
                         {
                             filedBody += "<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                         }
                         filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
                         filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else if(constr != null && constr != "")
+                    else if (constr != null && constr != "")
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
                         filedBody += "/>\n<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                     }
                     else filedBody += "/>\n";
-                    if(FormF.calculated == 1)
+                    if (FormF.calculated == 1)
                     {
-                        if(FormF.formula != null)
+                        if (FormF.formula != null)
                         {
                             bool isInModel = false;
-                            foreach(string i in ngModelName)
+                            foreach (string i in ngModelName)
                             {
-                                if(FormF.formula.Contains(i))
+                                if (FormF.formula.Contains(i))
                                 {
                                     isInModel = true;
                                 }
                             }
-                            if(isInModel)
+                            if (isInModel)
                             {
                                 ltlScript.Text += "$scope.$watch('" + getFormula(FormF.formula) + "', function (value) {  $scope." + model + FormF.name + "= value;}, true);";
                             }
@@ -507,22 +497,23 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
                     filedLabe = FormF.label;
                     filedBody += "<input type=\"number\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
                     ngModelCalculatedOutofModel.Add(FormF.name, "currForm." + repVal);
-                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    constr = "";
-                    if(constraint.TryGetValue((int)FormF.id, out constr))
-                    {
-                        filedBody += constr;
-                    }
-                    if(FormF.required == 1)
+                    //constr = "";
+                    //if (constraint.TryGetValue((int)FormF.id, out constr))
+                    //{
+                    //    filedBody += constr;
+                    //}
+                    AddFieldConstrains(ref filedBody, FormF);
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
                         //constr = "";
@@ -530,34 +521,34 @@ public partial class DataEntry : System.Web.UI.Page
                         //{
                         //    angJSForm.Text += constr;
                         //}
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
                         else filedBody += " required />\n";
-                        if(constr != null && constr != "")
+                        if (constr != null && constr != "")
                         {
                             filedBody += "<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                         }
                         filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
                         filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
                     }
-                    else if(constr != null && constr != "")
+                    else if (constr != null && constr != "")
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
                         filedBody += "/>\n<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
                     }
                     else filedBody += "/>\n";
-                    if(FormF.calculated == 1)
+                    if (FormF.calculated == 1)
                     {
-                        if(FormF.formula != null)
+                        if (FormF.formula != null)
                         {
                             ltlScript.Text += "$scope.$watch('currForm." + repVal + "', function (value) { var i = 0;for(i = 0; i < value.length; i++) value[i]." + FormF.name + " = " + getFormula(FormF.formula, repVal) + ";}, true);";
                         }
                     }
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -566,20 +557,20 @@ public partial class DataEntry : System.Web.UI.Page
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "DROP_DOWN_LIST":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
-                if(!ltlScript.Text.Contains("$scope.options" + (int)FormF.survey_id + "="))
+                if (!ltlScript.Text.Contains("$scope.options" + (int)FormF.survey_id + "="))
                 {
                     script = "";
                     script += "$scope.options" + (int)FormF.survey_id + "= [";
-                    foreach(SurveyElement se in getOptions((int)FormF.survey_id))
+                    foreach (SurveyElement se in getOptions((int)FormF.survey_id))
                     {
                         script += "{value:\"" + se.value.Replace("'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "\"},";
                     }
@@ -589,22 +580,22 @@ public partial class DataEntry : System.Web.UI.Page
 
 
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
                 filedLabe = FormF.label;
 
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
 
                     filedBody += "<select ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
 
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></select>\n";
                         }
@@ -617,16 +608,16 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
                     filedBody += "<select ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
 
-                    if(!ngModelNameSubForm.ContainsKey(FormF.name))
+                    if (!ngModelNameSubForm.ContainsKey(FormF.name))
                         ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" /></select>\n";
                         }
@@ -637,7 +628,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
 
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -645,34 +636,34 @@ public partial class DataEntry : System.Web.UI.Page
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "RADIO_BUTTON":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
                 filedLabe = FormF.label;
 
-                foreach(SurveyElement se in getOptions((int)FormF.survey_id))
+                foreach (SurveyElement se in getOptions((int)FormF.survey_id))
                 {
 
-                    if(FormF.FormFieldParentID == null)
+                    if (FormF.FormFieldParentID == null)
                     {
                         ngModelName.Add(FormF.name);
 
                         filedBody += "<label class=\"inline\"><input type=\"radio\" class=\"ace\"  ng-model=\"" + model + FormF.name + "\" value=\"" + se.value + "\"";
-                        if(FormF.required == 1)
+                        if (FormF.required == 1)
                         {
                             filedBody += " name=\"r_" + FormF.name + "\"";
-                            if(outVal != null && outVal != "")
+                            if (outVal != null && outVal != "")
                             {
                                 filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                                 filedBody += "<span class=\"lbl\"> " + se.value + "</span></label> \n";
@@ -725,17 +716,17 @@ public partial class DataEntry : System.Web.UI.Page
                         repVal = "";
                         roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
-                        if(repVal == null)
+                        if (repVal == null)
                             table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
                         filedBody += "<label class=\"inline\"><input type=\"radio\" class=\"ace\"  ng-model=\"rb_" + repVal + "." + FormF.name + "\" value=\"" + se.value + "\"";
 
-                        if(!ngModelNameSubForm.ContainsKey(FormF.name))
+                        if (!ngModelNameSubForm.ContainsKey(FormF.name))
                             ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                        if(FormF.required == 1)
+                        if (FormF.required == 1)
                         {
                             filedBody += " name=\"r_{{$index}}" + FormF.name + "\"";
-                            if(outVal != null && outVal != "")
+                            if (outVal != null && outVal != "")
                             {
                                 filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                                 filedBody += "<span class=\"lbl\"> " + se.value + "</span></label> \n";
@@ -753,7 +744,7 @@ public partial class DataEntry : System.Web.UI.Page
 
                     }
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
                 }
@@ -763,7 +754,7 @@ public partial class DataEntry : System.Web.UI.Page
                     filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
 
                 }
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     filedBody += "</div>\n";
                 }
@@ -775,21 +766,21 @@ public partial class DataEntry : System.Web.UI.Page
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "CHECK_BOX":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
-                    filedBody += outVal;
+                    angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     filedLabe = FormF.label;
 
@@ -797,79 +788,81 @@ public partial class DataEntry : System.Web.UI.Page
                     ltlScript.Text += "$scope." + model + FormF.name + " = false;";
 
                     filedBody += "<input type=\"checkbox\" ng-model=\"" + model + FormF.name + "\"";
-                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if(constraint.TryGetValue((int)FormF.id, out constr))
+                    if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
                     }
-                    if(FormF.required == 1)
-                    {
-                        filedBody += " name=\"r_" + FormF.name + "\"";
-                        //constr = "";
-                        //if (constraint.TryGetValue((int)FormF.id, out constr))
-                        //{
-                        //    angJSForm.Text += constr;
-                        //}
-                        if(outVal != null && outVal != "")
-                        {
-                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
-                        }
-                        else filedBody += " required />\n";
-                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
-                    }
-                    else filedBody += "/>\n";
+                    filedBody += "/>\n";
+                    //if (FormF.required == 1) //s3 we don't want the checkbox to be always red and requrired.
+                    //{
+                    //    filedBody += " name=\"r_" + FormF.name + "\"";
+                    //    //constr = "";
+                    //    //if (constraint.TryGetValue((int)FormF.id, out constr))
+                    //    //{
+                    //    //    angJSForm.Text += constr;
+                    //    //}
+                    //    if (outVal != null && outVal != "")
+                    //    {
+                    //        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                    //    }
+                    //    else filedBody += " required />\n";
+                    //    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                    //}
+                    //else filedBody += "/>\n";
                 }
                 else
                 {
                     repVal = "";
                     filedLabe = FormF.label;
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
                     filedBody += "<input type=\"checkbox\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if(constraint.TryGetValue((int)FormF.id, out constr))
+                    if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
                     }
-                    if(FormF.required == 1)
-                    {
-                        filedBody += " name=\"r_" + FormF.name + "\"";
-                        //constr = "";
-                        //if (constraint.TryGetValue((int)FormF.id, out constr))
-                        //{
-                        //    angJSForm.Text += constr;
-                        //}
-                        if(outVal != null && outVal != "")
-                        {
-                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
-                        }
-                        else filedBody += " required />\n";
-                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
-                    }
-                    else filedBody += "/>\n";
+                    //if (FormF.required == 1)//s3 we don't want the checkbox to be always red and requrired.
+                    //{
+                    //    filedBody += " name=\"r_" + FormF.name + "\"";
+                    //    //constr = "";
+                    //    //if (constraint.TryGetValue((int)FormF.id, out constr))
+                    //    //{
+                    //    //    angJSForm.Text += constr;
+                    //    //}
+                    //    if (outVal != null && outVal != "")
+                    //    {
+                    //        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                    //    }
+                    //    else filedBody += " required />\n";
+                    //    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                    //}
+                    //else filedBody += "/>\n";
+                    filedBody += "/>\n";
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "REPEATABLES_BASIC":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -877,7 +870,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 outVal = "";
                 closeRosterRelevant = 0;
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                     closeRosterRelevant = 1;
@@ -892,10 +885,10 @@ public partial class DataEntry : System.Web.UI.Page
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "REPEATABLES":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -903,7 +896,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 outVal = "";
                 closeRosterRelevant = 0;
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                     closeRosterRelevant = 1;
@@ -912,14 +905,15 @@ public partial class DataEntry : System.Web.UI.Page
                 ltlScript.Text += "$scope." + model + FormF.name + " = [";
                 checkFieldForTable((int)FormF.survey_id);
                 table.Add((int)FormF.id, FormF.name);
+                angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label>" + FormF.label + "</label><br/>\n";
                 angJSForm.Text += "<div class=\"col-sm-9 form-group\"><ul><li ng-repeat=\"rb_" + FormF.name + " in " + model + FormF.name + "\" ng-form=\"subForm" + FormF.name + "\">\n<div style=\"overflow: hidden;\">";
                 angJSForm.Text += "<label>{{rb_" + FormF.name + ".value}}</label><br />";
                 break;
             case "SEPARATOR":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -932,21 +926,21 @@ public partial class DataEntry : System.Web.UI.Page
             case "WRAPPED_TEXT":
 
 
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label style=\"font-weight: bold;\" ng-model=\"" + model + FormF.name + "\">" + FormF.label + "</label></div>\n";
                 }
@@ -954,33 +948,33 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
                     angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label style=\"font-weight: bold;\" ng-model=\"rb_" + repVal + "." + FormF.name + "\">" + FormF.label + "</label></div>\n";
                 }
 
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "GEOLOCATION":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
 
                     filedLabe = FormF.label;
@@ -988,14 +982,14 @@ public partial class DataEntry : System.Web.UI.Page
                     ngModelName.Add(FormF.name);
                     filedBody += "  <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Lat\" ng-model=\"" + model + FormF.name + "LatDE\"";
                     constr = "";
-                    if(constraint.TryGetValue((int)FormF.id, out constr))
+                    if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
                     }
                     filedBody += " name=\"r_" + FormF.name + "LatDE\"";
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             ltlScript.Text += "$scope." + model + FormF.name + "LatDE = 0;";
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
@@ -1007,14 +1001,14 @@ public partial class DataEntry : System.Web.UI.Page
 
                     filedBody += " <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Long\"  ng-model=\"" + model + FormF.name + "LongDE\"";
                     constr = "";
-                    if(constraint.TryGetValue((int)FormF.id, out constr))
+                    if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
                     }
                     filedBody += " name=\"r_" + FormF.name + "LongDE\"";
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             ltlScript.Text += "$scope." + model + FormF.name + "LongDE = 0;";
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
@@ -1032,26 +1026,26 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
                     filedLabe = FormF.label;
 
                     filedBody += "Lat: <input type=\"number\" min=\"-90\" max=\"90\" ng-model=\"rb_" + repVal + "." + FormF.name + "LatDE\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if(constraint.TryGetValue((int)FormF.id, out constr))
+                    if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
                     }
                     filedBody += " name=\"r_" + FormF.name + "LatDE\"";
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -1064,19 +1058,19 @@ public partial class DataEntry : System.Web.UI.Page
 
                     filedBody += " Long: <input type=\"number\" min=\"-180\" max=\"180\" ng-model=\"rb_" + repVal + "." + FormF.name + "LongDE\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
                     constr = "";
-                    if(constraint.TryGetValue((int)FormF.id, out constr))
+                    if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
                     }
                     filedBody += " name=\"r_" + FormF.name + "LongDE\"";
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -1091,7 +1085,7 @@ public partial class DataEntry : System.Web.UI.Page
                     filedBody += "\n";
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -1099,34 +1093,34 @@ public partial class DataEntry : System.Web.UI.Page
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "EMAIL_FIELD":
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
                     }
                 }
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
 
                     filedLabe = FormF.label;
                     ngModelName.Add(FormF.name);
                     filedBody += "<input type=\"email\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -1139,20 +1133,20 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
                     filedLabe = FormF.label;
                     filedBody += "<input type=\"email\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -1162,7 +1156,7 @@ public partial class DataEntry : System.Web.UI.Page
                     else filedBody += "/> \n";
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -1171,10 +1165,10 @@ public partial class DataEntry : System.Web.UI.Page
                 break;
             case "IMAGE":
 
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -1182,11 +1176,11 @@ public partial class DataEntry : System.Web.UI.Page
                 }
 
                 outVal = "";
-                if(relevant.TryGetValue((int)FormF.id, out outVal))
+                if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
+                if (FormF.FormFieldParentID == null)
                 {
                     ngModelName.Add(FormF.name);
 
@@ -1195,14 +1189,14 @@ public partial class DataEntry : System.Web.UI.Page
 
 
                     filedBody += "<input type=\"file\" fileread=\"" + model + FormF.name + "\"   accept=\"image/*\" class=\"col-xs-10 col-sm-8\" ";
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -1215,21 +1209,21 @@ public partial class DataEntry : System.Web.UI.Page
                 {
                     repVal = "";
                     roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
+                    if (repVal == null)
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
                     filedLabe = FormF.label;
 
                     filedBody += "  <input type=\"file\" fileread=\"rb_" + repVal + "." + FormF.name + "\"   accept=\"image/*\" class=\"col-xs-10 col-sm-8\" ";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1)
+                    if (FormF.isReadOnly == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    if(FormF.required == 1)
+                    if (FormF.required == 1)
                     {
                         filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
+                        if (outVal != null && outVal != "")
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -1241,7 +1235,7 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
 
-                if(outVal != null && outVal != "")
+                if (outVal != null && outVal != "")
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -1250,10 +1244,10 @@ public partial class DataEntry : System.Web.UI.Page
                 break;
 
             default:
-                if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
-                    if(closeRosterRelevant == 1)
+                    if (closeRosterRelevant == 1)
                     {
                         angJSForm.Text += "</div>\n";
                         closeRosterRelevant = 0;
@@ -1263,6 +1257,1116 @@ public partial class DataEntry : System.Web.UI.Page
                 break;
         }
     }
+    
+    //private void switchDataEntry1(FormFieldExport FormF)
+    //{
+
+    //    string filedLabe = "";
+    //    string filedBody = "";
+    //    switch(FormF.type)
+    //    {
+    //        case "DATE_FIELD":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                ngModelName.Add(FormF.name);
+    //                filedLabe = FormF.label;
+    //                filedBody = "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
+    //                    }
+    //                    else filedBody += " required jqdatepicker />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+
+
+
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                filedLabe = FormF.label;
+
+    //                filedBody += "<input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + " jqdatepicker />\n";
+    //                    }
+    //                    else filedBody += " required jqdatepicker />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "PHONE_NUMBER_FIELD":
+    //        case "BARCODE":
+    //        case "TEXT_FIELD":
+
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+
+    //            outVal = "";
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                ngModelName.Add(FormF.name);
+
+    //                filedLabe = FormF.label;
+
+
+    //                if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //                {
+    //                    angJSForm.Text += outVal;
+    //                }
+
+    //                filedBody += "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else
+    //                    {
+    //                        filedBody += " required />\n";
+    //                    }
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else
+    //                {
+    //                    filedBody += "/>\n";
+    //                }
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                {
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                }
+
+    //                filedLabe = FormF.label;
+
+
+    //                if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //                {
+    //                    angJSForm.Text += outVal.Replace("currForm", "rb_" + repVal);
+    //                }
+
+    //                filedBody += "  <input type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\" ";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"rb_" + repVal + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else
+    //                    {
+    //                        filedBody += " required />\n";
+    //                    }
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else
+    //                {
+    //                    filedBody += "/>\n";
+    //                }
+
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "TEXT_AREA":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                ngModelName.Add(FormF.name);
+
+    //                filedLabe = FormF.label;
+    //                filedBody += "<textarea rows=\"2\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
+    //                    }
+    //                    else filedBody += " required ></textarea>\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
+    //                }
+    //                else filedBody += "></textarea> \n";
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+
+
+    //                filedLabe = FormF.label;
+    //                filedBody += "<textarea rows=\"2\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\"";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></textarea>\n";
+    //                    }
+    //                    else filedBody += " required ></textarea>\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> </div>\n";
+    //                }
+    //                else filedBody += "></textarea> </div>\n";
+
+
+
+    //            }
+
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "CURRENCY_FIELD":
+    //        case "NUMERIC_TEXT_FIELD":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                filedLabe = FormF.label;
+    //                ngModelName.Add(FormF.name);
+    //                filedBody += "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+    //                if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                constr = "";
+    //                List<FieldConstraintRel> currFieldConstraints = (from fc in fieldConstraintRel
+    //                                                                 where fc.FormFieldID == (int)FormF.id
+    //                                                                 select fc).ToList();
+    //                foreach(FieldConstraintRel fcr in currFieldConstraints)
+    //                {
+    //                    if(constraint.TryGetValue(fcr.ConstraintID, out constr))
+    //                    {
+    //                        filedBody += constr;
+    //                    }
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    //constr = "";
+    //                    //if (constraint.TryGetValue((int)FormF.id, out constr))
+    //                    //{
+    //                    //    angJSForm.Text += constr;
+    //                    //}
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        ltlScript.Text += "$scope." + model + FormF.name + " = 0;";
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    if(constr != null && constr != "")
+    //                    {
+    //                        filedBody += "<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
+    //                    }
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
+    //                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else if(constr != null && constr != "")
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    filedBody += "/>\n<span ng-show=\"mainForm.r_" + FormF.name + ".$error.min || mainForm.r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+    //                if(FormF.calculated == 1)
+    //                {
+    //                    if(FormF.formula != null)
+    //                    {
+    //                        bool isInModel = false;
+    //                        foreach(string i in ngModelName)
+    //                        {
+    //                            if(FormF.formula.Contains(i))
+    //                            {
+    //                                isInModel = true;
+    //                            }
+    //                        }
+    //                        if(isInModel)
+    //                        {
+    //                            ltlScript.Text += "$scope.$watch('" + getFormula(FormF.formula) + "', function (value) {  $scope." + model + FormF.name + "= value;}, true);";
+    //                        }
+    //                        else
+    //                        {
+    //                            ltlScript.Text += getFormula(FormF.formula, "$scope." + model + FormF.name, repVal);
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                filedLabe = FormF.label;
+    //                filedBody += "<input type=\"number\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                ngModelCalculatedOutofModel.Add(FormF.name, "currForm." + repVal);
+    //                if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                constr = "";
+    //                if(constraint.TryGetValue((int)FormF.id, out constr))
+    //                {
+    //                    filedBody += constr;
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    //constr = "";
+    //                    //if (constraint.TryGetValue((int)FormF.id, out constr))
+    //                    //{
+    //                    //    angJSForm.Text += constr;
+    //                    //}
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    if(constr != null && constr != "")
+    //                    {
+    //                        filedBody += "<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
+    //                    }
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>";
+    //                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else if(constr != null && constr != "")
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    filedBody += "/>\n<span ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.min || subForm" + repVal + ".r_" + FormF.name + ".$error.max\">Out of Bounds!</span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+    //                if(FormF.calculated == 1)
+    //                {
+    //                    if(FormF.formula != null)
+    //                    {
+    //                        ltlScript.Text += "$scope.$watch('currForm." + repVal + "', function (value) { var i = 0;for(i = 0; i < value.length; i++) value[i]." + FormF.name + " = " + getFormula(FormF.formula, repVal) + ";}, true);";
+    //                    }
+    //                }
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "DROP_DOWN_LIST":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            if(!ltlScript.Text.Contains("$scope.options" + (int)FormF.survey_id + "="))
+    //            {
+    //                script = "";
+    //                script += "$scope.options" + (int)FormF.survey_id + "= [";
+    //                foreach(SurveyElement se in getOptions((int)FormF.survey_id))
+    //                {
+    //                    script += "{value:\"" + se.value.Replace("'", @"\\'").Replace("\r\n", " ").Replace("\n", " ") + "\"},";
+    //                }
+    //                ltlScript.Text += script.Substring(0, script.Length - 1);
+    //                ltlScript.Text += "];";
+    //            }
+
+
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            filedLabe = FormF.label;
+
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                ngModelName.Add(FormF.name);
+
+    //                filedBody += "<select ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
+
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" ></select>\n";
+    //                    }
+    //                    else filedBody += " required ></select>";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "></select>\n";
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                filedBody += "<select ng-model=\"rb_" + repVal + "." + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ng-options=\"o.value for o in options" + (int)FormF.survey_id + "\"";
+
+    //                if(!ngModelNameSubForm.ContainsKey(FormF.name))
+    //                    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" /></select>\n";
+    //                    }
+    //                    else filedBody += " required /></select>\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/></select>\n";
+    //            }
+
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "RADIO_BUTTON":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            filedLabe = FormF.label;
+
+    //            foreach(SurveyElement se in getOptions((int)FormF.survey_id))
+    //            {
+
+    //                if(FormF.FormFieldParentID == null)
+    //                {
+    //                    ngModelName.Add(FormF.name);
+
+    //                    filedBody += "<label class=\"inline\"><input type=\"radio\" class=\"ace\"  ng-model=\"" + model + FormF.name + "\" value=\"" + se.value + "\"";
+    //                    if(FormF.required == 1)
+    //                    {
+    //                        filedBody += " name=\"r_" + FormF.name + "\"";
+    //                        if(outVal != null && outVal != "")
+    //                        {
+    //                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                            filedBody += "<span class=\"lbl\"> " + se.value + "</span></label> \n";
+    //                        }
+    //                        else
+    //                        {
+    //                            filedBody += " required ><span class=\"lbl\"> " + se.value + "</span></label>\n";
+    //                        }
+    //                        //  angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+    //                    }
+    //                    else
+    //                    {
+    //                        filedBody += " ><span class=\"lbl\"> " + se.value + "</span></label>\n";
+    //                    }
+
+    //                    //angJSForm.Text += "<div class=\"right\"><label>" + se.value + "</label><input type=\"radio\" ng-model=\"" + model + FormF.name + "\" value=\"" + se.value + "\"";
+    //                    //if (FormF.required == 1)
+    //                    //{
+    //                    //    angJSForm.Text += " name=\"r_" + FormF.name + "\"";
+    //                    //    if (outVal != null && outVal != "")
+    //                    //    {
+    //                    //        angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    //    }
+    //                    //    else angJSForm.Text += " required />\n";
+    //                    //    angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+    //                    //}
+    //                    //else angJSForm.Text += "/></div>\n";
+    //                }
+    //                else
+    //                {
+    //                    //repVal = "";
+    //                    //roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                    //if (repVal == null)
+    //                    //    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                    //angJSForm.Text += "<div class=\"left clear\"><label>" + se.value + "</label></div><div class=\"right\"><input type=\"radio\" ng-model=\"rb_" + repVal + "." + FormF.name + "\" value=\"" + se.value + "\"";
+    //                    //if (!ngModelNameSubForm.ContainsKey(FormF.name))
+    //                    //    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                    //if (FormF.required == 1)
+    //                    //{
+    //                    //    angJSForm.Text += " name=\"r_{{$index}}" + FormF.name + "\"";
+    //                    //    if (outVal != null && outVal != "")
+    //                    //    {
+    //                    //        angJSForm.Text += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    //    }
+    //                    //    else angJSForm.Text += " required />\n";
+    //                    //    angJSForm.Text += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span></div>\n";
+    //                    //}
+    //                    //else angJSForm.Text += "/></div>\n";
+
+    //                    repVal = "";
+    //                    roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+
+    //                    if(repVal == null)
+    //                        table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+
+    //                    filedBody += "<label class=\"inline\"><input type=\"radio\" class=\"ace\"  ng-model=\"rb_" + repVal + "." + FormF.name + "\" value=\"" + se.value + "\"";
+
+    //                    if(!ngModelNameSubForm.ContainsKey(FormF.name))
+    //                        ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                    if(FormF.required == 1)
+    //                    {
+    //                        filedBody += " name=\"r_{{$index}}" + FormF.name + "\"";
+    //                        if(outVal != null && outVal != "")
+    //                        {
+    //                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                            filedBody += "<span class=\"lbl\"> " + se.value + "</span></label> \n";
+    //                        }
+    //                        else
+    //                        {
+    //                            filedBody += " required ><span class=\"lbl\"> " + se.value + "</span></label>\n";
+    //                        }
+
+    //                    }
+    //                    else
+    //                    {
+    //                        filedBody += " ><span class=\"lbl\"> " + se.value + "</span></label> \n";
+    //                    }
+
+    //                }
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
+    //            }
+    //            else
+    //            {
+
+    //                filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span> \n";
+
+    //            }
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                filedBody += "</div>\n";
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+
+
+
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "CHECK_BOX":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                filedBody += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                filedLabe = FormF.label;
+
+    //                ngModelName.Add(FormF.name);
+    //                ltlScript.Text += "$scope." + model + FormF.name + " = false;";
+
+    //                filedBody += "<input type=\"checkbox\" ng-model=\"" + model + FormF.name + "\"";
+    //                if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                constr = "";
+    //                if(constraint.TryGetValue((int)FormF.id, out constr))
+    //                {
+    //                    filedBody += constr;
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    //constr = "";
+    //                    //if (constraint.TryGetValue((int)FormF.id, out constr))
+    //                    //{
+    //                    //    angJSForm.Text += constr;
+    //                    //}
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                filedLabe = FormF.label;
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                filedBody += "<input type=\"checkbox\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                constr = "";
+    //                if(constraint.TryGetValue((int)FormF.id, out constr))
+    //                {
+    //                    filedBody += constr;
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    //constr = "";
+    //                    //if (constraint.TryGetValue((int)FormF.id, out constr))
+    //                    //{
+    //                    //    angJSForm.Text += constr;
+    //                    //}
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "REPEATABLES_BASIC":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            closeRosterRelevant = 0;
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //                closeRosterRelevant = 1;
+    //            }
+
+    //            ltlScript.Text += "$scope." + model + FormF.name + " = [];";
+    //            checkFieldForRoaster((int)FormF.id, FormF.name);
+    //            roaster.Add((int)FormF.id, FormF.name);
+    //            angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label>Roster " + FormF.label + "</label><br/>\n";
+    //            angJSForm.Text += "<a ng-click=\"addNew" + FormF.name + "()\"><i class=\"fa fa-plus\"></i> Add New " + FormF.name + "</a></div><div class=\"col-sm-11 form-group\"><ul>";
+    //            angJSForm.Text += "<li ng-repeat=\"rb_" + FormF.name + " in " + model + FormF.name + "\" ng-form=\"subForm" + FormF.name + "\">\n<div style=\"overflow: hidden;\">";
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "REPEATABLES":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            closeRosterRelevant = 0;
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //                closeRosterRelevant = 1;
+    //            }
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            ltlScript.Text += "$scope." + model + FormF.name + " = [";
+    //            checkFieldForTable((int)FormF.survey_id);
+    //            table.Add((int)FormF.id, FormF.name);
+    //            angJSForm.Text += "<div class=\"col-sm-9 form-group\"><ul><li ng-repeat=\"rb_" + FormF.name + " in " + model + FormF.name + "\" ng-form=\"subForm" + FormF.name + "\">\n<div style=\"overflow: hidden;\">";
+    //            angJSForm.Text += "<label>{{rb_" + FormF.name + ".value}}</label><br />";
+    //            break;
+    //        case "SEPARATOR":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            angJSForm.Text += "<div class=\"clear\"><hr /></div>\n";
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "TRUNCATED_TEXT":
+    //        case "WRAPPED_TEXT":
+
+
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label style=\"font-weight: bold;\" ng-model=\"" + model + FormF.name + "\">" + FormF.label + "</label></div>\n";
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label style=\"font-weight: bold;\" ng-model=\"rb_" + repVal + "." + FormF.name + "\">" + FormF.label + "</label></div>\n";
+    //            }
+
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "GEOLOCATION":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+
+    //                filedLabe = FormF.label;
+
+    //                ngModelName.Add(FormF.name);
+    //                filedBody += "  <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Lat\" ng-model=\"" + model + FormF.name + "LatDE\"";
+    //                constr = "";
+    //                if(constraint.TryGetValue((int)FormF.id, out constr))
+    //                {
+    //                    filedBody += constr;
+    //                }
+    //                filedBody += " name=\"r_" + FormF.name + "LatDE\"";
+    //                if(FormF.required == 1)
+    //                {
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        ltlScript.Text += "$scope." + model + FormF.name + "LatDE = 0;";
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LatDE.$error.required || mainForm.r_" + FormF.name + "LatDE.$error.number\"><i class=\"fa fa-warning\"></i></span> \n";
+    //                }
+    //                else filedBody += "/>";
+
+    //                filedBody += " <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Long\"  ng-model=\"" + model + FormF.name + "LongDE\"";
+    //                constr = "";
+    //                if(constraint.TryGetValue((int)FormF.id, out constr))
+    //                {
+    //                    filedBody += constr;
+    //                }
+    //                filedBody += " name=\"r_" + FormF.name + "LongDE\"";
+    //                if(FormF.required == 1)
+    //                {
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        ltlScript.Text += "$scope." + model + FormF.name + "LongDE = 0;";
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
+    //                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.number\"><i class=\"fa fa-warning\"></i></span> \n";
+    //                }
+    //                else filedBody += "/>";
+    //                filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LatDE.$error.min || mainForm.r_" + FormF.name + "LatDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid Coords!</span>\n";
+    //                filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + "LongDE.$error.min || mainForm.r_" + FormF.name + "LongDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid Coords!</span>\n";
+    //                filedBody += " \n";
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+
+    //                filedLabe = FormF.label;
+
+    //                filedBody += "Lat: <input type=\"number\" min=\"-90\" max=\"90\" ng-model=\"rb_" + repVal + "." + FormF.name + "LatDE\"";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                constr = "";
+    //                if(constraint.TryGetValue((int)FormF.id, out constr))
+    //                {
+    //                    filedBody += constr;
+    //                }
+    //                filedBody += " name=\"r_" + FormF.name + "LatDE\"";
+    //                if(FormF.required == 1)
+    //                {
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
+    //                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>";
+
+
+    //                filedBody += " Long: <input type=\"number\" min=\"-180\" max=\"180\" ng-model=\"rb_" + repVal + "." + FormF.name + "LongDE\"";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1 || FormF.calculated == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                constr = "";
+    //                if(constraint.TryGetValue((int)FormF.id, out constr))
+    //                {
+    //                    filedBody += constr;
+    //                }
+    //                filedBody += " name=\"r_" + FormF.name + "LongDE\"";
+    //                if(FormF.required == 1)
+    //                {
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.required\"><i class=\"fa fa-warning\"></i></span>";
+    //                    filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.number\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>";
+    //                filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.min || subForm" + repVal + ".r_" + FormF.name + "LatDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid coords!</span>\n";
+    //                filedBody += "<span style=\"color: red; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.min || subForm" + repVal + ".r_" + FormF.name + "LongDE.$error.max\"><i class=\"fa fa-warning\"></i>Invalid coords!</span>\n";
+    //                filedBody += "\n";
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "EMAIL_FIELD":
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+
+    //                filedLabe = FormF.label;
+    //                ngModelName.Add(FormF.name);
+    //                filedBody += "<input type=\"email\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+
+    //                filedLabe = FormF.label;
+    //                filedBody += "<input type=\"email\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/> \n";
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //        case "IMAGE":
+
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+
+    //            outVal = "";
+    //            if(relevant.TryGetValue((int)FormF.id, out outVal))
+    //            {
+    //                angJSForm.Text += outVal;
+    //            }
+    //            if(FormF.FormFieldParentID == null)
+    //            {
+    //                ngModelName.Add(FormF.name);
+
+    //                filedLabe = FormF.label;
+
+
+
+    //                filedBody += "<input type=\"file\" fileread=\"" + model + FormF.name + "\"   accept=\"image/*\" class=\"col-xs-10 col-sm-8\" ";
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+    //            }
+    //            else
+    //            {
+    //                repVal = "";
+    //                roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+    //                if(repVal == null)
+    //                    table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+
+    //                filedLabe = FormF.label;
+
+    //                filedBody += "  <input type=\"file\" fileread=\"rb_" + repVal + "." + FormF.name + "\"   accept=\"image/*\" class=\"col-xs-10 col-sm-8\" ";
+    //                ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+    //                if(FormF.isReadOnly == 1)
+    //                {
+    //                    filedBody += " ng-readonly=\"1\" ";
+    //                }
+    //                if(FormF.required == 1)
+    //                {
+    //                    filedBody += " name=\"r_" + FormF.name + "\"";
+    //                    if(outVal != null && outVal != "")
+    //                    {
+    //                        filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+    //                    }
+    //                    else filedBody += " required />\n";
+    //                    filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+    //                }
+    //                else filedBody += "/>\n";
+
+    //            }
+    //            angJSForm.Text += getFieldBody(filedLabe, filedBody);
+
+    //            if(outVal != null && outVal != "")
+    //            {
+    //                angJSForm.Text += "</div>\n";
+    //            }
+
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+
+    //        default:
+    //            if(prevFieldID != 0 && FormF.FormFieldParentID == null)
+    //            {
+    //                angJSForm.Text += "</div></li></ul></div>\n";
+    //                if(closeRosterRelevant == 1)
+    //                {
+    //                    angJSForm.Text += "</div>\n";
+    //                    closeRosterRelevant = 0;
+    //                }
+    //            }
+    //            prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
+    //            break;
+    //    }
+    //}
+
+    //s3
+
     /// <summary>
     /// Creates the structure for the table in the AngularJS script, that will be used with the ng-repeat directive.
     /// </summary>
@@ -1277,7 +2381,7 @@ public partial class DataEntry : System.Web.UI.Page
                        where s.id == surID
                        select s).FirstOrDefault();
 
-        foreach(SurveyElement se in FormFieldExport.getSurveyListElements(surID))
+        foreach(SurveyElement se in Survey.GetSurveyListElements(surID))
         {
             script += "{ value: '" + se.value + "'},";
         }
@@ -1423,7 +2527,7 @@ public partial class DataEntry : System.Web.UI.Page
     /// <returns>The elements of the surveyList</returns>
     protected IEnumerable<SurveyElement> getOptions(int surveyID)
     {
-        return FormFieldExport.getSurveyListElements(surveyID);
+        return Survey.GetSurveyListElements(surveyID);
     }
     /// <summary>
     /// Creates the HTML structure to allow AngularJS to control the visibility of the fields.
@@ -2115,4 +3219,49 @@ public partial class DataEntry : System.Web.UI.Page
             file.Write(content);
         }
    }
+
+    /// <summary>
+    /// Returns Field Name With Form Name, ex: mainForm.r_age.
+    /// </summary>
+    /// <param name="formFX"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    private string GetFieldNameWithFormName(FormFieldExport formFX)
+    {
+        if (formFX != null)
+        {
+            return "mainForm.r_" + formFX.name;
+        }
+        else
+            return string.Empty;
+    }
+
+    /// <summary>
+    /// Adds contraints on the given field. Example: min and max on the numeric field.
+    /// </summary>
+    /// <param name="fieldContraints"></param>
+    /// <param name="fieldBody"></param>
+    /// <param name="formFExp"></param>
+    /// <author>Saad Mansour</author>
+    private void AddFieldConstrains(ref string fieldBody, FormFieldExport formFExp)
+    {
+        try
+        {
+            constr = "";
+            List<FieldConstraintRel> currFieldConstraints = (from fc in fieldConstraintRel
+                                                             where fc.FormFieldID == (int)formFExp.id
+                                                             select fc).ToList();
+            foreach (FieldConstraintRel fcr in currFieldConstraints)
+            {
+                if (constraint.TryGetValue(fcr.ConstraintID, out constr))
+                {
+                    fieldBody += constr;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+    }
 }

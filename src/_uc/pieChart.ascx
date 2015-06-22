@@ -5,6 +5,12 @@
 
 <div class="col-lg-12">
     <div class="panel panel-primary">
+        <span class="fake-link" onclick="<%= "exportChartImage('flot-chart-pie" + reportFieldID + "','" + ReportName + "','" + labelName + "')" %>"
+            style="margin-left: 10px;">Export As Image</span>
+       <%-- <a href="JavaScript:void(0)" 
+             style="margin-left: 10px; color: blue; text-decoration: underline;" onclick="<%= "exportChartImage('flot-chart-pie'" + reportFieldID + "','" + ReportName + "')" %>" >
+            > Export As Image
+        </a>--%>
 <%--        <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i><%= labelName%></h3>
         </div>--%>

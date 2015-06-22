@@ -362,4 +362,10 @@ li > #exit > i.fa {
             -moz-box-shadow: 0 0 6px #f8b9b7;
             box-shadow: 0 0 6px #f8b9b7;
         }
+
+/* Controls */
+    .fake-link {
+        text-decoration: underline; 
+        cursor: pointer;
+    }
 }

@@ -1098,7 +1098,7 @@ public partial class DataEntryWebFormEditOLD : System.Web.UI.Page
                        where s.id == surID
                        select s).FirstOrDefault();
 
-        foreach(SurveyElement se in FormFieldExport.getSurveyListElements(surID))
+        foreach (SurveyElement se in Survey.GetSurveyListElements(surID))
         {
             script += "{ value: '" + se.value + "'},";
         }
@@ -1217,7 +1217,7 @@ public partial class DataEntryWebFormEditOLD : System.Web.UI.Page
     /// <returns>The elements of the surveyList</returns>
     protected IEnumerable<SurveyElement> getOptions(int surveyID)
     {
-        return FormFieldExport.getSurveyListElements(surveyID);
+        return Survey.GetSurveyListElements(surveyID);
     }
     /// <summary>
     /// Creates the HTML structure to allow AngularJS to control the visibility of the fields.

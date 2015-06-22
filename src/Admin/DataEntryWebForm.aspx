@@ -14,11 +14,11 @@
             function sendJson() {
                 var json = document.getElementById('<%=Literal2.ClientID%>');
                 var btnSave = document.getElementById('btnSaveJSON');
-            var res = json.textContent;
-            $.ajax({
-                type: "POST",
-                url: "DataEntryWebForm.aspx/SaveFormAsJSON",
-                //data: "{'result' : '" + res + "', 'formID' : '" + <%=formID%> + "'}",
+                var res = json.textContent;
+                $.ajax({
+                    type: "POST",
+                    url: "DataEntryWebForm.aspx/SaveFormAsJSON",
+                    //data: "{'result' : '" + res + "', 'formID' : '" + <%=formID%> + "'}",
                 data:JSON.stringify({result:res,formID:<%=formID%>}),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -116,4 +116,3 @@
 
     </script>
 </asp:Content>
-

@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 /// <summary>
@@ -32,6 +33,7 @@ public partial class _master_Admin : System.Web.UI.MasterPage
     {
         if(Session["isAuthenticated"] != null)
         {
+            InitializeNotificationButton();
             lblVersion.Text = Utility.getVersion();
             LoggedUser = HttpContext.Current.User.Identity.Name.ToString().ToUpper();
             RoleUser = User_Credential.getRoleForUser(LoggedUser);
@@ -85,5 +87,30 @@ public partial class _master_Admin : System.Web.UI.MasterPage
     {
         System.Web.Security.FormsAuthentication.SignOut();
         Response.Redirect("~/login.aspx", true);
+    }
+
+    private void InitializeNotificationButton()
+    {
+        if (GlobalVariables.IsNotificationButtonActive)
+        {
+            btnIncomingNotification.Text = "New Forms";
+            btnIncomingNotification.CssClass = "notification-flash";
+            btnIncomingNotification.ToolTip =
+                "There are new incoming form responses. Click to go to home page and check them";
+        }
+        else
+        {
+            btnIncomingNotification.Text = "No New Forms";
+            btnIncomingNotification.CssClass = "no-notification";
+            btnIncomingNotification.ToolTip = "No new incoming form responses";
+        }
+    }
+
+    protected void btnIncomingNotification_Click(object sender, EventArgs e)
+    {
+        GlobalVariables.IsNotificationButtonActive = false;
+        InitializeNotificationButton();
+        Response.Redirect("~/Admin/Home_Page.aspx", true);
+        //Page.ClientScript.RegisterStartupScript(this.GetType(), "CallMyFunction", "test123();", true);
     }
 }

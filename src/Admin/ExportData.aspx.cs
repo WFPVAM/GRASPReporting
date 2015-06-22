@@ -164,15 +164,16 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         // db.Database.SqlQuery<string>(sqlCmd).FirstOrDefault();
 
         var fieldList = (from ff in db.FormFieldExport
-                         where ff.form_id == formID && ff.type != "SEPARATOR" && ff.type != "TRUNCATED_TEXT" &&
-                            ff.type != "WRAPPED_TEXT" && ff.type != "REPEATABLES_BASIC" && ff.type != "REPEATABLES" &&
-                            ff.FormFieldParentID == null
-                         select new { ff.name, ff.positionIndex, sid = ff.survey_id }).Union(
+                     where ff.form_id == formID && ff.type != "SEPARATOR" && ff.type != "TRUNCATED_TEXT" &&
+                        ff.type != "WRAPPED_TEXT" && ff.type != "REPEATABLES_BASIC" && ff.type != "REPEATABLES" &&
+                        ff.FormFieldParentID == null
+                     select new { ff.name, ff.positionIndex, sid = ff.survey_id }).Union(
                                        from fe in db.FormFieldExt
                                        where fe.FormID == formID
                                        select new { name = fe.FormFieldExtName, positionIndex = fe.PositionIndex.Value, sid = new Nullable<decimal>() });
 
         var arField = fieldList.OrderBy(o => o.positionIndex).ToArray();
+        string fieldName;
 
         foreach(var f in fieldList.OrderBy(o => o.positionIndex))
         {
@@ -181,7 +182,8 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             //Build the column headers for SPSS file.
             if (RdbSpss.Checked)
             {
-                sbColHeader.Append(f.name + separator);   
+                fieldName = ChangeEnumeratorNameToTitle(f.positionIndex, f.name);
+                sbColHeader.Append(fieldName + separator);   
             }
         }
         columnList = sb.ToString();
@@ -200,13 +202,19 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                                 f.type != "REPEATABLES_BASIC" && f.type != "REPEATABLES" && f.form_id == formID &&
                                 !(from ffff in db.FormField_FormField
                                   select ffff.repetableFormFields_id).Contains(f.id)
-                                select new { f.name, f.label, f.positionIndex }).Distinct().OrderBy(o => o.positionIndex);
+                                select new { f.name, f.label, f.positionIndex }).Union(
+                                      from fe in db.FormFieldExt
+                                      where fe.FormID == formID
+                                      select new { name = fe.FormFieldExtName, label = fe.FormFieldExtLabel, positionIndex = fe.PositionIndex.Value }).Distinct().OrderBy(o => o.positionIndex);    
+
             sbColHeader.Clear();
             string columnHeaderLabel = string.Empty;
+
             foreach (var f in fieldsLabels)
             {
+                fieldName = ChangeEnumeratorNameToTitle(f.positionIndex, f.name);
                 //Take the label, but if there is no label take the field name.
-                columnHeaderLabel = !string.IsNullOrEmpty(f.label) ? f.label : f.name;
+                columnHeaderLabel = !string.IsNullOrEmpty(f.label) ? f.label : fieldName;
                 sbColHeader.Append(columnHeaderLabel + separator);
             }   
         }
@@ -260,20 +268,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         using(db = new GRASPEntities())
         {
             if(RdbSpss.Checked)
-            {
-                surveyList = (from sl in db.SurveyListAPI
-                              from ff in db.FormField
-                              where ff.survey_id != null && sl.id == ff.survey_id && ff.form_id == formID
-                              orderby sl.id, sl.positionIndex
-                              select new
-                              {
-                                  id = (int)sl.id,
-                                  name = sl.name,
-                                  value = sl.value,
-                                  positionIndex = sl.positionIndex,
-                                  fieldName = ff.name
-                              }).Distinct().OrderBy(s => s.id).ThenBy(s => s.positionIndex).ToList<dynamic>();
-            }
+                FillSurveyList(db, formID);
 
             if(filter.Length != 0)
             {
@@ -304,7 +299,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
                             for(int i = 0; i < record.FieldCount; i++)
                             {
-                                if(i >= 3 && i < arField.Length)
+                                if(i >= 3 && (i - 3) < arField.Length)
                                 {
                                     var x = arField[i - 3];
                                     if(x.sid != null || x.sid > 0)
@@ -351,7 +346,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
                         for(int i = 0; i < record.FieldCount; i++)
                         {
-                            if(i >= 3 && i < arField.Length)
+                            if(i >= 3 && (i-3) < arField.Length)
                             {
                                 var x = arField[i - 3];
                                 if(x.sid != null || x.sid > 0)
@@ -443,6 +438,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             WriteTextFile(fileContent, surveyFilePath);
         }
     }
+
     private void ExportFieldMapping(int formID, string filePath, string separator)
     {
         StringBuilder sb = new StringBuilder();
@@ -478,15 +474,18 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                                        where fe.FormID == formID
                                        orderby fe.PositionIndex
                                        select new { name = fe.FormFieldExtName, label = fe.FormFieldExtLabel, positionIndex = fe.PositionIndex.Value }); ;
+        string fieldName;
 
         foreach(var f in fields.OrderBy(o => o.positionIndex))
         {
-            sb.Append(f.name + separator + f.label + "\r\n");
+            fieldName = ChangeEnumeratorNameToTitle(f.positionIndex, f.name);
+            sb.Append(fieldName + separator + f.label + "\r\n");
         }
         WriteTextFile(sb.ToString(), filePath + "\\FieldsMapping-Form" + formID.ToString() + ".csv");
         db.Dispose();
 
     }
+    
     private void ExportRepeatables(int formID, int startFormResponseID, DateTime? fromDate,
         string senderMsisdn, string filePath, string separator, string filter, string filterCount, int responseStatusID)
     {
@@ -500,49 +499,54 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         string LRM = ((char)0x200E).ToString();  // This is a LRM
         List<ResponseRepeatable> repeatables = new List<ResponseRepeatable>();
 
-        GRASPEntities db = new GRASPEntities();
-
-        if(filter.Length != 0)
+        using (GRASPEntities db = new GRASPEntities())
         {
+            if (RdbSpss.Checked)
+                FillSurveyList(db, formID);
 
-            int fc = Convert.ToInt32(filterCount);
-            var respUnion = (from r in db.ResponseValue
-                             from fr in db.FormResponse
-                             where fr.id == r.FormResponseID && fr.parentForm_id == 1
+            if (filter.Length != 0)
+            {
+
+                int fc = Convert.ToInt32(filterCount);
+                var respUnion = (from r in db.ResponseValue
+                                 from fr in db.FormResponse
+                                 where fr.id == r.FormResponseID && fr.parentForm_id == 1
+                                        && (responseStatusID == 0 || fr.ResponseStatusID == responseStatusID)
+                                 select new
+                                 {
+                                     FormResponseID = r.FormResponseID.Value,
+                                     Value = r.value,
+                                     nvalue = r.nvalue.Value,
+                                     formFieldID = r.formFieldId.Value
+                                 }).Union(
+                 from re in db.ResponseValueExt
+                 from fr in db.FormResponse
+                 where fr.id == re.FormResponseID && fr.parentForm_id == 1
+                 select new { FormResponseID = re.FormResponseID, Value = "", nvalue = re.nvalue.Value, formFieldID = re.FormFieldID.Value });
+
+                var filteredResponseIDs = from r in respUnion.Where(filter)
+                                          group r by r.FormResponseID into grp
+                                          where grp.Count() == fc
+                                          select new { formResponseID = grp.Key };
+
+                repeatables = (from r in db.ResponseRepeatable
+                               from fr in filteredResponseIDs
+                               where fr.formResponseID == r.FormResponseID && r.parentForm_id == formID && r.RVRepeatCount > 0 && r.FormResponseID > startFormResponseID
+                               orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId
+                               select r).ToList();
+            }
+            else
+            {
+                repeatables = (from r in db.ResponseRepeatable
+                               from fr in db.FormResponse
+                               where r.FormResponseID == fr.id && r.parentForm_id == formID && r.RVRepeatCount > 0
+                                    && r.FormResponseID > startFormResponseID
                                     && (responseStatusID == 0 || fr.ResponseStatusID == responseStatusID)
-                             select new
-                             {
-                                 FormResponseID = r.FormResponseID.Value,
-                                 Value = r.value,
-                                 nvalue = r.nvalue.Value,
-                                 formFieldID = r.formFieldId.Value
-                             }).Union(
-             from re in db.ResponseValueExt
-             from fr in db.FormResponse
-             where fr.id == re.FormResponseID && fr.parentForm_id == 1
-             select new { FormResponseID = re.FormResponseID, Value = "", nvalue = re.nvalue.Value, formFieldID = re.FormFieldID.Value });
-
-            var filteredResponseIDs = from r in respUnion.Where(filter)
-                                      group r by r.FormResponseID into grp
-                                      where grp.Count() == fc
-                                      select new { formResponseID = grp.Key };
-
-            repeatables = (from r in db.ResponseRepeatable
-                           from fr in filteredResponseIDs
-                           where fr.formResponseID == r.FormResponseID && r.parentForm_id == formID && r.RVRepeatCount > 0 && r.FormResponseID > startFormResponseID
-                           orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId
-                           select r).ToList();
+                               //orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId
+                               select r).ToList();
+            }
         }
-        else
-        {
-            repeatables = (from r in db.ResponseRepeatable
-                           from fr in db.FormResponse
-                           where r.FormResponseID == fr.id && r.parentForm_id == formID && r.RVRepeatCount > 0
-                                && r.FormResponseID > startFormResponseID
-                                && (responseStatusID == 0 || fr.ResponseStatusID == responseStatusID)
-                           //orderby r.FormResponseID, r.RVRepeatCount, r.formFieldId
-                           select r).ToList();
-        }
+
         string columnHeader = "";
         var columnList = (from r in repeatables
                           where r.RVRepeatCount == 1
@@ -605,7 +609,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             {
                 if(RdbSpss.Checked)
                 {
-                    if(r.survey_id.HasValue)
+                    if (r.survey_id.HasValue)
                     {
                         int surveyId = (int)r.survey_id.Value;
                         int? respListCode = surveyList.Where(s => s.id == surveyId && s.value == r.value).Select(s => s.positionIndex).FirstOrDefault();
@@ -625,7 +629,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             {
                 if(RdbSpss.Checked)
                 {
-                    if(r.survey_id.HasValue)
+                    if (r.survey_id.HasValue)
                     {
                         int surveyId = (int)r.survey_id.Value;
                         int? respListCode = surveyList.Where(s => s.id == surveyId && s.value == r.value).Select(s => s.positionIndex).FirstOrDefault();
@@ -635,7 +639,6 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                     {
                         fileContent += r.value.Replace("\n", " ") + separator;
                     }
-
                 }
                 else
                 {
@@ -717,5 +720,52 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         //writeBinay.Dispose();
     }
 
+    /// <summary>
+    /// Fills survey list from SurveyListAPI. Uses to export the survey list ID instead of value in SPSS option.
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="formID"></param>
+    /// <author>Saad Mansour</author>
+    private void FillSurveyList(GRASPEntities db, int formID)
+    {
+        try
+        {
+            surveyList = (from sl in db.SurveyListAPI
+                          from ff in db.FormField
+                          where ff.survey_id != null && sl.id == ff.survey_id && ff.form_id == formID
+                          orderby sl.id, sl.positionIndex
+                          select new
+                          {
+                              id = (int)sl.id,
+                              name = sl.name,
+                              value = sl.value,
+                              positionIndex = sl.positionIndex,
+                              fieldName = ff.name
+                          }).Distinct().OrderBy(s => s.id).ThenBy(s => s.positionIndex).ToList<dynamic>();
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+    }
 
+    /// <summary>
+    /// Changes the default title field name at position 1, from enumerator to title.
+    /// </summary>
+    /// <param name="fieldPositionIndex"></param>
+    /// <param name="fieldName"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    private string ChangeEnumeratorNameToTitle(int fieldPositionIndex, string fieldName)
+    {
+        if (fieldPositionIndex == 1
+            && fieldName.Equals("enumerator"))
+        {
+            return "title";
+        }
+        else
+        {
+            return fieldName;
+        }
+    }
 }

@@ -25,6 +25,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Windows.Forms.VisualStyles;
 using System.Xml;
 /// <summary>
 /// Used to receive HTTP Requests from Mobile, fetch them and then save data on the DB
@@ -132,7 +133,8 @@ public partial class MobileConnection : System.Web.UI.Page
         Response.ContentType = "text/plain";
         IncomingProcessor incomProc = new IncomingProcessor();
         //Response.Write(incomProc.ProcessResponse(data, senderF));
-        Response.Write(incomProc.SaveFileResponse(data, senderF, formName));
+        string saveFormInstanceResult = incomProc.SaveFileResponse(data, senderF, formName);
+        Response.Write(saveFormInstanceResult);
     }
 
     private void handleSyncRequest(string data, string sender)

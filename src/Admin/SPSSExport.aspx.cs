@@ -194,7 +194,7 @@ public partial class SPSSExport : System.Web.UI.Page
                        where s.id == surveyID
                        select s).FirstOrDefault();
 
-        foreach (var i in FormFieldExport.getSurveyListElements((int)surElID.id))
+        foreach (var i in Survey.GetSurveyListElements((int)surElID.id))
         {
             if (i.value == value)
                 res = i.id.ToString();
@@ -233,7 +233,7 @@ public partial class SPSSExport : System.Web.UI.Page
                                where s.id == sId
                                select s).FirstOrDefault();
 
-                foreach (var i in FormFieldExport.getSurveyListElements((int)surElID.id))
+                foreach (var i in Survey.GetSurveyListElements((int)surElID.id))
                 {
                     response = new List<string>();
                     response.Add(surElID.id.ToString());
@@ -374,7 +374,7 @@ public partial class SPSSExport : System.Web.UI.Page
                                              join rv in db.ResponseValue on ff.id equals (int)rv.formFieldId
                                              where s.id == (int)lbl.survey_id
                                              select s).FirstOrDefault();
-                                foreach (var el in FormFieldExport.getSurveyListElements((int)surEl.id))
+                                foreach (var el in Survey.GetSurveyListElements((int)surEl.id))
                                 {
                                     surveys.Add(el.id.ToString());
                                 }
@@ -446,7 +446,7 @@ public partial class SPSSExport : System.Web.UI.Page
                                              join rv in db.ResponseValue on ff.id equals (int)rv.formFieldId
                                              where s.id == (int)lbl.survey_id
                                              select s).FirstOrDefault();
-                                foreach (var el in FormFieldExport.getSurveyListElements((int)surEl.id))
+                                foreach (var el in Survey.GetSurveyListElements((int)surEl.id))
                                 {
                                     surveys.Add(el.id.ToString());
                                 }

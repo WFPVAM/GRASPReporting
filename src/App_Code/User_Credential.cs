@@ -138,12 +138,12 @@ public partial class User_Credential
 
         var user = new User_Credential();
 
-        user.email = email;
-        user.name = name;
-        user.surname = surname;
+        user.email = email ?? string.Empty;
+        user.name = name ?? string.Empty;
+        user.surname = surname ?? string.Empty;
         user.username = username;
         user.password = password;
-        user.phone_number = phone_number;
+        user.phone_number = phone_number ?? string.Empty;
         user.roles_id = roles_id;
         user.supervisor = Role.getRole(roles_id);
 

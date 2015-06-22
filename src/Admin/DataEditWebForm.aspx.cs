@@ -173,6 +173,14 @@ public partial class DataEdit : System.Web.UI.Page
 
 
     }
+
+    private string get1(string label)
+    {
+        return " <div class=\"col-sm-9 form-group\">\n" +
+               "                <label class=\"col-sm-3 control-label no-padding-right\">" + label + " </label>\n" +
+               "            </div>";
+    }
+
     /// <summary>
     /// Creates the HTML structure of the field passed in input.
     /// Each field is created using AngularJS directives.
@@ -973,6 +981,8 @@ public partial class DataEdit : System.Web.UI.Page
                 ltlScript.Text += "$scope." + model + FormF.name + " = [";
                 checkFieldForTable((int)FormF.survey_id);
                 table.Add((int)FormF.id, FormF.name);
+                angJSForm.Text += "<div class=\"col-sm-9 form-group\"><label>" + FormF.label + "</label><br/>\n";
+                //<label class=\"col-sm-3 control-label no-padding-right\">" + FormF.label + "</label>\n
                 angJSForm.Text += "<div class=\"col-sm-9 form-group\"><ul><li ng-repeat=\"rb_" + FormF.name + " in " + model + FormF.name + "\" ng-form=\"subForm" + FormF.name + "\">\n<div style=\"overflow: hidden;\">";
                 angJSForm.Text += "<label>{{rb_" + FormF.name + ".value}}</label><br />";
                 #endregion
@@ -1029,7 +1039,6 @@ public partial class DataEdit : System.Web.UI.Page
                 #endregion
                 break;
             case "GEOLOCATION":
-
                 //GeoLocation cannot be edited, so it's replaced w a simple disabled TEXTFIELD
                 #region Geolocation
                 if(prevFieldID != 0 && FormF.FormFieldParentID == null)
@@ -1306,7 +1315,7 @@ public partial class DataEdit : System.Web.UI.Page
                        where s.id == surID
                        select s).FirstOrDefault();
 
-        foreach(SurveyElement se in FormFieldExport.getSurveyListElements(surID))
+        foreach (SurveyElement se in Survey.GetSurveyListElements(surID))
         {
             script += "{ value: '" + se.value + "'},";
         }
@@ -1425,7 +1434,7 @@ public partial class DataEdit : System.Web.UI.Page
     /// <returns>The elements of the surveyList</returns>
     protected IEnumerable<SurveyElement> getOptions(int surveyID)
     {
-        return FormFieldExport.getSurveyListElements(surveyID);
+        return Survey.GetSurveyListElements(surveyID);
     }
     /// <summary>
     /// Creates the HTML structure to allow AngularJS to control the visibility of the fields.

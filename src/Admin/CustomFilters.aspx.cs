@@ -10,6 +10,13 @@ using Telerik.Web.UI;
 
 public partial class Admin_CustomFilter : System.Web.UI.Page
 {
+    private enum FieldValueControls
+    {
+        txtFilterVal,
+        ddlSurveyValues,
+        dateFieldValue
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!Utility.VerifyAccess(Request))
@@ -52,8 +59,8 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                 ddlFormFields.DataSource = ffs.ToList();
                 ddlFormFields.DataBind();
 
-
-                ddlSurveyValues.Visible = false;
+                SetFieldValueControlVisibility(FieldValueControls.txtFilterVal);
+                dateFieldValue.Visible = false;
             }
         }
     }
@@ -75,10 +82,15 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
         {
             filterVal = ddlSurveyValues.Text;
         }
+        else if (dateFieldValue.Visible)
+        {
+            filterVal = dateFieldValue.SelectedDate.Value.ToString("yyyy-MM-dd");
+        }
         else
         {
             filterVal = txtFilterVal.Text;       
         }
+
         lblFilterSummary.Text += ddlFormFields.Text + " " + ddlOperator.Text + " " + filterVal + "<br/>";
 
         //ddlSQLOperator.Visible = true;
@@ -96,6 +108,7 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
             case "NUMERIC_TEXT_FIELD":
                 lblFilter.Text += "(formFieldID==" + fieldID + " AND nvalue" + op + filterVal + ")";
                 break;
+            case "DATE_FIELD":
             case "TEXT_FIELD":
             case "RADIO_BUTTON":
             case "DROP_DOWN_LIST":
@@ -117,11 +130,13 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
             case "SERVERSIDE_CALCULATED":
                 lblFilter.Text += "(formFieldID==" + fieldID + " AND nvalue" + op + filterVal + ")";
                 break;
+            //case "DATE_FIELD":
+            //    lblFilter.Text += "(formFieldID==" + fieldID + " AND value" + op + filterVal + ")";
+            //    break;
         }
         hdnFilterCount.Value = (Convert.ToInt32(hdnFilterCount.Value) + 1).ToString();
-
-
     }
+
     protected void btnTest_Click(object sender, EventArgs e)
     {
         int formID = 0;
@@ -243,9 +258,25 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                     litFieldInfo.Text += "<br/><label>Max Value: </label>" + max.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Min Value: </label>" + min.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Null Values: </label>" + countNull.ToString();
-                    
-                    txtFilterVal.Visible = true;
-                    ddlSurveyValues.Visible = false;
+
+                    SetFieldValueControlVisibility(FieldValueControls.txtFilterVal);
+                    break;
+                case "DATE_FIELD": //<author>Saad Mansour</author>
+                    //Set the right yellow label information.
+                    litFieldInfo.Text = "<strong>" + e.Text + "</strong> is a Date field. The Date Format is yyyy-MM-dd For Example: 2015-01-20<br/>";
+
+                    //Finds the occurrences of the date field.
+                    count = FormFieldResponses.GetFieldCount(formID, formFieldID);
+                    string max2 = FormFieldResponses.GetFieldMaxValue(formID, formFieldID);
+                    string min2 = FormFieldResponses.GetFieldMinValue(formID, formFieldID);
+                    countNull = FormFieldResponses.GetFieldNullValuesCount(formID, formFieldID);
+
+                    litFieldInfo.Text += "<br/><label>Total Values: </label>" + count.ToString();
+                    litFieldInfo.Text += "<br/><label>Max Value: </label>" + (max2 != null ? max2 : "");
+                    litFieldInfo.Text += "<br/><label>Min Value: </label>" + (min2 != null ? min2 : "");
+                    litFieldInfo.Text += "<br/><label>Null Values: </label>" + countNull.ToString();
+
+                    SetFieldValueControlVisibility(FieldValueControls.dateFieldValue);
                     break;
                 case "TEXT_FIELD":
                     litFieldInfo.Text = "<strong>" + e.Text + "</strong> is associated to a free text field<br/>";
@@ -266,10 +297,8 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                         litFieldInfo.Text += "<li><label>" + tf.value + " </label>(" + tf.count.ToString() + ")</li>";
                     }
                     litFieldInfo.Text += "</ul>";
-                    
-                    txtFilterVal.Visible = true;
-                    ddlSurveyValues.Visible = false;
 
+                    SetFieldValueControlVisibility(FieldValueControls.txtFilterVal);
                     break;
                 case "RADIO_BUTTON":
                 case "DROP_DOWN_LIST":
@@ -295,9 +324,7 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                     ddlSurveyValues.DataSource = surveyList.ToList();
                     ddlSurveyValues.DataBind();
 
-                    txtFilterVal.Visible = false;
-                    ddlSurveyValues.Visible = true;                    
-
+                    SetFieldValueControlVisibility(FieldValueControls.ddlSurveyValues);
                     break;
                 case "SERVERSIDE_CALCULATED":
                                         litFieldInfo.Text ="<strong>" + e.Text + "</strong> is a Numeric field<br/>";
@@ -318,14 +345,45 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                     litFieldInfo.Text += "<br/><label>Max Value: </label>" + max.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Min Value: </label>" + min.Value.ToString();
                     litFieldInfo.Text += "<br/><label>Null Values: </label>" + countNull.ToString();
-                    
-                    txtFilterVal.Visible = true;
-                    ddlSurveyValues.Visible = false;
 
+                    SetFieldValueControlVisibility(FieldValueControls.txtFilterVal);
                     break;
             }
 
         }
 
+    }
+
+    /// <summary>
+    /// Sets the visibility of the field value control, and hide the other controls.
+    /// </summary>
+    /// <param name="visibileControl"></param>
+    /// <author>Saad Mansour</author>
+    private void SetFieldValueControlVisibility(FieldValueControls visibileControl)
+    {
+        if (visibileControl == FieldValueControls.txtFilterVal)
+        {
+            txtFilterVal.Visible = true;
+            reqTextField.Visible = true;
+            ddlSurveyValues.Visible = false;
+            dateFieldValue.Visible = false;
+            reqDate.Visible = false;
+        }
+        else if (visibileControl == FieldValueControls.ddlSurveyValues)
+        {
+            txtFilterVal.Visible = false;
+            reqTextField.Visible = false;
+            ddlSurveyValues.Visible = true;
+            dateFieldValue.Visible = false;
+            reqDate.Visible = false;
+        }
+        else //dateFieldValue
+        {
+            txtFilterVal.Visible = false;
+            reqTextField.Visible = false;
+            ddlSurveyValues.Visible = false;
+            dateFieldValue.Visible = true;
+            reqDate.Visible = true;
+        }
     }
 }

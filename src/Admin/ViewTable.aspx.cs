@@ -72,7 +72,7 @@ public partial class Admin_ViewTable : System.Web.UI.Page
                              join rv in db.ResponseValue on ff.id equals (int)rv.formFieldId
                              where s.id == SurveyID
                              select s).FirstOrDefault();
-                foreach (var el in FormFieldExport.getSurveyListElements((int)surEl.id))
+                foreach (var el in Survey.GetSurveyListElements((int)surEl.id))
                 {
                     surveys.Add(el.value);
                 }

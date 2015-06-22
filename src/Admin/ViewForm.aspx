@@ -14,6 +14,8 @@
         #tblContainer h1 { margin: 0 0 10px 0; padding: 5px 0; border: 3px solid #ccc; width: 100%; background: #eee; border-bottom: 1px solid #ddd; }
         .repContainer { height: 100%; min-height: 100%; overflow: hidden; border-top: 2px solid #0058b1; border-bottom: 2px solid #0058b1; }
         .repTitle { font-size: 16px; font-weight: bold; }
+        /* Displays the survey item title for each record in a Table. */
+        .surveyItemInTable { font-size: 12px; font-weight: bold; }
         .left { font-weight: bold; width: 50%; text-align: right; border-bottom: 1px solid #ddd; margin: 0; padding: 2px 0 0px 0; }
         .right { width: 49%; border-bottom: 1px dashed #ddd; margin: 0; padding: 2px 0 4px 0; text-align: left; }
         .inline { display: inline-block; padding: 0 2px; width: 100px; border-left: 1px solid #ddd; }

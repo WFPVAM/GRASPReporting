@@ -38,11 +38,12 @@ public partial class _uc_barChart : System.Web.UI.UserControl
     public string aggregate = "";
     public string firstColumn = "";
     public string secondColumn = "";
+    public string ReportName { get; set; }
 
     public int reportFieldID { get; set; }
     public string labelName { get; set; }
     public int ResponseStatusID { get; set; }
-
+    public DateTime? ResponseValueDate { get; set; }
 
     /// <summary>
     /// Shows a bar charts on the selected report, taking the data from the DB
@@ -88,10 +89,11 @@ public partial class _uc_barChart : System.Web.UI.UserControl
 
         if(aggregate == "count" || aggregate == "")
         {
-            var items = from ffr in db.FormFieldResponses
+            var items = from ffr in db.FormFieldResponses.AsEnumerable()
                         where ffr.formFieldId == serieID
                              && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) 
                              && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
+                             && (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
                         group ffr by ffr.value into g
                         select new
                         {
@@ -110,10 +112,11 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         {
 
 
-            var resVal = from ffr in db.FormFieldResponses
+            var resVal = from ffr in db.FormFieldResponses.AsEnumerable()
                          where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) 
                             && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
                             && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
+                            && (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
                          select new { ffr.value, ffr.formFieldId, ffr.nvalue };
 
 

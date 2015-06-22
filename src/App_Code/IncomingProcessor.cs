@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -89,8 +90,10 @@ public class IncomingProcessor
 
                             fieldTypeMapping = FormField.getFormFieldTypeMap(formParentID); //idx= 0:name; 1:id; 2:type; 3:positionIndex
 
-                            if(formResponseID == 0)
+                            if(formResponseID == 0) //The form ID is not existed in the database.
                             {
+                                SaveFileInResponseFilesFolder(fileContent, fileName, GeneralEnums.ResponseFilesFolderNames.unknownForms);
+                                DeleteFormFromResponseFileFolder(fileName, GeneralEnums.ResponseFilesFolderNames.incoming);
                                 return "ko";
                             }
                             if(firstFormResponseID == 0)
@@ -203,6 +206,13 @@ public class IncomingProcessor
                                     {
                                         valueToInsert = child.InnerText;
                                     }
+
+                                    if (fieldTypeMapping[fIDX, 2].Equals(GeneralEnums.FieldTypes.CHECK_BOX.ToString()) //Save false for unchecked check boxes.
+                                        && string.IsNullOrEmpty(valueToInsert))
+                                    {
+                                        valueToInsert = "false";
+                                    }
+
                                     ResponseValue.createResponseValue(db, valueToInsert, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
                                     if(tmpNm == "client_version")
                                         clientVersion = child.InnerText;
@@ -268,11 +278,9 @@ public class IncomingProcessor
                 //UserToFormResponses.GenerateAssociationForAllUsers(formParentID, formResponseID);
 
                 //SaveProcessedResponse(fileContent, formResponseID.ToString().PadLeft(9, '0'));
-                SaveProcessedResponse(fileContent, fileName);
-                if(fileName.Length > 0)
-                {
-                    File.Delete(Utility.GetResponseFilesFolderName() + "incoming\\" + fileName);
-                }
+                SaveFileInResponseFilesFolder(fileContent, fileName, GeneralEnums.ResponseFilesFolderNames.processed);
+                DeleteFormFromResponseFileFolder(fileName, GeneralEnums.ResponseFilesFolderNames.incoming);
+
                 return "ok";
             }
         }
@@ -415,6 +423,7 @@ public class IncomingProcessor
             ProgressContex.CurrentOperationText = "Validating User to Response Permission. Please Wait...";
             Thread.Sleep(1100);
             incomProc.GenerateUserToFormResponseAssociation();
+            GlobalVariables.LastProcessFormResponsesTime = "Last Process Form Responses: " + DateTime.Now.ToString();
         }
         catch (Exception ex)
         {
@@ -431,6 +440,12 @@ public class IncomingProcessor
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="btnProcessIncomingResponse"></param>
+    /// <param name="litIncomingInfo"></param>
+    /// <author>Saad Mansour</author>
     public static void CheckProcessIncomingFormsStatus(RadButton btnProcessIncomingResponse, Literal litIncomingInfo)
     {
         try
@@ -515,6 +530,7 @@ public class IncomingProcessor
             }
 
             FormResponseServerStatus.InsertOrUpdateStatus(formInstanceName, true);
+            SetIsNewFormsArrived();
             return "ok";
         }
         catch(Exception ex)
@@ -534,6 +550,15 @@ public class IncomingProcessor
             file.Close();
             return "ko";
         }
+    }
+
+    /// <summary>
+    /// Sets the New Forms Arrived flag for notification to true if new form arrived.
+    /// </summary>
+    /// <author>Saad Mansour</author>
+    protected void SetIsNewFormsArrived()
+    {
+        GlobalVariables.IsNewFormsArrived = true;
     }
 
     private bool SaveIncommingImage(string data, string sender, string formInstanceName, string imageFileName)
@@ -579,6 +604,19 @@ public class IncomingProcessor
             LogUtils.WriteErrorLog(ex.Message);
             return false;
         }
+    }
+
+    private bool SaveIncommingVideo(string data, string sender, string formInstanceName, string videoFileName)
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+        return false;
     }
 
     //private byte[] Decompress(byte[] compressedBytes)
@@ -744,17 +782,32 @@ public class IncomingProcessor
         return fileName;
     }
 
-    public void SaveProcessedResponse(string data, string fileName)
+    /// <summary>
+    /// Saves the given file in the given folder name.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="fileName"></param>
+    /// <param name="folderName"></param>
+    /// <author>Saad Mansour</author>
+    public void SaveFileInResponseFilesFolder(string data, string fileName, GeneralEnums.ResponseFilesFolderNames folderName)
     {
-        string folderPath = Utility.GetResponseFilesFolderName() + "processed\\";
-        if(!Directory.Exists(folderPath))
+        try
         {
-            Directory.CreateDirectory(folderPath);
+            string folderPath = Utility.GetResponseFilesFolderName() + folderName.ToString() + "\\";
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            using (StreamWriter file = new StreamWriter(folderPath + fileName, true))
+            {
+                file.Write(data);
+                file.Close();
+            }
         }
-        using(StreamWriter file = new StreamWriter(folderPath + fileName, true))
+        catch (Exception ex)
         {
-            file.Write(data);
-            file.Close();
+            LogUtils.WriteErrorLog(ex.ToString());
         }
     }
 
@@ -779,6 +832,26 @@ public class IncomingProcessor
         if(firstFormResponseID > 0)
         {
             UserToFormResponses.GenerateAssociationForAllUsersFrom(this.firstFormResponseID);
+        }
+    }
+
+    /// <summary>
+    /// Deletes the file from the given ResponseFiles folder.
+    /// </summary>
+    /// <param name="folderName"></param>
+    /// <author>Saad Mansour</author>
+    private void DeleteFormFromResponseFileFolder(string fileName, GeneralEnums.ResponseFilesFolderNames folderName)
+    {
+        try
+        {
+            if (fileName.Length > 0)
+            {
+                File.Delete(Utility.GetResponseFilesFolderName() + folderName.ToString() + "\\" + fileName);
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
         }
     }
 }

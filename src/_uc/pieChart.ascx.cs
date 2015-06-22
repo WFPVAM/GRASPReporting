@@ -24,6 +24,7 @@ using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Diagnostics;
+using System.Data.Objects;
 /// <summary>
 /// User Control to create the structure for a pie chart with KendoUI
 /// </summary>
@@ -31,7 +32,8 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
 {
 
     public string json = "";
-    public string chartName = "";
+    public string chartName = "ss";
+    public string ReportName { get; set; }
     public string legend = "false";
     public string table = "false";
     public string firstColumn = "";
@@ -40,7 +42,7 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
     public int reportFieldID { get; set; }
     public string labelName { get; set; }
     public int ResponseStatusID { get; set; }
-
+    public DateTime? ResponseValueDate { get; set; }
 
     /// <summary>
     /// Shows a bar charts on the selected report, taking the data from the DB
@@ -65,25 +67,27 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
                                   where rs.ResponseStatusName == "Deleted"
                                   select new { rs.ResponseStatusID }).FirstOrDefault();
 
-        var items = from rv in db.FormFieldResponses
-                    where rv.formFieldId == formFieldID && (ResponseStatusID == 0 || rv.ResponseStatusID == ResponseStatusID) && rv.ResponseStatusID != deleteRespStatusID.ResponseStatusID
-                    group rv by rv.value into g
-                    select new
-                    {
-                        category = g.Key,
-                        value = g.Count()
-                    };
-
+        var items = from rv in db.FormFieldResponses.AsEnumerable()
+            where rv.formFieldId == formFieldID
+                  && (ResponseStatusID == 0 || rv.ResponseStatusID == ResponseStatusID)
+                  && rv.ResponseStatusID != deleteRespStatusID.ResponseStatusID
+                  && (rv.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : rv.RVCreateDate.Value.Date))
+            group rv by rv.value into g
+            select new
+            {
+                category = g.Key,
+                value = g.Count()
+            };
+        //ResponseValueDate != null ? ResponseValueDate : rv.RVCreateDate.Value.Date))
         Dictionary<string, string> response = new Dictionary<string, string>();
         List<Object> newItems = new List<Object>();
-        foreach (var r in items.AsParallel())
+        foreach (var r in items)
         {
             try
             {
                 Dictionary<string, string> tmp = JsonConvert.DeserializeObject<Dictionary<string, string>>(r.category.ToString());
                 response.Add(tmp.FirstOrDefault().Value, r.value.ToString());
                 newItems.Add(new { category = tmp.FirstOrDefault().Value, value = r.value });
-
             }
             catch (Exception ex)
             {

@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 /// <summary>
 /// Used to call an user control based on the chart type of the ReportFields
@@ -38,32 +39,36 @@ public partial class Admin_Statistics_ViewChart : System.Web.UI.Page
         int ReportID = Convert.ToInt32(Request["reportID"]);
         int responseStatusID = 0;
 
-        if(DdlResponseStatus.SelectedValue != null && DdlResponseStatus.SelectedValue != "")
+        if (DdlResponseStatus.SelectedValue != null && DdlResponseStatus.SelectedValue != "")
         {
             responseStatusID = Convert.ToInt32(DdlResponseStatus.SelectedValue);
         }
 
 
         IEnumerable<ReportField> repFlds = ReportField.getReportFields(ReportID);
-        Literal1.Text="<script>function createCharts(){";
+        Literal1.Text = "<script>function createCharts(){";
 
-        foreach (ReportField rep in repFlds.OrderBy(o=>o.ReportFieldOrder))
+        foreach (ReportField rep in repFlds.OrderBy(o => o.ReportFieldOrder))
         {
             switch (rep.ChartType)
             {
                 case "pie":
                     _uc_pieChart c = (_uc_pieChart)Page.LoadControl("../_uc/pieChart.ascx");
                     c.reportFieldID = Convert.ToInt32(rep.ReportFieldID);
+                    c.ReportName = ReportName;
                     c.labelName = rep.ReportFieldTitle;
                     c.ResponseStatusID = responseStatusID;
+                    if (dateFrom.SelectedDate != null) c.ResponseValueDate = dateFrom.SelectedDate.Value.Date;
                     PlaceHolder1.Controls.Add(c);
                     Literal1.Text += "createChartPie" + rep.ReportFieldID + "(); ";
                     break;
                 case "bar":
                     _uc_barChart c2 = (_uc_barChart)Page.LoadControl("../_uc/barChart.ascx");
                     c2.reportFieldID = Convert.ToInt32(rep.ReportFieldID);
+                    c2.ReportName = ReportName;
                     c2.labelName = rep.ReportFieldTitle;
                     c2.ResponseStatusID = responseStatusID;
+                    if (dateFrom.SelectedDate != null) c2.ResponseValueDate = dateFrom.SelectedDate.Value.Date;
                     PlaceHolder1.Controls.Add(c2);
                     Literal1.Text += "createChartBar" + rep.ReportFieldID + "(); ";
                     break;

@@ -1,9 +1,10 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="barChart.ascx.cs" Inherits="_uc_barChart" %>
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 
-
 <div class="col-lg-12">
     <div class="panel panel-primary">
+        <span class="fake-link" onclick="<%= "exportChartImage('flot-chart-bar" + reportFieldID + "','" + ReportName + "','" + labelName + "')" %>"
+            style="margin-left: 10px; ">Export As Image</span>
 <%--        <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i><%= labelName%></h3>
         </div>--%>
@@ -12,7 +13,7 @@
             <p><i class="fa fa-warning"></i><strong>Warning! </strong>Data you choose for this report are empty.</p>
         </div>
         <div class="panel-body">
-            <div class="flot-chart" style="margin-bottom:15px;">
+            <div class="flot-chart" style="margin-bottom:15px">
                 <div class="flot-chart-content" id='<%= "flot-chart-bar" + reportFieldID %>'>
                     <script>
                         function createChartBar<%= reportFieldID%>() {
@@ -23,10 +24,15 @@
                                     font: "bold 16px  Arial,Helvetica,sans-serif"
                                 },
                                 legend: {
-                                    visible: <%= legend%>
+                                    visible: <%= legend%>,
                                     },
                                 seriesDefaults: {
-                                    type: "bar"
+                                    type: "bar",
+                                    labels: {
+                                        visible: true,
+                                        background: "transparent",
+                                        template: "#= series.name #: #= value #"
+                                    }
                                 },
                                 series: [{
                                     name: "<%= aggregate%>",

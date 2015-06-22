@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,11 @@ using System.Xml.XPath;
 /// </summary>
 public class Utility
 {
+    public static string GetVideoFileNameSeparator()
+    {
+        return "%";
+    }
+
     /// <summary>
     /// Checks if a string is a numeric field
     /// </summary>
@@ -50,7 +56,7 @@ public class Utility
 
     public static string getVersion()
     {
-        return "1.1.5";
+        return "1.1.9";
     }
 
     private static bool IsGRASPImagesFolderNotUnderReportingFolder()
@@ -188,37 +194,39 @@ public class Utility
 
         GRASPEntities db = new GRASPEntities();
 
-        var groupMembership = (from gm in db.GroupMembership
-                               where gm.contact_contact_id == (from c in db.Contact
-                                                               where c.phoneNumber == phone
-                                                               select c.contact_id).FirstOrDefault()
-                               select gm.group_path).FirstOrDefault();
+        var groupsMemberships = (from gm in db.GroupMembership
+            where gm.contact_contact_id == (from c in db.Contact
+                where c.phoneNumber == phone
+                select c.contact_id).FirstOrDefault()
+            select gm.group_path);
 
-        if(groupMembership != null)
+        if (groupsMemberships != null)
         {
-            Dictionary<string, decimal> forms = (from f in db.Form
-                                                 where f.permittedGroup_path == groupMembership && f.finalised == 1
-                                                 select new { f.id_flsmsId, f.id }).ToDictionary(p => p.id_flsmsId, p => p.id);
-
-            if(forms != null)
+            foreach (var groupMembership in groupsMemberships)
             {
-                foreach(string dF in downloadedForms)
+                Dictionary<string, decimal> forms = (from f in db.Form
+                                                     where f.permittedGroup_path == groupMembership && f.finalised == 1
+                                                     select new { f.id_flsmsId, f.id }).ToDictionary(p => p.id_flsmsId, p => p.id);
+                if (forms != null)
                 {
-                    if(forms.ContainsKey(dF))
+                    foreach (string dF in downloadedForms)
                     {
-                        forms.Remove(dF);
+                        if (forms.ContainsKey(dF))
+                        {
+                            forms.Remove(dF);
+                        }
                     }
-                }
 
-                foreach(var rF in forms)
-                {
-                    //XmlElement formNode = sv.CreateElement("form");
+                    foreach (var rF in forms)
+                    {
+                        //XmlElement formNode = sv.CreateElement("form");
 
-                    sb.Append(FormField.getX_Form((int)rF.Value));
-                    //formNode.InnerText = sb.ToString().Replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-                    //rootNode.AppendChild(formNode);
+                        sb.Append(FormField.getX_Form((int)rF.Value));
+                        //formNode.InnerText = sb.ToString().Replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+                        //rootNode.AppendChild(formNode);
 
-                }
+                    }
+                }   
             }
         }
         //sv.AppendChild(rootNode);
@@ -410,6 +418,7 @@ public class Utility
     /// </summary>
     /// <param name="stringNumber">A string represents a number.</param>
     /// <returns></returns>
+    /// <author>Saad Mansour</author>
     public static string GetIntegerNumberFromString(string stringNumber)
     {
         try

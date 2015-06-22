@@ -10,17 +10,26 @@
     <script src="../_js/kendo.dataviz.min.js"></script>
 
     <script src="../_js/console.js"></script>
-
+    <script src="../_js/kendo.all.min.js"></script>
     <script>
         $(document).ready(function () {
             setTimeout(function () {
                 createCharts();
             }, 400);
         });
+
+        function exportChartImage(chartID, reportName, chartName) {
+            var chart = $("#" + chartID).getKendoChart();
+            chart.exportImage().done(function (data) {
+                kendo.saveAs({
+                    dataURI: data,
+                    fileName: reportName + "_" + chartName + ".png"
+                });
+            });
+        }
     </script>
     <style type="text/css">
         #filter { margin-bottom: 4px; border-bottom: 1px solid #ccc;font-size:12px;padding:0 0 4px 0; }
-
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphBody1" runat="Server">
@@ -35,17 +44,30 @@
         </div>
     </div>
     <div id="filter">
+        <asp:Label ID="lblDateFilter" runat="server" Text="Date"></asp:Label>
+        <asp:Label ID="lblFromDate" Visible="False" runat="server" Text="From"></asp:Label>
+        <telerik:RadDatePicker ID="dateFrom" width="150px" Skin="Metro" runat="server">
+            <DateInput DateFormat="dd-MM-yyyy"> 
+            </DateInput>
+        </telerik:RadDatePicker>
+        <asp:Label ID="lblFromTo" runat="server" Visible="False" Text="To"></asp:Label>
+        <telerik:RadDatePicker ID="RadDatePicker1" Visible="False" width="150px" Skin="Metro" runat="server">
+            <DateInput DateFormat="yyyy-MM-dd"> 
+            </DateInput>
+        </telerik:RadDatePicker>
+        
         Review Status: 
-        <telerik:RadComboBox ID="DdlResponseStatus" runat="server" EnableLoadOnDemand="True" Skin="Metro" AutoPostBack="true" AppendDataBoundItems="true" BorderColor="#66AFE9" BackColor="White" DataSourceID="EdsResponseStatus" DataTextField="ResponseStatusName" DataValueField="ResponseStatusID">
+        <telerik:RadComboBox ID="DdlResponseStatus" runat="server" EnableLoadOnDemand="True" Skin="Metro" 
+            AutoPostBack="False" AppendDataBoundItems="true" BorderColor="#66AFE9" BackColor="White" DataSourceID="EdsResponseStatus" DataTextField="ResponseStatusName" DataValueField="ResponseStatusID">
             <Items>
                 <telerik:RadComboBoxItem Text="Any" Value="0" />
             </Items>
         </telerik:RadComboBox>
+        <telerik:RadButton ID="btnApplyFilters" runat="server" Text="Apply Filters"></telerik:RadButton>
     </div>
     <!--  INIZIO USERCONTROL --->
     <div id="row">
         <asp:PlaceHolder ID="PlaceHolder1" runat="server"></asp:PlaceHolder>
-
     </div>
     <asp:Literal ID="Literal1" runat="server" EnableViewState="false"></asp:Literal>
     <hr />
@@ -54,5 +76,5 @@
 
         <asp:EntityDataSource ID="EdsResponseStatus" runat="server" ConnectionString="name=GRASPEntities" DefaultContainerName="GRASPEntities" EnableFlattening="False" EntitySetName="FormResponseStatus" Select="it.[ResponseStatusName], it.[ResponseStatusID]">
     </asp:EntityDataSource>
+    
 </asp:Content>
-

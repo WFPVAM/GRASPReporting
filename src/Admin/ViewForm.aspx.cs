@@ -198,6 +198,10 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                         {
                             respLabel = f.name;
                         }
+                        if (f.type == GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString())
+                        {
+                            respValue = Utility.GetIntegerNumberFromString(f.value);
+                        }
                         if((f.type == "IMAGE") && (respValue != "GRASPImage\\"))
                         {
                             WriteImageField(ref respValue);                          
@@ -219,21 +223,55 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                     //    litTableResult.Text += "</div></div>"; //Close previous repeatable
                     //}
                     //Opens repeatable
+
+                    //<author>Saad Mansour</author>
+                    //Writes repeatable Header label.
                     litTableResult.Text += "<div class=\" repContainer clear\"><div class=\"repTitle clear\">" + f.label + "</div>";
                     prevID = f.formFieldId.Value;
-                    foreach(var rf in repeatableItems.Where(r=>r.ParentFormFieldID==f.formFieldId).OrderBy(o=>o.RVRepeatCount))
-                    {
-                        respValue = rf.value;
-                        respLabel = rf.label;
-                        if(respLabel.Trim().Length == 0)
-                        {
-                            respLabel = rf.name;
-                        }
 
-                        litTableResult.Text += "<div class=\"left clear\"><label>" + respLabel + "</label></div>" +
-                            "<div class=\"right overflowTable\"><div class=\"inline\">" + respValue + "</div></div>";
+                    switch (f.type)
+                    {
+                        case "REPEATABLES": //Table
+                            //finds the first repeatable count, which is the count of the first record in the table. Uses to write the questions
+                            //for each record.
+                            int repeatCount = (int)repeatableItems.Where(r => r.ParentFormFieldID == f.formFieldId)
+                                .OrderBy(o => o.RVRepeatCount)
+                                .FirstOrDefault().RVRepeatCount;
+
+                            //Writes table's survey item label, then it's questions (record by record).
+                            foreach (SurveyElement se in Survey.GetSurveyListElements((int)f.survey_id))
+                            {
+                                //Writes survey item header.
+                                litTableResult.Text += "<div class=\"surveyItemInTable clear\">" + se.value + "</div>";
+
+                                //Finds the questions of the given count (record).
+                                var surListo = repeatableItems.Where(r => r.ParentFormFieldID == f.formFieldId
+                                                                          && r.RVRepeatCount == repeatCount)
+                                    .OrderBy(o => o.RVRepeatCount);
+
+                                //writes the questions of the specific record.
+                                foreach (var rf in surListo)
+                                {
+                                    WriteRepeatableItem(rf);
+                                }
+
+                                ++repeatCount;
+                            }
+
+                            break;
+                        case "REPEATABLES_BASIC": //Roster
+                            foreach (
+                                var rf in
+                                    repeatableItems.Where(r => r.ParentFormFieldID == f.formFieldId)
+                                        .OrderBy(o => o.RVRepeatCount))
+                            {
+                                WriteRepeatableItem(rf);
+                            }
+                            break;
                     }
+
                     litTableResult.Text += "</div>";
+
                 }
                 //else
                 //{
@@ -373,7 +411,7 @@ public partial class Admin_ViewForm : System.Web.UI.Page
 
                 if(f.rv.RVRepeatCount == 0) //It's a normal field
                 {
-
+                    //s3* copy this part from function "ShowResponse(int resID)" to fix the table survey items labels issue.
                     //if(rosterCount != 0)
                     //{
                     //    litTableResult.Text += "</div></div>";
@@ -385,6 +423,10 @@ public partial class Admin_ViewForm : System.Web.UI.Page
                         if(respLabel.Trim().Length == 0)
                         {
                             respLabel = f.ff.name;
+                        }
+                        if (f.ff.type == GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString())
+                        {
+                            respValue = Utility.GetIntegerNumberFromString(respValue);
                         }
                         if((f.ff.type == "IMAGE") && (respValue != "GRASPImage\\"))
                         {
@@ -526,5 +568,23 @@ public partial class Admin_ViewForm : System.Web.UI.Page
         pnlHistory.Visible = true;
         litTableResult.Visible = true;
         pnlResponseStatus.Height = Unit.Empty;
+    }
+
+    /// <summary>
+    /// Outputs the given repeatable item (Label and Value).
+    /// </summary>
+    /// <param name="objResponseRepeatable"></param>
+    private void WriteRepeatableItem(ResponseRepeatable objResponseRepeatable)
+    {
+        string respLabel = objResponseRepeatable.label;
+        if (respLabel.Trim().Length == 0)
+        {
+            respLabel = objResponseRepeatable.name;
+        }
+
+        litTableResult.Text += "<div class=\"left clear\"><label>" + respLabel +
+                               "</label></div>" +
+                               "<div class=\"right overflowTable\"><div class=\"inline\">" +
+                               objResponseRepeatable.value + "</div></div>";
     }
 }
