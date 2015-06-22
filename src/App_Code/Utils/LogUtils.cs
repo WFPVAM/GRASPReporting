@@ -9,8 +9,9 @@ using System.IO;
 /// </summary>
 public class LogUtils
 {
-    public static void WriteErrorLog(string errorInfo)
+    public static Guid WriteErrorLog(string errorInfo)
     {
+        Guid errorID = Guid.NewGuid();
         string path = HttpContext.Current.Server.MapPath("~/LogFiles/ErrorLog.txt");
         if (!File.Exists(path))
         {
@@ -22,10 +23,11 @@ public class LogUtils
         }
         using (StreamWriter sw = File.AppendText(path))
         {
-
-            sw.WriteLine("\r\n ------ " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " : Error ------- \r\n");
+            sw.WriteLine("\r\n ------ " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ", Error ID: " + errorID.ToString() + " ------- \r\n");
             sw.WriteLine(errorInfo + "\r\n\r\n");
         }
+
+        return errorID;
     }
 
     public static void WriteFileErrorLog(Exception ex, string fileName, string fileContent)

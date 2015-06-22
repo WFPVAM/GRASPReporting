@@ -11,7 +11,9 @@ public class GeneralEnums
     public enum FieldTypes
     {
         NUMERIC_TEXT_FIELD,
-        DROP_DOWN_LIST
+        DROP_DOWN_LIST,
+        DATE_FIELD,
+        CHECK_BOX
     }
 
     public enum ResponseFilesFolderNames
@@ -19,6 +21,13 @@ public class GeneralEnums
         incoming,
         processed,
         error,
-        duplicate
+        duplicate,
+        unknownForms
+    }
+
+    public enum SaveIncomingInstanceResults
+    {
+        ok,
+        ko
     }
 }
