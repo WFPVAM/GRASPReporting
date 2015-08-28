@@ -43,4 +43,39 @@ public partial class FormResponseCoord
         commandScript.ExecuteNonQuery();
         connection.Close();
     }
+
+    public static void UpdateByFormResponseID(string coordText, int formResponseID)
+    {
+        try
+        {
+            ConnectionStringSettingsCollection settings = ConfigurationManager.ConnectionStrings;
+
+            string connectionString = "";
+            if (settings != null)
+            {
+                foreach (ConnectionStringSettings cs in settings)
+                {
+                    if (cs.Name == "GRASP_MemberShip")
+                    {
+                        connectionString = cs.ConnectionString;
+                    }
+                }
+            }
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            string updateQuery = "Update FormResponseCoords Set " +
+                                 "FRCoordText= '" + coordText + "', " +
+                                 "FRCoordGeo = geography::STPointFromText('POINT(" + coordText + ")', 4326), " +
+                                 "FRCoordGeometry = geometry::STPointFromText('POINT(" + coordText + ")', 4326)" +
+                                 " where FormResponseID = " + formResponseID;
+            connection.Open();
+            SqlCommand commandScript = new SqlCommand(updateQuery, connection);
+            commandScript.ExecuteNonQuery();
+            connection.Close();
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+    }
 }

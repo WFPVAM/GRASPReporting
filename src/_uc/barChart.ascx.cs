@@ -16,19 +16,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Linq.Dynamic;
 /// <summary>
 /// User Control to create the structure for a bar chart with KendoUI
 /// </summary>
 public partial class _uc_barChart : System.Web.UI.UserControl
 {
-
-
+#region "Puclic Variables"
     public string chartName = "";
     public string jsonData = "";
     public string jsonCategories = "";
@@ -38,18 +39,21 @@ public partial class _uc_barChart : System.Web.UI.UserControl
     public string aggregate = "";
     public string firstColumn = "";
     public string secondColumn = "";
-    public string ReportName { get; set; }
+    public Report ObjReport { set; get; }
+    //public string ReportName { get; set; }
 
     public int reportFieldID { get; set; }
     public string labelName { get; set; }
     public int ResponseStatusID { get; set; }
-    public DateTime? ResponseValueDate { get; set; }
+    //public DateTime? ResponseValueDate { get; set; }
+    //public string CustomFilters { get; set; }
+#endregion
 
     /// <summary>
     /// Shows a bar charts on the selected report, taking the data from the DB
     /// and passing them to the javascript as json
     /// </summary>
-    /// <param name="sender"></param>
+    /// <param name="sender"></param>forn
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -83,17 +87,22 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         if(ReportData.ReportFieldTableData == 1)
             table = "true";
 
-            var deleteRespStatusID = (from rs in db.FormResponseStatus
+        var deleteRespStatusID = (from rs in db.FormResponseStatus
                                       where rs.ResponseStatusName == "Deleted"
                                       select new { rs.ResponseStatusID }).FirstOrDefault();
 
         if(aggregate == "count" || aggregate == "")
         {
-            var items = from ffr in db.FormFieldResponses.AsEnumerable()
-                        where ffr.formFieldId == serieID
-                             && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) 
-                             && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
-                             && (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
+            IEnumerable<FormFieldResponses> items = from ffr in db.FormFieldResponses.AsEnumerable()
+                where ffr.formFieldId == serieID && 
+                (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
+                      && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
+                //&& (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
+                select ffr;
+
+            FilterFormResponses(db, formID, ref items, deleteRespStatusID.ResponseStatusID);
+
+            var items2 = from ffr in items
                         group ffr by ffr.value into g
                         select new
                         {
@@ -101,7 +110,7 @@ public partial class _uc_barChart : System.Web.UI.UserControl
                             value = g.Count()
                         };
 
-            foreach(var item in items)
+            foreach(var item in items2)
             {
                 data.Add(item.value);
                 categories.Add(item.category);
@@ -110,20 +119,16 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         }
         else
         {
-
-
             var resVal = from ffr in db.FormFieldResponses.AsEnumerable()
-                         where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID) 
-                            && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
-                            && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
-                            && (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
-                         select new { ffr.value, ffr.formFieldId, ffr.nvalue };
+                where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
+                      && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
+                      && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
+                //s3 why is OR between serieID and valueID
+                //&& (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
+                select ffr; //new { ffr.value, formFieldID = ffr.formFieldId, ffr.nvalue, ffr.FormResponseID };
 
-
-            //var formValue = (from rv in db.ResponseValue
-            //                 where  && rv.FormResponseID == res
-            //                 select rv);
-
+            FilterFormResponses(db, formID, ref resVal, deleteRespStatusID.ResponseStatusID);
+            
             string tmpValueKey = "";
             foreach(var r in resVal)
             {
@@ -183,8 +188,6 @@ public partial class _uc_barChart : System.Web.UI.UserControl
                         }
                     }
                 }
-
-
             }
 
 
@@ -229,6 +232,39 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         jsonCategories = serializer.Serialize(categories);
         if(jsonCategories == "[]")
             warning.Visible = true;
+    }
 
+    private void FilterFormResponses(GRASPEntities db, int formID, ref IEnumerable<FormFieldResponses> items, int deleteRespStatusID)
+    {
+        try
+        {
+            string customFilter = !string.IsNullOrEmpty(ObjReport.Filters) ? ObjReport.Filters : null;
+            int filterCount = (int)ObjReport.FiltersCount;
+
+            if (!string.IsNullOrEmpty(customFilter))
+            {
+                var allFormFieldResponses = from ffr in db.FormFieldResponses
+                                            where
+                                                ffr.parentForm_id == formID &&
+                                                (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
+                                                && ffr.ResponseStatusID != deleteRespStatusID
+                                            select new { ffr.value, formFieldID = ffr.formFieldId, ffr.nvalue, ffr.FormResponseID };
+
+                //This...
+                var filteredFormResponseIDs = (from r in allFormFieldResponses.Where(customFilter)
+                                               group r by r.FormResponseID
+                                                   into grp
+                                                   where grp.Count() == filterCount
+                                                   select grp.Key).ToList();
+
+                items = from ffr in items
+                        where filteredFormResponseIDs.Contains(ffr.FormResponseID)
+                        select ffr;
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
     }
 }

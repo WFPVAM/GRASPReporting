@@ -43,7 +43,7 @@
     <script type="text/javascript">
         var urlWithoutQS = window.location.pathname;
         $(document).ready(function () {
-            SetNewFormsNotificationTimer();
+            //SetNewFormsNotificationTimer();
             var countCurrentPage = urlWithoutQS.split('/').length;
             var currentPage = urlWithoutQS.split('/')[countCurrentPage - 1].split('.')[0];
             console.log(currentPage);
@@ -164,7 +164,7 @@
                      </span>
                      <span style="color: #fff;">
                         <asp:Button ID="btnIncomingNotification" runat="server" CssClass="no-notification" 
-                            Text="No New Forms" ToolTip="No new incoming form responses" Width="120px" OnClick="btnIncomingNotification_Click" ></asp:Button> <%--OnClientClick="Test(); return false;" ToolTip="No new incoming form responses" Text="No New Forms"--%>
+                            Text="No New Forms" ToolTip="No new incoming form responses" Width="120px" OnClick="btnIncomingNotification_Click" Visible="False" ></asp:Button> <%--OnClientClick="Test(); return false;" ToolTip="No new incoming form responses" Text="No New Forms"--%>
                     </span>
                     <!--<div style="color: #f00;text-align: center;margin: 0 auto;width: 160px;padding-top: 8px;">PROVA</div>-->
                 </div>

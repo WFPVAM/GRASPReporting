@@ -271,9 +271,9 @@ public partial class FormResponse
                         }
                         break;
                     case "NUMERIC_TEXT_FIELD":
-                        if(r.value.Length>0 && r.nvalue != null)
+                        if (r.value.Length > 0) //s* && r.nvalue != null
                         {
-                            sb.AppendLine("\"" + r.name + "\": " + r.nvalue + ",");
+                            sb.AppendLine("\"" + r.name + "\": " + r.value + ",");
                         }
                         break;
                     case "CURRENCY_FIELD":
@@ -357,15 +357,15 @@ public partial class FormResponse
                             }
                             break;
                         case "NUMERIC_TEXT_FIELD":
-                            if(r.nvalue != null)
+                            if (r.value != null) //s* it was r.nvalue
                             {
-                                repFields = repFields + ("\"" + r.name + "\": " + r.nvalue + ",");
+                                repFields = repFields + ("\"" + r.name + "\": " + r.value + ",");
                             }
                             break;
                         case "CURRENCY_FIELD":
-                            if(r.nvalue != null)
+                            if (r.value != null) //s* it was r.nvalue
                             {
-                                repFields = repFields + ("\"" + r.name + "\": " + r.nvalue + ",");
+                                repFields = repFields + ("\"" + r.name + "\": " + r.value + ",");
                             }
                             break;
                     }

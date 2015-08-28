@@ -38,13 +38,14 @@ public class IncomingProcessor
         int fIDX = -1;
         int formParentID = 0;
         int formResponseID = 0;
-        string tmpNm = "";
+        string fieldName = "";
         string clientVersion = "";
         int prevFFID = 0;
         int ffIdRoster = 0;
         int repCount = 0; //Uses to count the records of a Repeatable control (Roster or Table). Uses: 1- In export to write each record in a new row.
         bool previousRoster = false;
         string fileContent="";
+        string previousFieldName = "";
 
         try
         {
@@ -104,16 +105,17 @@ public class IncomingProcessor
                         else if(child.Name.Contains('_'))
                         {
                             string[] tmpSplit = child.Name.Split('_');
-                            tmpNm = tmpSplit[0];
+                            fieldName = tmpSplit[0];
                             if(tmpSplit.Length > 2)
                             {
                                 for(int k = 1; k < tmpSplit.Length - 1; k++)
-                                    tmpNm += "_" + tmpSplit[k];
+                                    fieldName += "_" + tmpSplit[k];
                             }
                             fIDX = -1;
+
                             for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
                             {
-                                if(tmpNm == fieldTypeMapping[i, 0])
+                                if(fieldName == fieldTypeMapping[i, 0])
                                 {
                                     fIDX = i;
                                     break;
@@ -122,11 +124,10 @@ public class IncomingProcessor
                         }
                         else
                         {
-
                             fIDX = -1;
                             for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
                             {
-                                if(tmpNm == fieldTypeMapping[i, 0])
+                                if(fieldName == fieldTypeMapping[i, 0])
                                 {
                                     fIDX = i;
                                     break;
@@ -143,16 +144,28 @@ public class IncomingProcessor
                                         repCount++;
                                     else
                                         repCount = 1;
-                                    
-                                    InsertRepeatableData(db, child, fieldTypeMapping, formResponseID, repCount);
 
+                                    if (!previousFieldName.Equals(fieldName)) //Add a record for the roster or table root field.
+                                    {
+                                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
+                                    }
+
+                                    InsertRepeatableData(db, child, fieldTypeMapping, formResponseID, repCount);
                                     prevFFID = fIDX;
                                     previousRoster = true;
                                     break;
                                 case "REPEATABLES": //Table
                                     repCount = 0;
+
+                                    if (!previousFieldName.Equals(fieldName)) //Add a record for the roster or table root field.
+                                    {
+                                        //s* change the value of repCount 
+                                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
+                                    }
+
                                     foreach(XmlNode rChild in child.ChildNodes)
                                     {
+                                        //s* change the value of repCount
                                         InsertRepeatableData(db, rChild, fieldTypeMapping, formResponseID, ++repCount);
                                     }
                                     
@@ -191,11 +204,11 @@ public class IncomingProcessor
                                     ResponseValue.createResponseValue(db, child.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0, "NUMERIC_TEXT_FIELD");
                                     break;
                                 default:
-                                    if(previousRoster)
-                                    {
-                                        //file.WriteLine(repCount.ToString() + "," + formResponseID + "," + prevFFID + ", -1");
-                                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[prevFFID, 1]), Convert.ToInt32(fieldTypeMapping[prevFFID, 3]), -1);
-                                    }
+                                    //if(previousRoster) //s*
+                                    //{
+                                    //    //file.WriteLine(repCount.ToString() + "," + formResponseID + "," + prevFFID + ", -1");
+                                    //    ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[prevFFID, 1]), Convert.ToInt32(fieldTypeMapping[prevFFID, 3]), -1);
+                                    //}
                                     //file.WriteLine(child.InnerText + "," + formResponseID + "," + Convert.ToInt32(fieldTypeMapping[fIDX, 1]) + ", 0");
                                     string valueToInsert = "";
                                     if(child.InnerText != null && child.InnerText.Length > 4000)
@@ -214,17 +227,14 @@ public class IncomingProcessor
                                     }
 
                                     ResponseValue.createResponseValue(db, valueToInsert, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
-                                    if(tmpNm == "client_version")
+                                    if(fieldName == "client_version")
                                         clientVersion = child.InnerText;
                                     prevFFID = fIDX;
                                     previousRoster = false;
                                     break;
                             }
                         }
-                    }
-                    if(previousRoster) //Add a record for the roster or table root field.
-                    {
-                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[prevFFID, 1]), Convert.ToInt32(fieldTypeMapping[prevFFID, 3]), -1);
+                        previousFieldName = fieldName;
                     }
                 }
                 try

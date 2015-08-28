@@ -3,7 +3,7 @@
 
 <div class="col-lg-12">
     <div class="panel panel-primary">
-        <span class="fake-link" onclick="<%= "exportChartImage('flot-chart-bar" + reportFieldID + "','" + ReportName + "','" + labelName + "')" %>"
+        <span class="fake-link" onclick="<%= "exportChartImage('flot-chart-bar" + reportFieldID + "','" + ObjReport.ReportName + "','" + labelName + "')" %>"
             style="margin-left: 10px; ">Export As Image</span>
 <%--        <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-long-arrow-right"></i><%= labelName%></h3>

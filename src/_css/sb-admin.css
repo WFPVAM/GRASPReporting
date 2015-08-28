@@ -368,4 +368,13 @@ li > #exit > i.fa {
         text-decoration: underline; 
         cursor: pointer;
     }
+
+    /* Others */
+.customFilterSummaryLabel {
+     border: 1px solid #666; 
+     background: #eee; 
+     padding: 4px; 
+     width: 500px;
+     font-size:12px;
+}
 }

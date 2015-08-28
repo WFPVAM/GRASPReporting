@@ -103,4 +103,53 @@ public partial class Report
             return Convert.ToInt32(report.FormID);
         else return 0;
     }
+
+    public static bool UpdateFilters(Report reportObj)
+    {
+        try
+        {
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                var report = (from r in db.Reports
+                              where r.ReportID == reportObj.ReportID
+                    select r).FirstOrDefault();
+
+                if (report != null)
+                {
+                    report.Filters = reportObj.Filters;
+                    report.FiltersSummary = reportObj.FiltersSummary;
+                    report.FiltersCount = reportObj.FiltersCount;
+                    db.SaveChanges();
+                }
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return false;
+    }
+
+    public static Report GetReportByID(int reportID)
+    {
+        Report report = null;
+
+        try
+        {
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                report = (from r in db.Reports
+                    where r.ReportID == reportID
+                    select r).FirstOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return report;
+    }
 }

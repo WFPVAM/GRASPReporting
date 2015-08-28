@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:ssdl="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" xmlns:edm="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:map="http://schemas.microsoft.com/ado/2009/11/mapping/cs" xmlns:codegen="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:huagati="http://www.huagati.com/edmxtools/annotations">
+  <!--Updated by Huagati EDMX Tools version 2.35.5259.25942 on 2015-07-02 02:10:54-->
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="GRASPModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="GRASPModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BindingContainer">
           <Key>
             <PropertyRef Name="id" />
@@ -429,6 +430,9 @@ warning 6002: The table/view 'GRASPPCB.dbo.message_FrontlineMultimediaMessagePar
           <Property Name="ReportDescription" Type="nvarchar(max)" />
           <Property Name="FormID" Type="numeric" Precision="19" Scale="0" Nullable="false" />
           <Property Name="ReportCreateDate" Type="datetime" />
+          <Property Name="Filters" Type="nvarchar" Nullable="true" MaxLength="2000" />
+          <Property Name="FiltersSummary" Type="nvarchar" Nullable="true" MaxLength="2000" />
+          <Property Name="FiltersCount" Type="int" Nullable="true" />
         </EntityType>
         <EntityType Name="ResponseValue">
           <Key>
@@ -1654,7 +1658,8 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
             <End Role="FormResponseCoords_ResponseValue" EntitySet="FormResponseCoords_ResponseValue" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="GRASPModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1985,6 +1990,9 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
           <Property Name="ReportDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="FormID" Type="Decimal" Precision="19" Scale="0" Nullable="false" />
           <Property Name="ReportCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="Filters" Type="String" Nullable="true" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="FiltersSummary" Type="String" Nullable="true" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="FiltersCount" Type="Int32" Nullable="true" />
         </EntityType>
         <EntityType Name="ResponseValue">
           <Key>
@@ -3311,6 +3319,9 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
                 <ScalarProperty Name="ReportDescription" ColumnName="ReportDescription" />
                 <ScalarProperty Name="FormID" ColumnName="FormID" />
                 <ScalarProperty Name="ReportCreateDate" ColumnName="ReportCreateDate" />
+                <ScalarProperty Name="Filters" ColumnName="Filters" />
+                <ScalarProperty Name="FiltersSummary" ColumnName="FiltersSummary" />
+                <ScalarProperty Name="FiltersCount" ColumnName="FiltersCount" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3850,6 +3861,7 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->
-    <Diagrams></Diagrams>
+    <Diagrams>
+    </Diagrams>
   </Designer>
 </edmx:Edmx>

@@ -37,7 +37,8 @@
                 <!--<div style="width: 160px; float:left">-->
                 <a href="index.html">
                     <img style="padding-left: 25px; padding-top: 8px" src="_images/logo_wfp.gif" height="70px" alt="World Food Programme" /></a>
-                <span style="color: white">Version: <asp:Literal ID="lblVersion" runat="server"></asp:Literal></span><!--</div>-->
+                <span style="color: white">Version:
+                    <asp:Literal ID="lblVersion" runat="server"></asp:Literal></span><!--</div>-->
                 <!--<div style="color: #f00;text-align: center;margin: 0 auto;width: 160px;padding-top: 8px;">PROVA</div>-->
             </div>
         </nav>
@@ -55,20 +56,20 @@
                         </label>
                         <asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal>
                         <asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Log In" ValidationGroup="login" class="btn btn-lg btn-primary btn-block" type="submit" />
-                        <div style="margin-top:20px" class="panel panel-info">
+                        <div style="margin-top: 20px" class="panel panel-info">
                             <div class="panel-footer announcement-bottom">
                                 <asp:HyperLink ID="lnkdwnload" runat="server" NavigateUrl="~/Public/GraspMobile.apk">
                                     <div class="row">
-                                        <div class="col-xs-6">
+                                        <div class="col-xs-10">
                                             Download GRASP APK
                                         </div>
-                                        <div class="col-xs-6 text-right">
+                                        <div class="col-xs-2 text-right">
                                             <i class="fa fa-download"></i>
                                         </div>
                                     </div>
                                 </asp:HyperLink>
                             </div>
-                            <div class="panel-footer announcement-bottom">
+                            <%--<div class="panel-footer announcement-bottom">
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/Public/BarcodeScanner.apk">
                                     <div class="row">
                                         <div class="col-xs-8">
@@ -79,7 +80,7 @@
                                         </div>
                                     </div>
                                 </asp:HyperLink>
-                            </div>
+                            </div>--%>
                         </div>
                     </div>
                 </div>

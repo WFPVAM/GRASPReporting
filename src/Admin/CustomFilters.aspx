@@ -21,14 +21,33 @@
         .col1 { font-weight: bold; }
         .rcbHeader ul li { font-weight: bold; }
         .rcbItem ul { border-bottom: 1px dashed #ddd; }
-        #filterSummary {width: 620px; border: 1px solid #666; background: #eee; padding: 10px;  height: 200px;margin:2px 0; }
-        #btnBox,#filterBox { width: 620px; text-align: center; background: #CCE6FF; padding: 10px;border:1px solid #0058B1 }
+        #filterSummary {width: 625px; border: 1px solid #666; background: #eee; padding: 10px;  height: 200px;margin:2px 0; }
+        #btnBox,#filterBox { width: 625px; text-align: center; background: #CCE6FF; padding: 10px;border:1px solid #0058B1 }
             #btnBox .btn { margin-right: 50px; }
         .testResult { font-size: 12px; margin: 15px 5px; }
         #infoField { position: absolute; top: 10px; left: 660px; width: 200px; height: 200px;background:#fef9a4;font-size:11px;padding:5px; }
             #infoField label { display: inline-block; width: 100px; }
         .pnlExportView { text-align: center; width: 620px; border: 1px solid #ddd; padding: 10px; }
  </style>
+    <script>
+        /**
+           * Pass the url to the report page.
+           *
+		   */
+        function closeWindow(url) {
+            var oWnd = GetRadWindow();
+            oWnd.close(url);   
+        }
+
+        function GetRadWindow() {
+            var oWindow = null;
+            if (window.radWindow)
+                oWindow = window.radWindow;
+            else if (window.frameElement.radWindow)
+                oWindow = window.frameElement.radWindow;
+            return oWindow;
+        }
+    </script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -89,9 +108,11 @@
                             <li class="col1">
                                 <%# Eval("name") %></li>
                             <li class="col2">
-                                <%# Eval("label") %></li>
+                                <asp:Label ID="lblFieldLabel" runat="server" Text='<%# Eval("label") %>'></asp:Label>
+                            </li>
                             <li class="col3">
-                                <asp:Label ID="lblType" runat="server" Text='<%# Eval("type") %>'></asp:Label></li>
+                                <asp:Label ID="lblType" runat="server" Text='<%# Eval("type") %>'></asp:Label>
+                            </li>
                         </ul>
                     </ItemTemplate>
                 </telerik:RadComboBox>
@@ -126,17 +147,15 @@
             <asp:Label ID="lblTestResult" runat="server" Text="" Visible="false" CssClass="testResult"></asp:Label>
         </div>
     </div>
-                <asp:Panel ID="pnlExportView" runat="server" CssClass="pnlExportView" Visible="false">
-
-    <telerik:RadButton ID="btnExportData" runat="server" OnClick="btnExportData_Click" Text="Export Data">
-    </telerik:RadButton>
-    <telerik:RadButton ID="btnViewData" runat="server" OnClick="btnViewData_Click" Text="View Data">
-    </telerik:RadButton>
-
+    <asp:Panel ID="pnlExportView" runat="server" CssClass="pnlExportView" Visible="false">
+        <telerik:RadButton ID="btnExportData" runat="server" OnClick="btnExportData_Click" Text="Export Data">
+        </telerik:RadButton>
+        <telerik:RadButton ID="btnViewData" runat="server" OnClick="btnViewData_Click" Text="View Data">
+        </telerik:RadButton>
+        <telerik:RadButton ID="btnApplyToReport" runat="server" OnClick="btnApplyToReport_Click" Text="Apply To Report">
+        </telerik:RadButton>
     </asp:Panel>
             </telerik:RadAjaxPanel>
-
-
     </form>
 </body>
 </html>

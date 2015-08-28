@@ -10,6 +10,9 @@ using Telerik.Web.UI;
 
 public partial class Admin_CustomFilter : System.Web.UI.Page
 {
+    public string url { get; set; }
+    public string ReportName { get; set; }
+
     private enum FieldValueControls
     {
         txtFilterVal,
@@ -33,7 +36,7 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
             formID = Convert.ToInt32(Request["FormID"]);
             if(!IsPostBack)
             {
-                hdnFilterCount.Value = "0";
+                InitializeFilterVariables();
                 ddlSQLOperator.Items.Add(new RadComboBoxItem("AND", "AND"));
                 ddlSQLOperator.Items.Add(new RadComboBoxItem("OR", "OR"));
 
@@ -65,8 +68,6 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
         }
     }
 
-
-
     protected void btnAddFilter_Click(object sender, EventArgs e)
     {
         string fieldID = ddlFormFields.SelectedValue.ToString();
@@ -91,6 +92,7 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
             filterVal = txtFilterVal.Text;       
         }
 
+        //Label fieldLabel = (Label)selItem.FindControl("lblFieldLabel");
         lblFilterSummary.Text += ddlFormFields.Text + " " + ddlOperator.Text + " " + filterVal + "<br/>";
 
         //ddlSQLOperator.Visible = true;
@@ -134,7 +136,7 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
             //    lblFilter.Text += "(formFieldID==" + fieldID + " AND value" + op + filterVal + ")";
             //    break;
         }
-        hdnFilterCount.Value = (Convert.ToInt32(hdnFilterCount.Value) + 1).ToString();
+        hdnFilterCount.Value = (Convert.ToInt32(hdnFilterCount.Value) + 1).ToString(); //s3 count
     }
 
     protected void btnTest_Click(object sender, EventArgs e)
@@ -174,11 +176,11 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                 lblTestResult.Visible = true;
                 if(c > 0)
                 {
-                    pnlExportView.Visible = true;
+                    SetButtonsPanelVisibility(true);
                 }
                 else
                 {
-                    pnlExportView.Visible = false;
+                    SetButtonsPanelVisibility(false);
                 }
             }
         }
@@ -190,7 +192,7 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
         lblTestResult.Text = "";
         hdnFilterCount.Value = "0";
         ddlSQLOperator.Visible = false;
-        pnlExportView.Visible = false;
+        SetButtonsPanelVisibility(false);
     }
     protected void btnRemoveLastEntry_Click(object sender, EventArgs e)
     {
@@ -219,6 +221,36 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
             Response.Redirect(url);
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <author>Saad Mansour</author>
+    protected void btnApplyToReport_Click(object sender, EventArgs e)
+    {
+        if (Request["FormID"] != null 
+            && Request["FormID"] != "")
+        {
+            string filter = lblFilter.Text;
+            filter = Server.UrlEncode(filter);
+            string filterSummary = Server.UrlEncode(Server.HtmlEncode(lblFilterSummary.Text));
+            url = "ViewChart.aspx?FormID=" + Request["FormID"]
+                  + "&reportName=" + Request["reportName"]
+                  + "&reportID=" + Request["reportID"]
+                  + "&customFilter=" + filter
+                  + "&filterCount=" + hdnFilterCount.Value
+                  + "&filterSummary=" + filterSummary;
+
+            Session["IsFiltersChanged"] = true;
+
+            //Calls the close window js function, and passes the url to refresh the report page. 
+            ScriptManager.RegisterStartupScript(this, GetType(), "close", "closeWindow('" + url + "');", true);
+        }
+    }
+
+
     protected void ddlFormFields_SelectedIndexChanged(object sender, RadComboBoxSelectedIndexChangedEventArgs e)
     {
         int formID = 0;
@@ -384,6 +416,40 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
             ddlSurveyValues.Visible = false;
             dateFieldValue.Visible = true;
             reqDate.Visible = true;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="isVisible"></param>
+    /// <author>Saad Mansour</author>
+    private void SetButtonsPanelVisibility(bool isVisible)
+    {
+        pnlExportView.Visible = isVisible;
+
+        //Hide the ApplyToReport button if the form isn't called from the report page.
+        if (isVisible
+            && Request["reportID"] == null)
+            btnApplyToReport.Visible = false;
+    }
+
+    private void InitializeFilterVariables()
+    {
+        Report objReport = (Report)Session["ReportObject"];
+        if (Request["reportID"] != null
+            && objReport != null) //Called from report, and report object is not null.
+        {
+            hdnFilterCount.Value = !string.IsNullOrEmpty(objReport.FiltersCount.ToString()) ? 
+                objReport.FiltersCount.ToString() : "0";
+            lblFilterSummary.Text = Server.HtmlDecode(Server.UrlDecode(objReport.FiltersSummary));
+            lblFilter.Text = objReport.Filters;
+        }
+        else
+        {
+            hdnFilterCount.Value = "0";
+            lblFilterSummary.Text = "";
+            lblFilter.Text = "";
         }
     }
 }

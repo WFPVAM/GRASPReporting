@@ -571,6 +571,9 @@ public partial class Report
     public string ReportDescription { get; set; }
     public decimal FormID { get; set; }
     public Nullable<System.DateTime> ReportCreateDate { get; set; }
+    public string Filters { get; set; }
+    public string FiltersSummary { get; set; }
+    public Nullable<int> FiltersCount { get; set; }
 }
 
 public partial class ReportField

@@ -20,6 +20,8 @@ using System.Configuration;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Web;
 using System.Xml;
@@ -56,7 +58,7 @@ public class Utility
 
     public static string getVersion()
     {
-        return "1.1.9";
+        return "1.2.3";
     }
 
     private static bool IsGRASPImagesFolderNotUnderReportingFolder()
@@ -179,69 +181,6 @@ public class Utility
     public static string GetSenderNumber(string senderNumber)
     {
         return senderNumber.Replace("+", "");
-    }
-
-    public static string getFormForMobileByPhoneNumber(string phone, List<string> downloadedForms)
-    {
-        //XmlDocument sv = new XmlDocument();
-        //XmlElement rootNode = sv.CreateElement("forms");
-        string xmlForms = "";
-        //XmlDeclaration xmldecl;
-        //xmldecl = sv.CreateXmlDeclaration("1.0", "UTF-8", "no");
-
-        StringBuilder sb = new StringBuilder();
-        sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><forms>");
-
-        GRASPEntities db = new GRASPEntities();
-
-        var groupsMemberships = (from gm in db.GroupMembership
-            where gm.contact_contact_id == (from c in db.Contact
-                where c.phoneNumber == phone
-                select c.contact_id).FirstOrDefault()
-            select gm.group_path);
-
-        if (groupsMemberships != null)
-        {
-            foreach (var groupMembership in groupsMemberships)
-            {
-                Dictionary<string, decimal> forms = (from f in db.Form
-                                                     where f.permittedGroup_path == groupMembership && f.finalised == 1
-                                                     select new { f.id_flsmsId, f.id }).ToDictionary(p => p.id_flsmsId, p => p.id);
-                if (forms != null)
-                {
-                    foreach (string dF in downloadedForms)
-                    {
-                        if (forms.ContainsKey(dF))
-                        {
-                            forms.Remove(dF);
-                        }
-                    }
-
-                    foreach (var rF in forms)
-                    {
-                        //XmlElement formNode = sv.CreateElement("form");
-
-                        sb.Append(FormField.getX_Form((int)rF.Value));
-                        //formNode.InnerText = sb.ToString().Replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-                        //rootNode.AppendChild(formNode);
-
-                    }
-                }   
-            }
-        }
-        //sv.AppendChild(rootNode);
-        //sv.InsertBefore(xmldecl, rootNode);
-        //using (var stringWriter = new StringWriter())
-        //using (var xmlTextWriter = XmlWriter.Create(stringWriter))
-        //{
-        //    sv.WriteTo(xmlTextWriter);
-        //    xmlTextWriter.Flush();
-        //    xmlForms = stringWriter.GetStringBuilder().ToString();
-        //}
-        sb.Append("</forms>");
-        xmlForms = sb.ToString();
-        return xmlForms;
-
     }
 
     public static bool existingForm(string id)
@@ -441,5 +380,32 @@ public class Utility
         return stringNumber;
     }
 
+    public static string getres()
+    {
+        object obj = HttpContext.GetLocalResourceObject("~/Admin/ViewChart.aspx" ,"Nofilters.Text");
+        //ResourceManager rm = new ResourceManager("ViewChart.aspx.resx",
+        //    Assembly.GetExecutingAssembly());
 
+
+        // Retrieve the value of the string resource named "welcome".
+        // The resource manager will retrieve the value of the  
+        // localized resource using the caller's current culture setting.
+        //String str = rm.GetString("Nofilters");
+        return obj != null ? obj.ToString() : "";
+    }
+
+    public static XmlDocument TryParseXml(string xml)
+    {
+        try
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xml);
+            return doc;
+        }
+        catch (XmlException e)
+        {
+            LogUtils.WriteErrorLog(e.ToString());
+            return null;
+        }
+    }
 }

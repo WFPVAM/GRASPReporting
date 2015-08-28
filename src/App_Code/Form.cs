@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 /// <summary>
@@ -40,5 +41,64 @@ public partial class Form
         if (item != null)
             return item.name;
         else return "";
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <param name="downloadedForms"></param>
+    /// <returns></returns>
+    /// <editedBy>Saad Mansour</editedBy>
+    public static string GetAllXFormsByPhoneNumber(string phone, List<string> downloadedForms)
+    {
+        //XForms of all forms together.
+        StringBuilder xmlForms = new StringBuilder();
+        //sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><forms>"); //s3
+        //sb.Append("<forms>"); //s3
+
+        using (GRASPEntities db = new GRASPEntities())
+        {
+            var groupsMemberships = (from gm in db.GroupMembership
+                                     where gm.contact_contact_id == (from c in db.Contact
+                                                                     where c.phoneNumber == phone
+                                                                     select c.contact_id).FirstOrDefault()
+                                     select gm.group_path);
+
+            if (groupsMemberships != null)
+            {
+                foreach (var groupMembership in groupsMemberships) //Get user mobile forms of all its groups.
+                {
+                    Dictionary<string, decimal> forms = (from f in db.Form
+                                                         where f.permittedGroup_path == groupMembership && f.finalised == 1
+                                                         select new { f.id_flsmsId, f.id }).ToDictionary(p => p.id_flsmsId, p => p.id);
+
+                    if (forms != null)
+                    {
+                        //Remove the already downloaded forms by mobile user.
+                        foreach (string dF in downloadedForms)
+                        {
+                            if (forms.ContainsKey(dF))
+                            {
+                                forms.Remove(dF);
+                            }
+                        }
+
+                        //Appends the xForm for all forms together.
+                        foreach (var rF in forms)
+                        {
+                            //XmlElement formNode = sv.CreateElement("form");
+                            xmlForms.Append(global::FormField.GetX_Form((int)rF.Value));
+                            //formNode.InnerText = sb.ToString().Replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+                            //rootNode.AppendChild(formNode);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        //sb.Append("</forms>"); //s3
+        return xmlForms.ToString();
     }
 }

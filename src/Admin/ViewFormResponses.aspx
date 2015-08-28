@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-
+    <link href="../_css/sb-admin.css" rel="stylesheet">
     <style type="text/css">
         body { font-family: Arial; }
         .rcbHeader ul,
@@ -20,7 +20,6 @@
         .col2,
         .col3 { margin: 0; padding: 0 3px 0 0; width: 110px; line-height: 13px; float: left; }
         .col2 { width: 300px; }
-        .filterSummary { border: 1px solid #666; background: #eee; padding: 4px; width: 500px;font-size:12px; }
         #navbar {margin-bottom:5px;padding:5px;border:1px solid #ccc;background:#eee;font-size:12px; }
         #btnApplyQuickFilter { margin-left: 15px; }
     </style>
@@ -60,7 +59,7 @@
 
         <div>
             <asp:HiddenField ID="hdnFilterCount" runat="server" />
-            <asp:Panel ID="filterSummary" runat="server" Visible="false" CssClass="filterSummary">
+            <asp:Panel ID="filterSummary" runat="server" Visible="false" CssClass="customFilterSummaryLabel">
                 <asp:Label ID="lblFilterSummary" runat="server" Text=""></asp:Label>
             </asp:Panel>
         </div>

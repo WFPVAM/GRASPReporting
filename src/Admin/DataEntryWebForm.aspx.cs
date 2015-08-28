@@ -960,7 +960,8 @@ public partial class DataEntry : System.Web.UI.Page
                 prevFieldID = (FormF.FormFieldParentID == null) ? 0 : (int)FormF.FormFieldParentID;
                 break;
             case "GEOLOCATION":
-                if (prevFieldID != 0 && FormF.FormFieldParentID == null)
+                if (prevFieldID != 0 && 
+                    FormF.FormFieldParentID == null)
                 {
                     angJSForm.Text += "</div></li></ul></div>\n";
                     if (closeRosterRelevant == 1)
@@ -969,6 +970,7 @@ public partial class DataEntry : System.Web.UI.Page
                         closeRosterRelevant = 0;
                     }
                 }
+
                 outVal = "";
                 if (relevant.TryGetValue((int)FormF.id, out outVal))
                 {
@@ -976,12 +978,10 @@ public partial class DataEntry : System.Web.UI.Page
                 }
                 if (FormF.FormFieldParentID == null)
                 {
-
                     filedLabe = FormF.label;
-
                     ngModelName.Add(FormF.name);
-                    filedBody += "  <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Lat\" ng-model=\"" + model + FormF.name + "LatDE\"";
-                    constr = "";
+                    filedBody += "  <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Lat\" ng-model=\"" + model + FormF.name + "LatDE\""; //*
+                    constr = ""; //*
                     if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
@@ -989,7 +989,7 @@ public partial class DataEntry : System.Web.UI.Page
                     filedBody += " name=\"r_" + FormF.name + "LatDE\"";
                     if (FormF.required == 1)
                     {
-                        if (outVal != null && outVal != "")
+                        if (!string.IsNullOrEmpty(outVal))
                         {
                             ltlScript.Text += "$scope." + model + FormF.name + "LatDE = 0;";
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
@@ -999,7 +999,7 @@ public partial class DataEntry : System.Web.UI.Page
                     }
                     else filedBody += "/>";
 
-                    filedBody += " <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-90\" max=\"90\" placeholder=\"Long\"  ng-model=\"" + model + FormF.name + "LongDE\"";
+                    filedBody += " <input type=\"number\" class=\"col-xs-5 col-sm-4\" min=\"-180\" max=\"180\" placeholder=\"Long\"  ng-model=\"" + model + FormF.name + "LongDE\"";
                     constr = "";
                     if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
@@ -1030,14 +1030,14 @@ public partial class DataEntry : System.Web.UI.Page
                         table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
                     filedLabe = FormF.label;
-
                     filedBody += "Lat: <input type=\"number\" min=\"-90\" max=\"90\" ng-model=\"rb_" + repVal + "." + FormF.name + "LatDE\"";
                     ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if (FormF.isReadOnly == 1 || FormF.calculated == 1)
+                    if (FormF.isReadOnly == 1 || 
+                        FormF.calculated == 1)
                     {
                         filedBody += " ng-readonly=\"1\" ";
                     }
-                    constr = "";
+                    constr = ""; //*
                     if (constraint.TryGetValue((int)FormF.id, out constr))
                     {
                         filedBody += constr;
@@ -1045,7 +1045,7 @@ public partial class DataEntry : System.Web.UI.Page
                     filedBody += " name=\"r_" + FormF.name + "LatDE\"";
                     if (FormF.required == 1)
                     {
-                        if (outVal != null && outVal != "")
+                        if (!string.IsNullOrEmpty(outVal))
                         {
                             filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
                         }
@@ -1085,7 +1085,7 @@ public partial class DataEntry : System.Web.UI.Page
                     filedBody += "\n";
                 }
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
-                if (outVal != null && outVal != "")
+                if (!string.IsNullOrEmpty(outVal))
                 {
                     angJSForm.Text += "</div>\n";
                 }
@@ -3018,6 +3018,7 @@ public partial class DataEntry : System.Web.UI.Page
                         coords = coords.Replace(",", ".");
 
                         ResponseValue.createResponseValue(coords, formResponseID, ffID, 0);
+                        //ResponseValue.createResponseValue(db, coords, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0, "GEOLOCATION");
                         FormResponseCoord.createFormResponseCoord(coords, formResponseID);
                         coords = "";
                     }

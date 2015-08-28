@@ -5,7 +5,7 @@
 
 <div class="col-lg-12">
     <div class="panel panel-primary">
-        <span class="fake-link" onclick="<%= "exportChartImage('flot-chart-pie" + reportFieldID + "','" + ReportName + "','" + labelName + "')" %>"
+        <span class="fake-link" onclick="<%= "exportChartImage('flot-chart-pie" + reportFieldID + "','" + ObjReport.ReportName + "','" + labelName + "')" %>"
             style="margin-left: 10px;">Export As Image</span>
        <%-- <a href="JavaScript:void(0)" 
              style="margin-left: 10px; color: blue; text-decoration: underline;" onclick="<%= "exportChartImage('flot-chart-pie'" + reportFieldID + "','" + ReportName + "')" %>" >

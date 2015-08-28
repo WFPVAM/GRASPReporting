@@ -212,10 +212,17 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
             foreach (var f in fieldsLabels)
             {
-                fieldName = ChangeEnumeratorNameToTitle(f.positionIndex, f.name);
-                //Take the label, but if there is no label take the field name.
-                columnHeaderLabel = !string.IsNullOrEmpty(f.label) ? f.label : fieldName;
-                sbColHeader.Append(columnHeaderLabel + separator);
+                if (f.name.Equals("gps"))
+                {
+                    SplitGPSLatitudeAndLongitude(f.name, f.label, sbColHeader, separator);
+                }
+                else
+                {
+                    fieldName = ChangeEnumeratorNameToTitle(f.positionIndex, f.name);
+                    //Take the label, but if there is no label take the field name.
+                    columnHeaderLabel = !string.IsNullOrEmpty(f.label) ? f.label : fieldName;
+                    sbColHeader.Append(columnHeaderLabel + separator);
+                }
             }   
         }
 
@@ -287,7 +294,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                                            where grp.Count() == fc
                                            select grp.Key).ToList();
 
-                if(RdbSpss.Checked)
+                if (RdbSpss.Checked) //s3 code duplication (RdbSpss.Checked)
                 {
                     while(reader.Read())
                     {
@@ -325,7 +332,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                 }
                 else
                 {
-                    while(reader.Read())
+                    while (reader.Read()) //s3 code duplication
                     {
                         int respID = reader.GetInt32(0);
                         if(filteredResponseIDs.Contains(respID))
@@ -337,7 +344,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             }
             else
             {
-                if(RdbSpss.Checked)
+                if (RdbSpss.Checked) //s3 code duplication (RdbSpss.Checked)
                 {
                     while(reader.Read())
                     {
@@ -369,7 +376,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                         sb.Append(sb2.ToString().Substring(0, sb2.ToString().Length - 1) + "\r\n");
                     }
                 }
-                else //Excel (CSV).
+                else //Excel (CSV). //s3 code duplication
                 {
                     while(reader.Read())
                     {
@@ -665,7 +672,16 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < record.FieldCount; i++)
         {
-            sb.Append(record[i].ToString().Replace("\n", " ") + separator);
+            //Index 7 is the GPS, split it into two fields.
+            if (i == 7) //s3
+            {
+                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[0]))
+                    sb.Append(record[i].ToString().Split(' ')[0].Replace("\n", " ") + separator);
+                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[1]))
+                    sb.Append(record[i].ToString().Split(' ')[1].Replace("\n", " ") + separator);
+            }
+            else
+                sb.Append(record[i].ToString().Replace("\n", " ") + separator);
         }
 
         return sb.ToString().Substring(0, sb.ToString().Length - 1) + "\r\n";
@@ -766,6 +782,31 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         else
         {
             return fieldName;
+        }
+    }
+
+    /// <summary>
+    /// Adds two header for the GPS field: Latitude And Longitude.
+    /// </summary>
+    /// <param name="fieldName"></param>
+    /// <param name="fieldLabel"></param>
+    /// <param name="sbColHeader"></param>
+    /// <param name="separator"></param>
+    /// <author>Saad Mansour</author>
+    private void SplitGPSLatitudeAndLongitude(string fieldName, string fieldLabel, StringBuilder sbColHeader, string separator)
+    {
+        try
+        {
+            if (fieldName.Equals("gps"))
+            {
+                string columnHeaderLabel = !string.IsNullOrEmpty(fieldLabel) ? fieldLabel : fieldName;
+                sbColHeader.Append(columnHeaderLabel + " Longitude" + separator);
+                sbColHeader.Append(columnHeaderLabel + " Latitude" + separator);               
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
         }
     }
 }

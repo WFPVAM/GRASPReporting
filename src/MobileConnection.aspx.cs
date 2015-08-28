@@ -101,7 +101,7 @@ public partial class MobileConnection : System.Web.UI.Page
                         Response.Write("ERROR:Client phone number not received");
                         break;
                     }
-                    handleSyncRequest(data, senderF);
+                    HandleSyncRequest(data, senderF);
                     break;
                 default:
                     Response.Clear();
@@ -137,15 +137,16 @@ public partial class MobileConnection : System.Web.UI.Page
         Response.Write(saveFormInstanceResult);
     }
 
-    private void handleSyncRequest(string data, string sender)
+    private void HandleSyncRequest(string data, string sender)
     {
         data = data.Replace("\n", "").Replace("\r", "").Replace("  ", "");
-        XmlDocument xmlData = TryParseXml(data);
+        XmlDocument xmlData = Utility.TryParseXml(data);
+
         if(xmlData != null)
         {
             Response.Clear();
             Response.ContentType = "text/plain";
-            Response.Write(readXML(xmlData, sender));
+            Response.Write(GetManipulatedFormsXML(xmlData, sender));
         }
         else
         {
@@ -153,41 +154,88 @@ public partial class MobileConnection : System.Web.UI.Page
             Response.ContentType = "text/plain";
             Response.Write("Generating a request response generated an error");
         }
-
     }
 
-    private XmlDocument TryParseXml(string xml)
+    private string GetManipulatedFormsXML(XmlDocument formsIDList, string phone)
     {
         try
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xml);
-            return doc;
+            List<string> downloadedForms = new List<string>(); //Represents the downloaded forms in the requested mobile.
+            XmlNodeList formIDs = formsIDList.GetElementsByTagName("form");
+
+            //Get a list of the downloaded forms ids in user's mobile.
+            for (int i = 0; i < formIDs.Count; i++)
+            {
+                downloadedForms.Add(formIDs[i].InnerXml);
+            }
+
+            StringBuilder allFormsXML = new StringBuilder();
+            string allFormsXMLResponse = global::Form.GetAllXFormsByPhoneNumber(phone, downloadedForms);
+
+            allFormsXML.Append(allFormsXMLResponse);
+
+            //Add a temporary root, in order to parse it as XML. Will be removed after parse it and modify the xml (remove empty groups).
+            allFormsXML.Insert(0, "<TempRoot>");
+            allFormsXML.Append("</TempRoot>");
+
+            XmlDocument formsXMLDoc = Utility.TryParseXml(allFormsXML.ToString());
+
+            if (formsXMLDoc != null)
+            {
+                //Get all groups elements.
+                XmlNodeList groupNodes = formsXMLDoc.GetElementsByTagName("group");
+
+                //Removes all empty field-list groups.
+                int iCount = 0;
+                while (iCount < groupNodes.Count)
+                {
+                    XmlNode groupNode = groupNodes.Item(iCount);
+                    if (groupNode != null
+                        && (groupNode.Attributes["appearance"] != null
+                           && groupNode.Attributes["appearance"].Value.Equals("field-list")))
+                    {
+                        if (groupNode.ChildNodes.Count == 0)
+                        {
+                            groupNodes.Item(iCount).ParentNode.RemoveChild(groupNodes.Item(iCount));
+                            iCount--;
+                        }
+                    }
+                    iCount++;
+                }
+
+                //Get the xml after cleaning the empty groups.
+                allFormsXML.Clear();
+                allFormsXML.Append(formsXMLDoc.InnerXml);
+                
+                //Removes the temporary root.
+                allFormsXML.Replace("<TempRoot>", "");
+                allFormsXML.Replace("</TempRoot>", "");
+
+                //Replaces some characters.
+                allFormsXML.Replace("&", "&amp;")
+                    .Replace("\"", "&quot;")
+                    .Replace("'", "&apos;")
+                    .Replace("<", "&lt;")
+                    .Replace(">", "&gt;");
+                allFormsXML.Replace("&lt;form&gt;", "<form>&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?&gt;");
+                allFormsXML.Replace("&lt;/form&gt;", "</form>");
+
+                //Insert <forms> root.
+                allFormsXML.Insert(0, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><forms>");
+                allFormsXML.Append("</forms>");
+            }
+
+            return allFormsXML.ToString();
         }
-        catch(XmlException e)
+        catch (Exception ex)
         {
-            return null;
+            LogUtils.WriteErrorLog(ex.ToString());
+            return GetEmptyXmlFormsList();
         }
     }
 
-    private string readXML(XmlDocument doc, string phone)
+    private string GetEmptyXmlFormsList()
     {
-        List<string> downloadedForms = new List<string>();
-        XmlNodeList elemList = doc.GetElementsByTagName("form");
-        for(int i = 0; i < elemList.Count; i++)
-        {
-            downloadedForms.Add(elemList[i].InnerXml);
-        }
-        string response = Utility.getFormForMobileByPhoneNumber(phone, downloadedForms);
-        return response;
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><forms></forms>";
     }
-
-    private string readXML(string phone)
-    {
-        List<string> downloadedForms = new List<string>();
-        string response = Utility.getFormForMobileByPhoneNumber(phone, downloadedForms);
-        return response;
-    }
-
-
 }

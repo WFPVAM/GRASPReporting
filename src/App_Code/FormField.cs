@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.UI.WebControls.Expressions;
+using System.Xml;
 
 /// <summary>
 /// FormField  class contains auxiliary functions to query FormField table on Grasp DB
@@ -143,32 +145,60 @@ public partial class FormField
         return items;
     }
 
-    public static string getX_Form(int formID)
+    /// <summary>
+    /// Get xform format of the given form id.
+    /// </summary>
+    /// <param name="formID"></param>
+    /// <returns></returns>
+    /// <editedBy>Saad Mansour</editedBy>
+    public static string GetX_Form(int formID)
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder xForm = new StringBuilder();
 
-        GRASPEntities db = new GRASPEntities();
-
-        var items = from ff in db.FormFieldExport
-                    where ff.form_id == formID && ff.FormFieldParentID == null
-                    select ff.x_form;
-
-        if(items != null)
+        using (GRASPEntities db = new GRASPEntities())
         {
-            sb.Append("<form>");
-            foreach(var item in items)
+            //Get all form's fields without parent (fields in tables or rosters are already in their parent record).
+            var formFields = (from ff in db.FormFieldExport
+                where ff.form_id == formID && ff.FormFieldParentID == null
+                select new {ff.x_form, ff.positionIndex}).OrderBy(ff => ff.positionIndex);
+
+            //Get the form's designer version.
+            var formDesignerVersion = (from f in db.Form
+                where f.id == formID
+                select new {f.designerVersion}).Single();
+
+            string designerVersionTag = "<des_version_2>" + formDesignerVersion.designerVersion + "</des_version_2>";
+
+            if (formFields != null)
             {
-
-                if(item.Contains("<des_version_2/>"))
+                //Adds form root tag.
+                xForm.Append("<form>");
+                foreach (var field in formFields)
                 {
-                    sb.Append(item.Replace("<des_version_2/>", "<des_version_2>0.0.33</des_version_2>").Replace("&", "&amp;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("<", "&lt;").Replace(">", "&gt;"));
-                }
-                else sb.Append(item.Replace("&", "&amp;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("<", "&lt;").Replace(">", "&gt;"));
-            }
-            sb.Append("</form>");
-        }
+                    //finds the first element and removes the xml root tag, which sometimes causes error in mobile. //s3
+                    if (field.x_form.StartsWith("<?xml"))
+                    {
+                        //Replaces both <des_version_2 /> and <des_version_2/> with the form's designer version.
+                        string fieldWithDesignerVersion =
+                            field.x_form.Replace("<des_version_2 />", designerVersionTag)
+                                .Replace("<des_version_2/>", designerVersionTag);
 
-        return sb.ToString().Replace("&lt;?xml version=\"1.0\"?&gt;", "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?&gt;"); ;
+                        //Removes the root <?xml version="1.0" ?>
+                        xForm.Append(fieldWithDesignerVersion.Substring(fieldWithDesignerVersion.IndexOf(">") + 1));    
+                    }
+                    else
+                        xForm.Append(field.x_form);
+                    //if (item.Contains("<des_version_2/>")) //s3
+                    //{
+                    //    sb.Append(item.Replace("<des_version_2/>", "<des_version_2>0.0.33</des_version_2>").Replace("&", "&amp;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("<", "&lt;").Replace(">", "&gt;"));
+                    //}
+                    //else sb.Append(item.Replace("&", "&amp;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("<", "&lt;").Replace(">", "&gt;"));
+                }
+                xForm.Append("</form>");
+            }
+        }
+        return xForm.ToString();
+            //.Replace("&lt;?xml version=\"1.0\"?&gt;", "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?&gt;"); //s3
     }
 
     public static FormField createFormField(ImportingElement element, int id)

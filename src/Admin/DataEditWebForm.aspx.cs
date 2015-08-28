@@ -145,17 +145,19 @@ public partial class DataEdit : System.Web.UI.Page
         ltlScript.Text += Literal1.Text;
         //ltlScript.Text += "\r\n setTimeout('LoadData',2000) \r\n" + "});</script>";
 
-        ltlScript.Text += "\r\n\r\n $http({\r\n" +
-                      "  method: 'GET',\r\n" +
-                      "  url: 'http://graspreporting.brainsen.com/formJSON.txt'\r\n" +
-                      "}).success(function(data, status) {\r\n" +
-                      "   console.log('works!!!   ' + data);\r\n" +
-                      "   $scope.currForm = data;" +
-                      "  }).error(function(data, status) {\r\n" +
-                      "  // Some error occurred\r\n" +
-                      "   console.log(status);\r\n" +
-                      " $scope.currForm = { " + FormResponse.GetAsJson(formResponseID) + " }});\r\n" +
-                "  });</script>";
+        ltlScript.Text += " $scope.currForm = { " + FormResponse.GetAsJson(formResponseID) + " } ";
+        ltlScript.Text +=    "  });</script>";
+            //"\r\n\r\n $http({\r\n" +
+            //          "  method: 'GET',\r\n" +
+            //          "  url: 'http://graspreporting.brainsen.com/formJSON.txt'\r\n" +
+            //          "}).success(function(data, status) {\r\n" +
+            //          "   console.log('works!!!   ' + data);\r\n" +
+            //          "   $scope.currForm = data;" +
+            //          "  }).error(function(data, status) {\r\n" +
+            //          "  // Some error occurred\r\n" +
+            //          "   console.log(status);\r\n" +
+            //          " $scope.currForm = { " + FormResponse.GetAsJson(formResponseID) + " }});\r\n" +
+            //    "  });</script>";
 
         Literal1.Text = "";
 
@@ -1056,67 +1058,77 @@ public partial class DataEdit : System.Web.UI.Page
                 {
                     angJSForm.Text += outVal;
                 }
-                if(FormF.FormFieldParentID == null)
-                {
-                    ngModelName.Add(FormF.name);
 
-                    filedLabe = FormF.label;
+                FormHTMLUtils.WriteGPSHTMLField(FormF, true, responseValues, ref filedLabe,
+                    ngModelName,
+                    ref filedBody,
+                    ref constr,
+                    constraint,
+                    ref outVal,
+                    ltlScript,
+                    ref repVal,
+                    roaster,
+                    table,
+                    ngModelNameSubForm,
+                    ref model);
 
+                //s* remove this old code
+                //if(FormF.FormFieldParentID == null)
+                //{
+                //    ngModelName.Add(FormF.name);
 
-                    filedBody += "<input disabled=\"disabled\" type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" ";
-                    if(FormF.isReadOnly == 1)
-                    {
-                        filedBody += " ng-readonly=\"1\" ";
-                    }
-                    var val = (from v in responseValues
-                               where v.formFieldId == FormF.id
-                               select v.value).FirstOrDefault();
-                    if(val != null)
-                    {
-                        filedBody += " ng-init=\"" + model + FormF.name + "='" + val + "'\" ";
-                    }
-                    if(FormF.required == 1)
-                    {
-                        filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
-                        {
-                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
-                        }
-                        else filedBody += " required />\n";
-                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
-                    }
-                    else filedBody += "/>\n";
-                }
-                else
-                {
-                    repVal = "";
-                    roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
-                    if(repVal == null)
-                        table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+                //    filedLabe = FormF.label;
+                //    filedBody += "<input type=\"text\" ng-model=\"" + model + FormF.name + "\" class=\"col-xs-10 col-sm-8\" "; //disabled=\"disabled\"
+                //    if(FormF.isReadOnly == 1)//-
+                //    {
+                //        filedBody += " ng-readonly=\"1\" ";
+                //    }
+                //    var val = (from v in responseValues
+                //               where v.formFieldId == FormF.id
+                //               select v.value).FirstOrDefault(); //-
+                //    if(val != null) //-
+                //    {
+                //        filedBody += " ng-init=\"" + model + FormF.name + "='" + val + "'\" ";
+                //    }
+                //    if(FormF.required == 1)
+                //    {
+                //        filedBody += " name=\"r_" + FormF.name + "\"";
+                //        if(outVal != null && outVal != "")
+                //        {
+                //            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                //        }
+                //        else filedBody += " required />\n";
+                //        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"mainForm.r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                //    }
+                //    else filedBody += "/>\n";
+                //}
+                //else
+                //{
+                //    repVal = "";
+                //    roaster.TryGetValue((int)FormF.FormFieldParentID, out repVal);
+                //    if(repVal == null)
+                //        table.TryGetValue((int)FormF.FormFieldParentID, out repVal);
 
-                    filedLabe = FormF.label;
+                //    filedLabe = FormF.label;
+                //    filedBody += "  <input  type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\" "; //disabled=\"disabled\"
+                //    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
+                //    if(FormF.isReadOnly == 1)
+                //    {
+                //        filedBody += " ng-readonly=\"1\" ";
+                //    }
+                //    if(FormF.required == 1)
+                //    {
+                //        filedBody += " name=\"r_" + FormF.name + "\"";
+                //        if(outVal != null && outVal != "")
+                //        {
+                //            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
+                //        }
+                //        else filedBody += " required />\n";
+                //        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
+                //    }
+                //    else filedBody += "/>\n";
 
-
-
-                    filedBody += "  <input disabled=\"disabled\" type=\"text\" ng-model=\"rb_" + repVal + "." + FormF.name + "\"  class=\"col-xs-10 col-sm-8\" ";
-                    ngModelNameSubForm.Add(FormF.name, "rb_" + repVal + ".");
-                    if(FormF.isReadOnly == 1)
-                    {
-                        filedBody += " ng-readonly=\"1\" ";
-                    }
-                    if(FormF.required == 1)
-                    {
-                        filedBody += " name=\"r_" + FormF.name + "\"";
-                        if(outVal != null && outVal != "")
-                        {
-                            filedBody += " ng-required=\"currForm" + Regex.Match(outVal, "currForm(.+?)\">").Groups[1].Value + "\" />\n";
-                        }
-                        else filedBody += " required />\n";
-                        filedBody += "<span style=\"color: #f1c409; padding: 5px;\" ng-show=\"subForm" + repVal + ".r_" + FormF.name + ".$error.required\"><i class=\"fa fa-warning\"></i></span>\n";
-                    }
-                    else filedBody += "/>\n";
-
-                }
+                //}
                 angJSForm.Text += getFieldBody(filedLabe, filedBody);
 
                 if(outVal != null && outVal != "")
@@ -1739,7 +1751,7 @@ public partial class DataEdit : System.Web.UI.Page
     /// <param name="formID">The id of the form</param>
     /// <returns>The formI</returns>
     [WebMethod]
-    public static string getJSON(string result, int formID)
+    public static string getJSON(string result, int formID) //s* no uses even in aspx!
     {
         //int formID = Convert.ToInt32(HttpContext.Current.Request["formID"]);
 
@@ -1877,65 +1889,71 @@ public partial class DataEdit : System.Web.UI.Page
             int formFieldID = 0;
             int positionIndex = 0;
             string coords = "";
-
+            int gpsFormFieldID = 0;
             GRASPEntities db = new GRASPEntities();
 
             //create a new review
 
             string userName = HttpContext.Current.User.Identity.Name.ToString();
             FormResponseReviews frr = FormResponseReviews.Insert(formResponseID, userName, 0, 0, "Data Editing");
-            int frrID = frr.FormResponseReviewID;
-            ResponseValueReviews rvr = new ResponseValueReviews();
-            //when we do the field update we keep the image field
-            //we update by field name
+            //int frrID = frr.FormResponseReviewID;
+            //ResponseValueReviews rvr = new ResponseValueReviews();
+            ////when we do the field update we keep the image field
+            ////we update by field name
             List<ResponseValue> respValue = (from rv in db.ResponseValue
                                              where rv.FormResponseID == formResponseID
                                              select rv).ToList();
-            string sqlInsert = "INSERT INTO ResponseValueReviews (formFieldID,FormresponseID,positionIndex,RVRepeatCount,value,nvalue,dvalue,FormResponseReviewID) " +
-                " VALUES (";
-            foreach(ResponseValue rv in respValue)
-            {
-                string updVal = sqlInsert;
-                updVal += rv.formFieldId.ToString() + ",";
-                updVal += rv.FormResponseID.ToString() + ",";
-                updVal += rv.positionIndex.ToString() + ",";
-                updVal += rv.RVRepeatCount.ToString() + ",";
-                updVal += "N'" + rv.value.ToString() + "',";
-                if(rv.nvalue != null)
-                {
-                    updVal += rv.nvalue.ToString() + ",";
-                }
-                else
-                {
-                    updVal += "NULL,";
-                }
-                if(rv.dvalue != null)
-                {
-                    updVal += "'" + rv.dvalue.ToString() + "',";
-                }
-                else
-                {
-                    updVal += "NULL,";
-                }
-                updVal += frrID.ToString() + ");";
-                sb.AppendLine(updVal);
+            //s* useless code
+            //string sqlInsert = "INSERT INTO ResponseValueReviews (formFieldID,FormresponseID,positionIndex,RVRepeatCount,value,nvalue,dvalue,FormResponseReviewID) " +
+            //    " VALUES (";
+            //foreach(ResponseValue rv in respValue)
+            //{
+            //    string updVal = sqlInsert;
+            //    updVal += rv.formFieldId.ToString() + ",";
+            //    updVal += rv.FormResponseID.ToString() + ",";
+            //    updVal += rv.positionIndex.ToString() + ",";
+            //    updVal += rv.RVRepeatCount.ToString() + ",";
+            //    updVal += "N'" + rv.value.ToString() + "',";
+            //    if(rv.nvalue != null)
+            //    {
+            //        updVal += rv.nvalue.ToString() + ",";
+            //    }
+            //    else
+            //    {
+            //        updVal += "NULL,";
+            //    }
+            //    if(rv.dvalue != null)
+            //    {
+            //        updVal += "'" + rv.dvalue.ToString() + "',";
+            //    }
+            //    else
+            //    {
+            //        updVal += "NULL,";
+            //    }
+            //    updVal += frrID.ToString() + ");";
+            //    sb.AppendLine(updVal);
 
-                //rvr.formFieldId = rv.formFieldId;
-                //rvr.FormResponseID = rv.FormResponseID;
-                //rvr.positionIndex = rv.positionIndex;
-                //rvr.RVRepeatCount = rv.RVRepeatCount;
-                //rvr.value = rv.value;
-                //rvr.nvalue = rv.nvalue;
-                //rvr.dvalue = rv.dvalue;
-                //rvr.FormResponseReviewID = frrID;
-            }
-            db.Database.ExecuteSqlCommand(sb.ToString());
+            //    //rvr.formFieldId = rv.formFieldId;
+            //    //rvr.FormResponseID = rv.FormResponseID;
+            //    //rvr.positionIndex = rv.positionIndex;
+            //    //rvr.RVRepeatCount = rv.RVRepeatCount;
+            //    //rvr.value = rv.value;
+            //    //rvr.nvalue = rv.nvalue;
+            //    //rvr.dvalue = rv.dvalue;
+            //    //rvr.FormResponseReviewID = frrID;
+            //}
+            //db.Database.ExecuteSqlCommand(sb.ToString());
 
             foreach(var v in values)
             {
+                if (v.Key.Equals("gps")) //Continue to the next value, as the gps values are saved in LatDE and LongDE, not in gps.
+                {
+                    continue;
+                }
+
                 fIDX = -1;
                 //ffields.TryGetValue(v.Key, out ffID);
-                for(int i = 0; i < fieldTypeMapping.Length; i++)
+                for(int i = 0; i < fieldTypeMapping.GetLength(0); i++)
                 {
                     if(v.Key == fieldTypeMapping[i, 0])
                     {
@@ -1943,9 +1961,6 @@ public partial class DataEdit : System.Web.UI.Page
                         break;
                     }
                 }
-
-                formFieldID = Convert.ToInt32(fieldTypeMapping[fIDX, 1]);
-                positionIndex = Convert.ToInt32(fieldTypeMapping[fIDX, 3]);
 
                 if(fIDX == -1)
                 {
@@ -1962,13 +1977,16 @@ public partial class DataEdit : System.Web.UI.Page
                         int ffID = FormField.getIdFromName(tmp, formID);
                         coords = coords.Replace(",", ".");
 
-                        //ResponseValue.createResponseValue(coords, formResponseID, ffID, 0);
-                        //FormResponseCoord.createFormResponseCoord(coords, formResponseID);
+                        ResponseValue.updateResponseValue(db, coords, formResponseID, ffID, positionIndex, 0);
+                        FormResponseCoord.UpdateByFormResponseID(coords, formResponseID);
                         coords = "";
                     }
                 }
                 else
                 {
+
+                    formFieldID = Convert.ToInt32(fieldTypeMapping[fIDX, 1]);
+                    positionIndex = Convert.ToInt32(fieldTypeMapping[fIDX, 3]);
                     switch(fieldTypeMapping[fIDX, 2])
                     {
                         case "REPEATABLES_BASIC":
@@ -1993,7 +2011,7 @@ public partial class DataEdit : System.Web.UI.Page
                             }
                             if(!isEmpty)
                             {
-                                if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == -1).Count() != 0)
+                                if (IsResponseValueExisted(respValue, formFieldID)) //if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == -1).Count() != 0)
                                 {
                                     ResponseValue.updateResponseValue(db, i.ToString(), formResponseID, formFieldID, positionIndex, -1);
                                 }
@@ -2022,7 +2040,7 @@ public partial class DataEdit : System.Web.UI.Page
                                 }
 
                                 string imagePthValue = Utility.GetGRASPImagesVirtualDirectory() + Utility.GetImagesFolderName() + "\\WEB\\" + formResponseID + "\\" + v.Key.ToString() + ".jpg";
-                                if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
+                                if(IsResponseValueExisted(respValue, formFieldID))
                                 {
                                     ResponseValue.updateResponseValue(db, imagePthValue, formResponseID, formFieldID, positionIndex, 0);
                                 }
@@ -2035,7 +2053,7 @@ public partial class DataEdit : System.Web.UI.Page
                         case "DROP_DOWN_LIST":
                             Dictionary<string, Object> ResVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(v.Value.ToString());
 
-                            if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
+                            if (IsResponseValueExisted(respValue, formFieldID))
                             {
                                 ResponseValue.updateResponseValue(db, ResVal.FirstOrDefault().Value.ToString(), formResponseID, formFieldID, positionIndex, 0);
                             }
@@ -2046,7 +2064,7 @@ public partial class DataEdit : System.Web.UI.Page
 
                             break;
                         case "NUMERIC_TEXT_FIELD":
-                            if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
+                            if (IsResponseValueExisted(respValue, formFieldID))
                             {
                                 if(v.Value == null)
                                 {
@@ -2066,7 +2084,7 @@ public partial class DataEdit : System.Web.UI.Page
                         default:
                             try
                             {
-                                if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
+                                if (IsResponseValueExisted(respValue, formFieldID))
                                 {
                                     ResponseValue.updateResponseValue(db, v.Value.ToString(), formResponseID, formFieldID, positionIndex, 0);
                                 }
@@ -2200,7 +2218,7 @@ public partial class DataEdit : System.Web.UI.Page
                     case "DROP_DOWN_LIST":
 
                         Dictionary<string, Object> ResVal = JsonConvert.DeserializeObject<Dictionary<string, Object>>(v.Value.ToString());
-                        if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
+                        if(IsResponseValueExisted(respValue, formFieldID))
                         {
                             ResponseValue.updateResponseValue(db, ResVal.FirstOrDefault().Value.ToString(), formResponseID, formFieldID, positionIndex, rc);
                         }
@@ -2210,7 +2228,7 @@ public partial class DataEdit : System.Web.UI.Page
                         }
                         break;
                     case "NUMERIC_TEXT_FIELD":
-                        if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
+                        if (IsResponseValueExisted(respValue, formFieldID))
                         {
                             ResponseValue.updateResponseValue(db, v.Value.ToString(), formResponseID, formFieldID, positionIndex, rc, "NUMERIC_TEXT_FIELD");
                         }
@@ -2223,13 +2241,13 @@ public partial class DataEdit : System.Web.UI.Page
                     default:
                         try
                         {
-                            if(respValue.Where(w => w.formFieldId == formFieldID && w.RVRepeatCount == 0).Count() != 0)
+                            if (IsResponseValueExisted(respValue, formFieldID))
                             {
-                                ResponseValue.updateResponseValue(db, v.Value.ToString(), formResponseID, formFieldID, positionIndex, 0);
+                                ResponseValue.updateResponseValue(db, v.Value.ToString(), formResponseID, formFieldID, positionIndex, rc);
                             }
                             else
                             {
-                                ResponseValue.createResponseValue(db, v.Value.ToString(), formResponseID, formFieldID, positionIndex, 0);
+                                ResponseValue.createResponseValue(db, v.Value.ToString(), formResponseID, formFieldID, positionIndex, rc);
                             }
                         }
                         catch(Exception ex)
@@ -2266,5 +2284,10 @@ public partial class DataEdit : System.Web.UI.Page
         {
             file.Write(content);
         }
+    }
+
+    private static bool IsResponseValueExisted(List<ResponseValue> respValue, int formFieldId)
+    {
+        return (respValue.Where(w => w.formFieldId == formFieldId).Count() != 0);
     }
 }

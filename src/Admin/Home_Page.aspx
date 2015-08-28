@@ -85,7 +85,7 @@
                     </asp:HyperLink>
                 </div>
                 <div class="panel-footer announcement-bottom">
-                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/public/BarcodeScanner.apk">
+                    <%--<asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/public/BarcodeScanner.apk">
                         <div class="row">
                             <div class="col-xs-8">
                                 Download Barcode Scanner
@@ -94,9 +94,9 @@
                                 <i class="fa fa-download"></i>
                             </div>
                         </div>
-                    </asp:HyperLink>
+                    </asp:HyperLink>--%>
 
-                    <div class="row" style="border-top: 1px solid #d9edf7; margin-top: 15px">
+                    <div class="row">
                         <div class="col-xs-12">
                             <asp:Literal ID="Literal1" runat="server"></asp:Literal>
                         </div>
