@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -25,6 +26,10 @@ using System.Web;
 /// </summary>
 public partial class Form
 {
+    #region "Extended Members"
+        public GeneralEnums.FormStatuses Status { get; private set; }
+    #endregion
+
     /// <summary>
     /// Queries the DB to check if the formID exists
     /// </summary>
@@ -41,6 +46,177 @@ public partial class Form
         if (item != null)
             return item.name;
         else return "";
+    }
+
+    /// <summary>
+    /// Checks whether the given form name existed, published and not deleted.
+    /// </summary>
+    /// <param name="formName"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    public static Form CheckFormStatusByName(string formName)
+    {
+        Form form = null;
+        Form newFormVersion = null;
+
+        try
+        {
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                //check whether the form is existed.
+                form = (from f in db.Form
+                        where f.name == formName
+                        select f).FirstOrDefault();
+
+                if (form == null)
+                {
+                    //check if there is a new form version.
+                    newFormVersion = (from f in db.Form
+                            where f.PreviousPublishedName == formName
+                            select f).FirstOrDefault();
+                }
+            }
+
+            SetFormStatus(ref form, newFormVersion);
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return form;
+    }
+
+    /// <summary>
+    /// Checks whether the given form name existed, published and not deleted.
+    /// </summary>
+    /// <param name="formID"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    public static Form CheckFormStatusByID(string formID)
+    {
+        Form form = null;
+        Form newFormVersion = null;
+
+        try
+        {
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                //check whether the form is existed.
+                form = (from f in db.Form
+                        where f.id_flsmsId == formID
+                        select f).FirstOrDefault();
+
+                if (form == null)
+                {
+                    //check if there is a new form version.
+                    newFormVersion = (from f in db.Form
+                                      where f.PreviousPublishedID == formID
+                                      select f).FirstOrDefault();
+                }
+            }
+
+            SetFormStatus(ref form, newFormVersion);
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return form;
+    }
+
+    /// <summary>
+    /// Sets the form status such as NotExisted, Deleted, etc.
+    /// </summary>
+    /// <param name="form"></param>
+    /// <param name="newFormVersion"></param>
+    /// <author>Saad Mansour</author>
+    private static void SetFormStatus(ref Form form, Form newFormVersion)
+    {
+        if (form == null) //Not existed
+        {
+            form = newFormVersion; //Check if there is a new form version.
+
+            if (form != null)
+            {
+                form.Status = GeneralEnums.FormStatuses.NewPublishedVersion;
+            }
+            else
+            {
+                form = new Form();
+                form.Status = GeneralEnums.FormStatuses.NotExisted;
+            }
+        }
+        else //The form is existed
+        {
+            if (form.IsDeleted == 1)
+            {
+                form.Status = GeneralEnums.FormStatuses.Deleted;
+            }
+            else if (form.finalised == 0)
+            {
+                form.Status = GeneralEnums.FormStatuses.NotFinalized;
+            }
+            else
+            {
+                form.Status = GeneralEnums.FormStatuses.Finalized;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="formName"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    public static Form GetFormByName(string formName)
+    {
+        Form form = null;
+
+        try
+        {
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                form = (from f in db.Form
+                    where f.name == formName
+                    select f).FirstOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return form;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="formName"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    public static Form GetFormById_flsmsId(string id_flsmsId)
+    {
+        Form form = null;
+
+        try
+        {
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                form = (from f in db.Form
+                        where f.id_flsmsId == id_flsmsId
+                        select f).FirstOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return form;
     }
 
     /// <summary>

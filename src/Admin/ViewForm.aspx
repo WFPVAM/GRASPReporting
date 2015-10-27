@@ -83,7 +83,7 @@
             &nbsp;&nbsp;&nbsp;&nbsp;
             <telerik:RadButton ID="btnSaveStatusChange" runat="server" Text=" Save Changes " OnClick="btnSaveStatusChange_Click"></telerik:RadButton>
         </asp:Panel>
-        <div id="editlnk">
+        <div id="editlnk" runat="server">
             <asp:Literal ID="litEditLink" runat="server"></asp:Literal></div>
         <asp:Panel ID="pnlHistory" runat="server" Visible="true" CssClass="pnlHistory">
             <telerik:RadGrid ID="grdHistory" runat="server" OnNeedDataSource="grdHistory_NeedDataSource" Skin="Metro" Height="150px"

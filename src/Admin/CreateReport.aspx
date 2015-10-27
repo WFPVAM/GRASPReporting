@@ -125,9 +125,9 @@
                         <telerik:RadComboBox ID="rcbChartType" runat="server" AutoPostBack="true" EnableLoadOnDemand="true" CloseDropDownOnBlur="true" OnSelectedIndexChanged="rcbChartType_SelectedIndexChanged"
                             EmptyMessage="Select a chart type" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White">
                             <Items>
-                                <telerik:RadComboBoxItem Text="Pie" Value="pie" />
-                                <telerik:RadComboBoxItem Text="Line" Value="line" Visible="false" />
                                 <telerik:RadComboBoxItem Text="Bar" Value="bar" />
+                                <telerik:RadComboBoxItem Text="Pie" Value="pie" />
+                                <telerik:RadComboBoxItem Text="Line" Value="line" />
                             </Items>
                         </telerik:RadComboBox>
                     </div>
@@ -157,7 +157,7 @@
                         </div>
                         <div class="form-group">
                             <label>Select an aggregate function</label>
-                            <telerik:RadComboBox ID="ddlAggregate" runat="server" EnableLoadOnDemand="true" CloseDropDownOnBlur="true" OnSelectedIndexChanged="rcbChartType_SelectedIndexChanged"
+                            <telerik:RadComboBox ID="ddlAggregate" runat="server" EnableLoadOnDemand="true" CloseDropDownOnBlur="true" OnSelectedIndexChanged="ddlAggregate_SelectedIndexChanged"
                                 EmptyMessage="Select an aggregate function" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White">
                                 <Items>
                                     <telerik:RadComboBoxItem Text="Average" Value="average" />
@@ -187,7 +187,7 @@
                             <asp:CheckBox ID="chkLegend" runat="server" Checked="true" />
                             Show Legend
                         </div>
-                        <div class="form-group">
+                        <div id="divChkTabularData" runat="server" class="form-group">
                             <asp:CheckBox ID="chkTable" runat="server" />
                             Show Tabular Data
                         </div>

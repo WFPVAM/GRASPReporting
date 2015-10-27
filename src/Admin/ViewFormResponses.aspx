@@ -23,6 +23,36 @@
         #navbar {margin-bottom:5px;padding:5px;border:1px solid #ccc;background:#eee;font-size:12px; }
         #btnApplyQuickFilter { margin-left: 15px; }
     </style>
+    <script type="text/javascript">
+        function DeleteResponse() {
+            if (!confirm('You are about to permanently delete the selected Form Response. Are you sure?'))
+                return false;
+            else {
+                SetDeletedArgument();
+                return true;
+            }
+        }
+
+        /**
+           * Set windows argument as deleted flag, so the parent page refreshs to update the responses count after the deletion.
+		   */
+        function SetDeletedArgument() {
+            var oWnd = GetRadWindow();
+            oWnd.argument = "responsesDeleted";
+        }
+
+        /**
+           * gets the rad window object.
+		   */
+        function GetRadWindow() {
+            var oWindow = null;
+            if (window.radWindow)
+                oWindow = window.radWindow;
+            else if (window.frameElement.radWindow)
+                oWindow = window.frameElement.radWindow;
+            return oWindow;
+        }
+    </script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -65,7 +95,8 @@
         </div>
 
         <telerik:RadGrid ID="RadGrid1" runat="server" AllowPaging="True" AllowCustomPaging="True" AllowSorting="false" CellSpacing="0"
-            EnableViewState="true" GridLines="None" OnNeedDataSource="RadGrid1_NeedDataSource" Skin="Metro" AlternatingItemStyle-BackColor="#CCE6FF" HeaderStyle-BackColor="#0058B1" HeaderStyle-ForeColor="White" AutoGenerateColumns="False">
+            EnableViewState="true" GridLines="None" OnDeleteCommand="RadGrid1_DeleteCommand"
+            OnNeedDataSource="RadGrid1_NeedDataSource" OnItemDataBound="RadGrid1_ItemDataBound" Skin="Metro" AlternatingItemStyle-BackColor="#CCE6FF" HeaderStyle-BackColor="#0058B1" HeaderStyle-ForeColor="White" AutoGenerateColumns="False">
             <ExportSettings>
                 <Pdf PageWidth="" />
             </ExportSettings>
@@ -77,6 +108,11 @@
                         </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
                     <telerik:GridBoundColumn DataField="FRCreateDate" DataType="System.DateTime" HeaderText="Received on" UniqueName="FRCreateDate">
+                        <ColumnValidationSettings>
+                            <ModelErrorMessage Text=""></ModelErrorMessage>
+                        </ColumnValidationSettings>
+                    </telerik:GridBoundColumn>
+                    <telerik:GridBoundColumn DataField="LastUpdatedDate" DataType="System.DateTime" HeaderText="Last Updated Date" UniqueName="LastUpdatedDate">
                         <ColumnValidationSettings>
                             <ModelErrorMessage Text=""></ModelErrorMessage>
                         </ColumnValidationSettings>
@@ -106,16 +142,15 @@
                             <ModelErrorMessage Text=""></ModelErrorMessage>
                         </ColumnValidationSettings>
                     </telerik:GridBoundColumn>
-                    <telerik:GridTemplateColumn DataField="id" DataType="System.Int32" FilterControlAltText="Filter id column" HeaderText="">
-
+                    <telerik:GridTemplateColumn DataField="id" DataType="System.Int32" FilterControlAltText="Filter id column" HeaderText="Actions">
                         <ItemTemplate>
                             <a href='viewForm.aspx?id=<%# Eval("id") %>' target="_blank">View</a>
+                            <asp:LinkButton runat="server" ID="linkBtnDeleteResponse" OnClientClick="return DeleteResponse()" CommandName="Delete">Delete</asp:LinkButton>
                         </ItemTemplate>
-
+                        <%--<ItemTemplate>
+                            
+                        </ItemTemplate>--%>
                     </telerik:GridTemplateColumn>
-
-
-
                 </Columns>
 
 

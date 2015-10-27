@@ -27,9 +27,9 @@
 
     <telerik:RadTabStrip ID="TsSettingsMenu" runat="server" MultiPageID="MpSettings" SelectedIndex="0" Skin="Metro" OnTabClick="TsSettingsMenu_TabClick">
         <Tabs>
-            <telerik:RadTab runat="server" Text="HomePage Content" PageViewID="PvHomePageContent" Selected="True">
+            <telerik:RadTab runat="server" Text="Roles" PageViewID="PvRoles" Selected="True">
             </telerik:RadTab>
-            <telerik:RadTab runat="server" Text="Roles" PageViewID="PvRoles">
+            <telerik:RadTab runat="server" Text="HomePage Content" PageViewID="PvHomePageContent">
             </telerik:RadTab>
         </Tabs>
     </telerik:RadTabStrip>
@@ -43,7 +43,7 @@
                         <telerik:RadEditor ID="RadEditor1" Skin="Metro" runat="server" ContentAreaCssFile="~/_css/RadEditorCustomCss.css"></telerik:RadEditor>
                         <telerik:RadButton ID="saveInfo" runat="server" Skin="MetroTouch" BackColor="White" Text="Save" OnClick="saveInfo_Click"></telerik:RadButton>
                     </telerik:RadPageView>
-                    <telerik:RadPageView ID="PvRoles" runat="server">
+                    <telerik:RadPageView ID="PvRoles" runat="server" Selected="True">
                         <h3>Roles</h3>
                         Select a Role to manage:
                         <telerik:RadComboBox ID="DdlRoles" runat="server" AutoPostBack="true" EmptyMessage="Select a role..." Width="300px" DataTextField="description" DataValueField="id" OnSelectedIndexChanged="DdlRoles_SelectedIndexChanged"></telerik:RadComboBox>
@@ -57,6 +57,11 @@
                             <div class="cbGroup">
                                 <h4>Selectable Status</h4>
                                 <asp:CheckBoxList ID="CblSelectableStatus" runat="server" RepeatDirection="Horizontal" DataTextField="ResponseStatusName" DataValueField="ResponseStatusID">
+                                </asp:CheckBoxList>
+                            </div>
+                            <div class="cbGroup">
+                                <h4>Permissions</h4>
+                                <asp:CheckBoxList ID="cblPermissions" runat="server" RepeatDirection="Horizontal" DataTextField="Description" DataValueField="id">
                                 </asp:CheckBoxList>
                             </div>
                             <telerik:RadButton ID="BtnSaveRoleChanges" runat="server" Text=" Save Changes " SingleClick="true" SingleClickText="Saving..." OnClick="BtnSaveRoleChanges_Click"></telerik:RadButton>

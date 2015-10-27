@@ -30,4 +30,42 @@ public class GeneralEnums
         ok,
         ko
     }
+
+    public enum UserRoles
+    {
+        SuperAdministrator,
+        Supervisor
+    }
+
+    /// <summary>
+    /// Represents permissions names as in "[GRASP].[dbo].Permissions" table
+    /// </summary>
+    public enum Permissions
+    {
+        DeleteFormResponse,
+        EditFormResponse
+    }
+
+    public enum FormStatuses
+    {
+        None = 0,
+        Deleted = 101,
+        NotExisted = 102,
+        NotFinalized = 103,
+        NewPublishedVersion = 104,
+        Finalized = 105       
+    }
+
+    /// <summary>
+    /// List of aggregate functions using in Reports Charts.
+    /// </summary>
+    public enum AggregateFuns
+    {
+        count,
+        average,
+        sum,
+        stdev,
+        min,
+        max
+    }
 }

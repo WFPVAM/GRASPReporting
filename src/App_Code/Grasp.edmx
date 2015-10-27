@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:ssdl="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" xmlns:edm="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:map="http://schemas.microsoft.com/ado/2009/11/mapping/cs" xmlns:codegen="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:huagati="http://www.huagati.com/edmxtools/annotations">
-  <!--Updated by Huagati EDMX Tools version 2.35.5259.25942 on 2015-07-02 02:10:54-->
+  <!--Updated by Huagati EDMX Tools version 2.35.5259.25942 on 2015-10-21 11:20:45-->
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
@@ -100,6 +100,11 @@
           <Property Name="permittedGroup_path" Type="nvarchar" MaxLength="255" />
           <Property Name="FormCreateDate" Type="datetime" />
           <Property Name="isHidden" Type="int" />
+          <Property Name="IsDeleted" Type="tinyint" Nullable="true" DefaultValue="0" />
+          <Property Name="DeletedDate" Type="datetime" Nullable="true" />
+          <Property Name="FormVersion" Type="tinyint" Nullable="true" />
+          <Property Name="PreviousPublishedName" Type="nvarchar" Nullable="true" MaxLength="100" />
+          <Property Name="PreviousPublishedID" Type="nvarchar" Nullable="true" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'GRASPPCB.dbo.Form_FormField' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -212,6 +217,7 @@ warning 6002: The table/view 'GRASPPCB.dbo.FormField_FormResponse' does not have
           <Property Name="fromDataEntry" Type="tinyint" />
           <Property Name="FRCreateDate" Type="datetime" />
           <Property Name="ResponseStatusID" Type="int" Nullable="false" />
+          <Property Name="LastUpdatedDate" Type="datetime" Nullable="true" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'GRASPPCB.dbo.FormResponse_ResponseValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1657,7 +1663,59 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
             <End Role="ResponseValue" EntitySet="ResponseValue" />
             <End Role="FormResponseCoords_ResponseValue" EntitySet="FormResponseCoords_ResponseValue" />
           </AssociationSet>
+          <EntitySet Name="Role_Permissions" Schema="dbo" Table="Role_Permissions" store:Name="Role_Permissions" store:Type="Tables" EntityType="GRASPModel.Store.Role_Permissions" />
+          <AssociationSet Name="FK_Role_Permissions_Roles" Association="GRASPModel.Store.FK_Role_Permissions_Roles">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="Role_Permissions" EntitySet="Role_Permissions" />
+          </AssociationSet>
+          <EntitySet Name="Permissions" Schema="dbo" Table="Permissions" store:Name="Permissions" store:Type="Tables" EntityType="GRASPModel.Store.Permissions" />
+          <AssociationSet Name="FK_Role_Permissions_Permissions" Association="GRASPModel.Store.FK_Role_Permissions_Permissions">
+            <End Role="Permissions" EntitySet="Permissions" />
+            <End Role="Role_Permissions" EntitySet="Role_Permissions" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Role_Permissions">
+          <Documentation />
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="RoleID" Type="int" Nullable="false" />
+          <Property Name="PermissionID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Role_Permissions_Roles">
+          <End Multiplicity="1" Role="Roles" Type="GRASPModel.Store.Roles" />
+          <End Multiplicity="*" Role="Role_Permissions" Type="GRASPModel.Store.Role_Permissions" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Role_Permissions">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Permissions">
+          <Documentation />
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_Role_Permissions_Permissions">
+          <End Multiplicity="1" Role="Permissions" Type="GRASPModel.Store.Permissions" />
+          <End Multiplicity="*" Role="Role_Permissions" Type="GRASPModel.Store.Role_Permissions" />
+          <ReferentialConstraint>
+            <Principal Role="Permissions">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Role_Permissions">
+              <PropertyRef Name="PermissionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
@@ -1768,13 +1826,18 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
           <Property Name="owner" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="pushed" Type="Byte" Nullable="false" />
           <Property Name="permittedGroup_path" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="FormCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="FormCreateDate" Type="DateTime" Nullable="true" />
           <Property Name="isHidden" Type="Int32" />
           <NavigationProperty Name="frontline_group" Relationship="Self.FK2180E4D3148215" FromRole="Form" ToRole="frontline_group" />
           <NavigationProperty Name="FormResponse" Relationship="Self.FK8325D545D92B32C4" FromRole="Form" ToRole="FormResponse" />
           <NavigationProperty Name="Survey" Relationship="Self.FK9448937AAACA0E5F" FromRole="Form" ToRole="Survey" />
           <NavigationProperty Name="FormField" Relationship="Self.FKE1EB1E761F476EAE" FromRole="Form" ToRole="FormField" />
           <NavigationProperty Name="FormField1" Relationship="Self.Form_FormField" FromRole="Form" ToRole="FormField" />
+          <Property Name="IsDeleted" Type="Byte" Nullable="true" DefaultValue="0" />
+          <Property Name="DeletedDate" Type="DateTime" Nullable="true" />
+          <Property Name="FormVersion" Type="Byte" Nullable="true" />
+          <Property Name="PreviousPublishedName" Type="String" Nullable="true" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PreviousPublishedID" Type="String" Nullable="true" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="FormField">
           <Key>
@@ -1868,6 +1931,7 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
           <NavigationProperty Name="FormField" Relationship="Self.FormField_FormResponse" FromRole="FormResponse" ToRole="FormField" />
           <NavigationProperty Name="ResponseValue" Relationship="Self.FormResponse_ResponseValue" FromRole="FormResponse" ToRole="ResponseValue" />
           <Property Name="ResponseStatusID" Type="Int32" Nullable="false" />
+          <Property Name="LastUpdatedDate" Type="DateTime" Nullable="true" />
         </EntityType>
         <EntityType Name="FormResponseCoords">
           <Key>
@@ -2021,6 +2085,7 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="User_Credential" Relationship="GRASPModel.FK623D294B7F468633" FromRole="Roles" ToRole="User_Credential" />
+          <NavigationProperty Relationship="GRASPModel.FK_Role_Permissions_Roles" FromRole="Roles" ToRole="RolePermissions" Name="RolePermission" />
         </EntityType>
         <EntityType Name="SmsInternetServiceSettings">
           <Key>
@@ -2690,6 +2755,16 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
           <EntitySet Name="ResponseRepeatableReviews" EntityType="GRASPModel.ResponseRepeatableReviews" />
           <EntitySet Name="ReportFields" EntityType="GRASPModel.ReportField" />
           <EntitySet Name="FormResponseServerStatus" EntityType="GRASPModel.FormResponseServerStatus" />
+          <EntitySet Name="RolePermissions" EntityType="GRASPModel.Role_Permissions" />
+          <AssociationSet Name="FK_Role_Permissions_Roles" Association="GRASPModel.FK_Role_Permissions_Roles">
+            <End EntitySet="Roles" Role="Roles" />
+            <End EntitySet="RolePermissions" Role="RolePermissions" />
+          </AssociationSet>
+          <EntitySet Name="Permissions" EntityType="GRASPModel.Permissions" />
+          <AssociationSet Name="FK_Role_Permissions_Permissions" Association="GRASPModel.FK_Role_Permissions_Permissions">
+            <End EntitySet="Permissions" Role="Permissions" />
+            <End EntitySet="RolePermissions" Role="RolePermissions" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="IndexHASH">
           <Key>
@@ -3018,6 +3093,51 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
           <Property Name="InstanceUniqueIdentifier" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="IsSavedToServer" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="Role_Permissions">
+          <Documentation />
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleID" Type="Int32" Nullable="false" />
+          <Property Name="PermissionID" Type="Int32" Nullable="false" />
+          <NavigationProperty Relationship="GRASPModel.FK_Role_Permissions_Roles" FromRole="RolePermissions" ToRole="Roles" Name="Roles" />
+          <NavigationProperty Relationship="GRASPModel.FK_Role_Permissions_Permissions" FromRole="RolePermissions" ToRole="Permissions" Name="Permissions" />
+        </EntityType>
+        <Association Name="FK_Role_Permissions_Roles">
+          <End Role="Roles" Type="GRASPModel.Roles" Multiplicity="1" />
+          <End Role="RolePermissions" Type="GRASPModel.Role_Permissions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RolePermissions">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Permissions">
+          <Documentation />
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Relationship="GRASPModel.FK_Role_Permissions_Permissions" FromRole="Permissions" ToRole="RolePermissions" Name="RolePermission" />
+        </EntityType>
+        <Association Name="FK_Role_Permissions_Permissions">
+          <End Role="Permissions" Type="GRASPModel.Permissions" Multiplicity="1" />
+          <End Role="RolePermissions" Type="GRASPModel.Role_Permissions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Permissions">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RolePermissions">
+              <PropertyRef Name="PermissionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3123,6 +3243,11 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
                 <ScalarProperty Name="permittedGroup_path" ColumnName="permittedGroup_path" />
                 <ScalarProperty Name="FormCreateDate" ColumnName="FormCreateDate" />
                 <ScalarProperty Name="isHidden" ColumnName="isHidden" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="DeletedDate" ColumnName="DeletedDate" />
+                <ScalarProperty Name="FormVersion" ColumnName="FormVersion" />
+                <ScalarProperty Name="PreviousPublishedName" ColumnName="PreviousPublishedName" />
+                <ScalarProperty Name="PreviousPublishedID" ColumnName="PreviousPublishedID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3200,6 +3325,7 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
                 <ScalarProperty Name="Code_Form" ColumnName="Code_Form" />
                 <ScalarProperty Name="fromDataEntry" ColumnName="fromDataEntry" />
                 <ScalarProperty Name="FRCreateDate" ColumnName="FRCreateDate" />
+                <ScalarProperty Name="LastUpdatedDate" ColumnName="LastUpdatedDate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3837,6 +3963,24 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
                 <ScalarProperty Name="IsSavedToServer" ColumnName="IsSavedToServer" />
                 <ScalarProperty Name="InstanceUniqueIdentifier" ColumnName="InstanceUniqueIdentifier" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RolePermissions">
+            <EntityTypeMapping TypeName="GRASPModel.Role_Permissions">
+              <MappingFragment StoreEntitySet="Role_Permissions">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="PermissionID" ColumnName="PermissionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Permissions">
+            <EntityTypeMapping TypeName="GRASPModel.Permissions">
+              <MappingFragment StoreEntitySet="Permissions">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

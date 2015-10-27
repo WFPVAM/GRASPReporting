@@ -1313,6 +1313,7 @@ public partial class DataEdit : System.Web.UI.Page
                 break;
         }
     }
+    
     /// <summary>
     /// Creates the structure for the table in the AngularJS script, that will be used with the ng-repeat directive.
     /// </summary>
@@ -1335,6 +1336,7 @@ public partial class DataEdit : System.Web.UI.Page
         ltlScript.Text += script.Substring(0, script.Length - 1);
         ltlScript.Text += " ];";
     }
+    
     /// <summary>
     /// Creates the angularJS function that allow user to add another instance of the roster
     /// </summary>
@@ -1366,6 +1368,7 @@ public partial class DataEdit : System.Web.UI.Page
         ltlScript.Text += " });};\n";
 
     }
+    
     /// <summary>
     /// Fits the formula to the model of AngularJS for a field
     /// </summary>
@@ -1387,6 +1390,7 @@ public partial class DataEdit : System.Web.UI.Page
         }
         return formula;
     }
+    
     /// <summary>
     /// Fits the formula to the model of AngularJS for a roster or table field
     /// </summary>
@@ -2120,7 +2124,7 @@ public partial class DataEdit : System.Web.UI.Page
                 }
             }
 
-
+            FormResponse.UpdateById(db, (decimal)formResponseID);
             db.SaveChanges();
 
             //stopWatch.Stop();

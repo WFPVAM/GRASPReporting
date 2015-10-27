@@ -55,7 +55,8 @@ public partial class FormFieldResponses
     /// <param name="formID"></param>
     /// <param name="formFieldID"></param>
     /// <returns></returns>
-    public static string GetFieldMaxValue(int formID, int formFieldID)
+    /// <author>Saad Mansour</author>
+    public static string GetFieldMaxValue(int formID, int formFieldID, string fieldType)
     {
         //double? max = 0;
         string max = string.Empty;
@@ -63,11 +64,31 @@ public partial class FormFieldResponses
         {
             using (GRASPEntities db = new GRASPEntities())
             {
-                max = (from ffr in db.FormFieldResponses
-                       where ffr.parentForm_id == formID
-                        && ffr.formFieldId == formFieldID
-                        && ffr.value != null
-                       select ffr.value).Max();
+                switch (fieldType)
+                {
+                    case "NUMERIC_TEXT_FIELD" :
+                    case "SERVERSIDE_CALCULATED":
+                        max = (from ffr in db.FormFieldResponses
+                               where ffr.parentForm_id == formID
+                                && ffr.formFieldId == formFieldID
+                                && ffr.nvalue != null
+                               select ffr.nvalue).Max().ToString();
+                        break;
+                    //case "DATE_FIELD":
+                    //    max = (from ffr in db.FormFieldResponses
+                    //           where ffr.parentForm_id == formID
+                    //            && ffr.formFieldId == formFieldID
+                    //            && ffr.dvalue != null
+                    //           select ffr.nvalue).Max().ToString();
+                    //    break;
+                    default:
+                        max = (from ffr in db.FormFieldResponses
+                               where ffr.parentForm_id == formID
+                                && ffr.formFieldId == formFieldID
+                                && ffr.value != null
+                               select ffr.value).Max();
+                        break;
+                }
             }
         }
         catch (Exception ex)
@@ -84,7 +105,7 @@ public partial class FormFieldResponses
     /// <param name="formID"></param>
     /// <param name="formFieldID"></param>
     /// <returns></returns>
-    public static string GetFieldMinValue(int formID, int formFieldID)
+    public static string GetFieldMinValue(int formID, int formFieldID, string fieldType)
     {
         //double? min = 0;
         string min = string.Empty;
@@ -92,6 +113,31 @@ public partial class FormFieldResponses
         {
             using (GRASPEntities db = new GRASPEntities())
             {
+                switch (fieldType)
+                {
+                    case "NUMERIC_TEXT_FIELD":
+                    case "SERVERSIDE_CALCULATED":
+                        min = (from ffr in db.FormFieldResponses
+                               where ffr.parentForm_id == formID
+                                && ffr.formFieldId == formFieldID
+                                && ffr.nvalue != null
+                               select ffr.nvalue).Min().ToString();
+                        break;
+                    //case "DATE_FIELD":
+                    //    max = (from ffr in db.FormFieldResponses
+                    //           where ffr.parentForm_id == formID
+                    //            && ffr.formFieldId == formFieldID
+                    //            && ffr.dvalue != null
+                    //           select ffr.nvalue).Min().ToString();
+                    //    break;
+                    default:
+                        min = (from ffr in db.FormFieldResponses
+                               where ffr.parentForm_id == formID
+                                && ffr.formFieldId == formFieldID
+                                && ffr.value != null
+                               select ffr.value).Min();
+                        break;
+                }
                 min = (from ffr in db.FormFieldResponses
                          where ffr.parentForm_id == formID
                          && ffr.formFieldId == formFieldID

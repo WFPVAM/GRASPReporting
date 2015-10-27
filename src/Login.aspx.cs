@@ -47,49 +47,49 @@ public partial class Login : System.Web.UI.Page
         //afterLogin(login.UserName, user);
     }
 
-    private void afterLogin(string username, string user)
-    {
-        //Debug.WriteLine("user name: " + user);
-        //UsersRolesDSTableAdapters.UsersTableAdapter userTA =
-        //       new UsersRolesDSTableAdapters.UsersTableAdapter();
-        //UsersRolesDS.UsersDataTable userDT =
-        //    new UsersRolesDS.UsersDataTable();
+    //private void afterLogin(string username, string user)
+    //{
+    //    //Debug.WriteLine("user name: " + user);
+    //    //UsersRolesDSTableAdapters.UsersTableAdapter userTA =
+    //    //       new UsersRolesDSTableAdapters.UsersTableAdapter();
+    //    //UsersRolesDS.UsersDataTable userDT =
+    //    //    new UsersRolesDS.UsersDataTable();
 
-        //userDT = userTA.GetDataByUserEmail(username);
-        //DataTableReader objDTReader = userDT.CreateDataReader();
+    //    //userDT = userTA.GetDataByUserEmail(username);
+    //    //DataTableReader objDTReader = userDT.CreateDataReader();
 
-        //objDTReader.Read();
+    //    //objDTReader.Read();
 
-        //if (objDTReader.HasRows)
-        //{
-        //    Session["uEmail"] = objDTReader["userEmail"].ToString();
-        //    Session["uClient"] = objDTReader["clientRagSoc"].ToString();
-        //    Session["uLastAccess"] = objDTReader["userLastAccess"].ToString();
-        //    Session["uRoleName"] = objDTReader["roleName"].ToString();
-        //    Session["uID"] = objDTReader["userID"].ToString();
+    //    //if (objDTReader.HasRows)
+    //    //{
+    //    //    Session["uEmail"] = objDTReader["userEmail"].ToString();
+    //    //    Session["uClient"] = objDTReader["clientRagSoc"].ToString();
+    //    //    Session["uLastAccess"] = objDTReader["userLastAccess"].ToString();
+    //    //    Session["uRoleName"] = objDTReader["roleName"].ToString();
+    //    //    Session["uID"] = objDTReader["userID"].ToString();
 
-        //    Application["OnlineUsersName"] = Application["OnlineUsersName"] + " - " + Session["uEmail"];
-        //}
+    //    //    Application["OnlineUsersName"] = Application["OnlineUsersName"] + " - " + Session["uEmail"];
+    //    //}
 
-        //userTA.UpdateAccess(DateTime.Now, username);
+    //    //userTA.UpdateAccess(DateTime.Now, username);
 
-        //string roleID = Session["roleID"].ToString();
-        //if (userRoleName == "Cliente")
-        //{
-        //    if (Request.Url.ToString().ToLower().Contains("manutenzione"))
-        //        Response.Redirect("Customer/ManPro", true);
-        //    else
-        //        Response.Redirect("Customer/", true);
-        //    //Response.Redirect("~/Customer", true);
-        //}
-        //if (userRoleName == "OperatoreGRIweb") Response.Redirect("~/Operator/?r=gw", true);
-        //if (userRoleName == "OperatoreManPro") Response.Redirect("~/Operator/?r=mp", true);
-        //if (userRoleName == "Amministratore")
-        //{
-        //    if (Request.Url.ToString().ToLower().Contains("manutenzione"))
-        //        Response.Redirect("Admin/ManPro", true);
-        //    else
-        //        Response.Redirect("Admin/", true);
-        //}
-    }
+    //    //string roleID = Session["roleID"].ToString();
+    //    //if (userRoleName == "Cliente")
+    //    //{
+    //    //    if (Request.Url.ToString().ToLower().Contains("manutenzione"))
+    //    //        Response.Redirect("Customer/ManPro", true);
+    //    //    else
+    //    //        Response.Redirect("Customer/", true);
+    //    //    //Response.Redirect("~/Customer", true);
+    //    //}
+    //    //if (userRoleName == "OperatoreGRIweb") Response.Redirect("~/Operator/?r=gw", true);
+    //    //if (userRoleName == "OperatoreManPro") Response.Redirect("~/Operator/?r=mp", true);
+    //    //if (userRoleName == "Amministratore")
+    //    //{
+    //    //    if (Request.Url.ToString().ToLower().Contains("manutenzione"))
+    //    //        Response.Redirect("Admin/ManPro", true);
+    //    //    else
+    //    //        Response.Redirect("Admin/", true);
+    //    //}
+    //}
 }

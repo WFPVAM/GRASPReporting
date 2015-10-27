@@ -4,7 +4,8 @@
 
 <%@ Register Src="../_uc/barChart.ascx" TagName="barChart" TagPrefix="uc2" %>
 <%@ Register TagPrefix="uc3" TagName="ResultMsgBar" Src="~/_uc/ResultMsgBar.ascx" %>
-             
+<%@ Reference Control="~/_uc/LineChart.ascx" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link href="../_css/kendo.dataviz.min.css" rel="stylesheet" />
 

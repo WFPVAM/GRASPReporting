@@ -33,7 +33,6 @@ public class IncomingProcessor
 
     public string ProcessResponse(string text, string sender, string fileName)
     {
-
         string[,] fieldTypeMapping = null;
         int fIDX = -1;
         int formParentID = 0;
@@ -46,9 +45,16 @@ public class IncomingProcessor
         bool previousRoster = false;
         string fileContent="";
         string previousFieldName = "";
+        bool isEditedResponse = false;
 
         try
         {
+            formResponseID = FormResponse.GetIdByResponseFileName(fileName);
+            if (formResponseID != 0) //It is edited response
+            {
+                isEditedResponse = true;
+            }
+
             if(text.Length != 0)
             {
                 byte[] encodedText = Convert.FromBase64String(text);
@@ -87,7 +93,13 @@ public class IncomingProcessor
                         if(child.Name == "id")
                         {
                             formParentID = FormResponse.getFormID(child.InnerText);
-                            formResponseID = FormResponse.createFormResponse(formParentID, sender, "");
+
+                            if (!isEditedResponse) //It is a new Response (not edited).
+                            {
+                                formResponseID = FormResponse.createFormResponse(formParentID, sender, "", fileName);
+                            }
+                            else
+                                FormResponse.UpdateById(db, (decimal)formResponseID);
 
                             fieldTypeMapping = FormField.getFormFieldTypeMap(formParentID); //idx= 0:name; 1:id; 2:type; 3:positionIndex
 
@@ -147,10 +159,12 @@ public class IncomingProcessor
 
                                     if (!previousFieldName.Equals(fieldName)) //Add a record for the roster or table root field.
                                     {
-                                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
+                                        if (!isEditedResponse)
+                                            ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
                                     }
 
-                                    InsertRepeatableData(db, child, fieldTypeMapping, formResponseID, repCount);
+                                    //Adds the questions inside the Roster.
+                                    InsertOrUpdateRepeatableData(db, child, fieldTypeMapping, formResponseID, repCount, isEditedResponse);
                                     prevFFID = fIDX;
                                     previousRoster = true;
                                     break;
@@ -160,19 +174,24 @@ public class IncomingProcessor
                                     if (!previousFieldName.Equals(fieldName)) //Add a record for the roster or table root field.
                                     {
                                         //s* change the value of repCount 
-                                        ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
+                                        if (!isEditedResponse)
+                                            ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), -1);
                                     }
 
                                     foreach(XmlNode rChild in child.ChildNodes)
                                     {
                                         //s* change the value of repCount
-                                        InsertRepeatableData(db, rChild, fieldTypeMapping, formResponseID, ++repCount);
+                                        //Adds the questions inside the Table.
+                                        InsertOrUpdateRepeatableData(db, rChild, fieldTypeMapping, formResponseID, ++repCount, isEditedResponse);
                                     }
                                     
                                     prevFFID = fIDX;
                                     previousRoster = true;
                                     break;
                                 case "IMAGE":
+                                    if (isEditedResponse)
+                                        break;
+                                    
                                     //Added by Rushdi on 30-SEP-2014
                                     if(child.InnerText.Contains("/instances"))
                                     {
@@ -191,25 +210,34 @@ public class IncomingProcessor
 
                                     ResponseValue.createResponseValue(db, imageFilePath, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
                                     break;
-
                                 case "GEOLOCATION":
                                     if(!string.IsNullOrEmpty(child.InnerText))
                                     {
-                                        ResponseValue.createResponseValue(db, child.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
-                                        FormResponseCoord.createFormResponseCoord(child.InnerText, formResponseID);
+                                        if (isEditedResponse)
+                                        {
+                                            ResponseValue.updateResponseValue(db, child.InnerText, formResponseID,
+                                                Convert.ToInt32(fieldTypeMapping[fIDX, 1]),
+                                                Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                            FormResponseCoord.UpdateByFormResponseID(child.InnerText, formResponseID);
+                                        }
+                                        else
+                                        {
+                                            ResponseValue.createResponseValue(db, child.InnerText, formResponseID,
+                                                Convert.ToInt32(fieldTypeMapping[fIDX, 1]),
+                                                Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                            FormResponseCoord.createFormResponseCoord(child.InnerText, formResponseID);
+                                        }
                                     }
                                     break;
                                 case "NUMERIC_TEXT_FIELD":
                                     child.InnerText = Utility.GetIntegerNumberFromString(child.InnerText);
-                                    ResponseValue.createResponseValue(db, child.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0, "NUMERIC_TEXT_FIELD");
+                                    if (isEditedResponse)
+                                    {
+                                        ResponseValue.updateResponseValue(db, child.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0, "NUMERIC_TEXT_FIELD");
+                                    }else
+                                        ResponseValue.createResponseValue(db, child.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0, "NUMERIC_TEXT_FIELD");
                                     break;
                                 default:
-                                    //if(previousRoster) //s*
-                                    //{
-                                    //    //file.WriteLine(repCount.ToString() + "," + formResponseID + "," + prevFFID + ", -1");
-                                    //    ResponseValue.createResponseValue(db, repCount.ToString(), formResponseID, Convert.ToInt32(fieldTypeMapping[prevFFID, 1]), Convert.ToInt32(fieldTypeMapping[prevFFID, 3]), -1);
-                                    //}
-                                    //file.WriteLine(child.InnerText + "," + formResponseID + "," + Convert.ToInt32(fieldTypeMapping[fIDX, 1]) + ", 0");
                                     string valueToInsert = "";
                                     if(child.InnerText != null && child.InnerText.Length > 4000)
                                     {
@@ -226,7 +254,11 @@ public class IncomingProcessor
                                         valueToInsert = "false";
                                     }
 
-                                    ResponseValue.createResponseValue(db, valueToInsert, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                    if (isEditedResponse)
+                                    {
+                                        ResponseValue.updateResponseValue(db, valueToInsert, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
+                                    }else
+                                        ResponseValue.createResponseValue(db, valueToInsert, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), 0);
                                     if(fieldName == "client_version")
                                         clientVersion = child.InnerText;
                                     prevFFID = fIDX;
@@ -265,8 +297,6 @@ public class IncomingProcessor
                         Directory.CreateDirectory(folderPath);
                     }
                     StreamWriter file = new StreamWriter(folderPath + "\\MobileConnection.txt", true);
-                    //file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                    //file.WriteLine(text);
                     file.WriteLine("____________________________________________________________________________");
                     file.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " Error on " + fileName);
                     file.WriteLine(exLog);
@@ -288,7 +318,7 @@ public class IncomingProcessor
                 //UserToFormResponses.GenerateAssociationForAllUsers(formParentID, formResponseID);
 
                 //SaveProcessedResponse(fileContent, formResponseID.ToString().PadLeft(9, '0'));
-                SaveFileInResponseFilesFolder(fileContent, fileName, GeneralEnums.ResponseFilesFolderNames.processed);
+                SaveFileInResponseFilesFolder(text, fileName, GeneralEnums.ResponseFilesFolderNames.processed);
                 DeleteFormFromResponseFileFolder(fileName, GeneralEnums.ResponseFilesFolderNames.incoming);
 
                 return "ok";
@@ -305,6 +335,12 @@ public class IncomingProcessor
         }
     }
 
+    public static string GetFormStatusByID(string formID)
+    {
+        Form form = Form.CheckFormStatusByID(formID);
+        return form.Status.ToString();
+    }
+
     /// <summary>
     /// Converts the responses in a Dictionary, so for each of its elements a ResponseValue is created.
     /// </summary>
@@ -313,7 +349,7 @@ public class IncomingProcessor
     /// <param name="key">The name of the roster field</param>
     /// <param name="formResponseID">The id representing the form Response</param>
     /// <param name="rc">An int representing the repetition count for this roster/table</param>
-    public void InsertRepeatableData(GRASPEntities db, XmlNode val, string[,] fieldTypeMapping, int formResponseID, int repCount)
+    public void InsertOrUpdateRepeatableData(GRASPEntities db, XmlNode val, string[,] fieldTypeMapping, int formResponseID, int repCount, bool isEitedResponse)
     {
         foreach (XmlNode node in val)
         {
@@ -331,18 +367,43 @@ public class IncomingProcessor
                 if (fieldTypeMapping[fIDX, 2] == GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString())
                 {
                     node.InnerText = Utility.GetIntegerNumberFromString(node.InnerText);
-                    ResponseValue.createResponseValue(db, node.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), repCount, GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString());
-                }else
-                    ResponseValue.createResponseValue(db, node.InnerText, formResponseID, Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), repCount);
+                    if (isEitedResponse)
+                    {
+                        ResponseValue.updateResponseValue(db, node.InnerText, formResponseID,
+                            Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]),
+                            repCount, GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString());
+                    }
+                    else
+                        ResponseValue.createResponseValue(db, node.InnerText, formResponseID,
+                            Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]),
+                            repCount, GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString());
+                }
+                else
+                {
+                    if (isEitedResponse)
+                    {
+                        ResponseValue.updateResponseValue(db, node.InnerText, formResponseID,
+                            Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), repCount);
+                    }
+                    else
+                        ResponseValue.createResponseValue(db, node.InnerText, formResponseID,
+                            Convert.ToInt32(fieldTypeMapping[fIDX, 1]), Convert.ToInt32(fieldTypeMapping[fIDX, 3]), repCount);
+                }
             }
         }
     }
 
+    /// <summary>
+    /// Gets the full path of the givin image file name.
+    /// </summary>
+    /// <param name="formNameWithSender"></param>
+    /// <param name="imageFileName"></param>
+    /// <returns></returns>
     private string GetImageFileFullPath(string formNameWithSender, string imageFileName)
     {
         try
         {
-            //PartialDmgGaza_2014-09-18_10-59-04_101
+            //Example: PartialDmgGaza_2014-09-18_10-59-04_101
             string senderNumber = formNameWithSender.GetSubstringAfterLastChar('_');
             string formName = formNameWithSender.Split('_')[0];
             string formInstanceName = formNameWithSender.GetSubstringBeforeLastChar('_');
@@ -362,10 +423,10 @@ public class IncomingProcessor
 
     public static void ProcessIncommingForms(RadButton btnProcessIncomingResponse, Literal litIncomingInfo)
     {
-        bool concurrentCalls = false; //whether the process called while it is already running.
+        bool concurrentCalls = false; //whether the process called while it is already running by the task scheduler.
         try
         {
-            if (GlobalVariables.IsProcessIncomingRunning) //whether the processing is already running.
+            if (GlobalVariables.IsProcessIncomingRunning) //whether the processing is already running by the task scheduler.
             {
                 if (btnProcessIncomingResponse != null)
                 {
@@ -445,18 +506,18 @@ public class IncomingProcessor
             if (concurrentCalls == false)
             {
                 GlobalVariables.IsProcessIncomingRunning = false;
-                CheckProcessIncomingFormsStatus(btnProcessIncomingResponse, litIncomingInfo);
+                CheckProcessResponsesStatus(btnProcessIncomingResponse, litIncomingInfo);
             }
         }
     }
 
     /// <summary>
-    /// 
+    /// Checks whether the process responses is already running, and changes the status message.
     /// </summary>
     /// <param name="btnProcessIncomingResponse"></param>
     /// <param name="litIncomingInfo"></param>
     /// <author>Saad Mansour</author>
-    public static void CheckProcessIncomingFormsStatus(RadButton btnProcessIncomingResponse, Literal litIncomingInfo)
+    public static void CheckProcessResponsesStatus(RadButton btnProcessIncomingResponse, Literal litIncomingInfo)
     {
         try
         {
@@ -492,56 +553,104 @@ public class IncomingProcessor
         }
     }
 
-    public string SaveFileResponse(string data, string sender, string formName)
+    /// <summary>
+    /// Gets the form response saved status with form status, ex: "ok,finalized"
+    /// </summary>
+    /// <param name="isSaved"></param>
+    /// <param name="formStatus"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    private string GetFormResponseStatus(bool isSaved, Form form)
+    {
+        StringBuilder responseMsg = new StringBuilder();
+
+        try
+        {
+            if (isSaved)
+            {
+                responseMsg.Append("ok");
+                responseMsg.Append("," + form.Status);
+
+                if (form.Status.Equals(GeneralEnums.FormStatuses.NewPublishedVersion.ToString()))
+                    //In case there is a new version, send to mobile the new form name
+                {
+                    responseMsg.Append("," + form.name);
+                }
+            }
+            else
+                responseMsg.Append("ko");
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return responseMsg.ToString();
+    }
+
+    /// <summary>
+    /// responseFullName structure like this: [FormName]_[Date]_[Time]_[ImageName]
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="sender"></param>
+    /// <param name="responseFullName"></param>
+    /// <returns></returns>
+    public string SaveFileResponse(string data, string sender, string responseFullName, string formId, bool isEditedResponse)
     {
         string formInstanceName = string.Empty;
         
         try
         {
-            string fileType = formName.GetSubstringAfterLastChar('_');
-            
+            Form form = Form.CheckFormStatusByID(formId); //check the form status.
+            string fileType = responseFullName.GetSubstringAfterLastChar('_');
+
             //Checks whether the file is image. The image file name structure is [FormName]_[Date]_[Time]_[ImgaeFileName]_[image]
             // ex.: "PartialDmgGaza_2014-09-18_10-59-04_1411027216475.jpg_image"
             if (!string.IsNullOrEmpty(fileType) 
                 && fileType.Equals("image"))
             {
                 //get file without _image type
-                formName = formName.GetSubstringBeforeLastChar('_'); //"PartialDmgGaza_2014-09-18_10-59-04_1411027216475.jpg"
+                responseFullName = responseFullName.GetSubstringBeforeLastChar('_'); //"PartialDmgGaza_2014-09-18_10-59-04_1411027216475.jpg"
                 //without image name
-                formInstanceName = formName.GetSubstringBeforeLastChar('_'); //"PartialDmgGaza_2014-09-18_10-59-04"
-                string imageFileName = Path.GetFileNameWithoutExtension(formName.GetSubstringAfterLastChar('_')); //"1411027216475"
+                formInstanceName = responseFullName.GetSubstringBeforeLastChar('_'); //"PartialDmgGaza_2014-09-18_10-59-04"
+                string imageFileName = Path.GetFileNameWithoutExtension(responseFullName.GetSubstringAfterLastChar('_')); //"1411027216475"
                 bool imageSavedSucceeded = SaveIncommingImage(data, sender, formInstanceName, imageFileName);
-                if (imageSavedSucceeded)
-                {
-                    return "ok"; //s3* ok
-                }else
-                    return "ko";
+                return GetFormResponseStatus(imageSavedSucceeded, form);
             }
 
             //string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff_") + sender.Replace("+", "");
-            formInstanceName = GetFileName(sender, formName);
-            bool isFileAlreadySaved = FormResponseServerStatus.IsFormSaved(formInstanceName); //s3* 
-            if (isFileAlreadySaved)
+            formInstanceName = GetFileName(sender, responseFullName);
+            
+            //A new response (not edited), then check for duplication.
+            if (isEditedResponse == false)
             {
-                SaveDuplicateForm(data, formInstanceName);
-                return "ok";
+                bool isFileAlreadySaved = FormResponseServerStatus.IsFormSaved(formInstanceName); //s3* 
+                if (isFileAlreadySaved) //Check if the form instance is already saved before, then go to duplicate folder.
+                {
+                    SaveDuplicateForm(data, formInstanceName);
+                    return GetFormResponseStatus(true, form);
+                }   
             }
 
-            string folderPath = Utility.GetResponseFilesFolderName() + "incoming\\";
-            if(!Directory.Exists(folderPath))
+            switch (form.Status)
             {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            using (StreamWriter file = new StreamWriter(folderPath + formInstanceName, true))
-            {
-                file.Write(data);
-                file.Close();
+                //If the from is not finalized then save the form instance in unknownForms folder.
+                case GeneralEnums.FormStatuses.Deleted:
+                case GeneralEnums.FormStatuses.NewPublishedVersion:
+                case GeneralEnums.FormStatuses.NotExisted:
+                case GeneralEnums.FormStatuses.NotFinalized:
+                    SaveFileInResponseFilesFolder(data, formInstanceName, GeneralEnums.ResponseFilesFolderNames.unknownForms);
+                    break;
+                //Save the form instance in incoming only if it is finalized
+                case GeneralEnums.FormStatuses.Finalized:
+                    SaveFileInResponseFilesFolder(data, formInstanceName, GeneralEnums.ResponseFilesFolderNames.incoming);
+                    break;
             }
 
             FormResponseServerStatus.InsertOrUpdateStatus(formInstanceName, true);
             SetIsNewFormsArrived();
-            return "ok";
+
+            return GetFormResponseStatus(true, form);
         }
         catch(Exception ex)
         {
@@ -558,8 +667,39 @@ public class IncomingProcessor
             file.WriteLine(ex.StackTrace);
             file.WriteLine("____________________________________________________________________________");
             file.Close();
-            return "ko";
+            return GetFormResponseStatus(false, null);
         }
+    }
+
+    /// <summary>
+    /// Gets the form id by reading the incoming form response data and read the form Id from it
+    /// </summary>
+    /// <returns></returns>
+    private static string GetFormIDFromComingXML(string incomingResponseData)
+    {
+        string formID = string.Empty;
+
+        try
+        {
+            byte[] encodedText = Convert.FromBase64String(incomingResponseData);
+            Stream stream = new MemoryStream(encodedText);
+            GZipStream zipStream = new GZipStream(stream, CompressionMode.Decompress);
+            stream.Position = 0;
+            StreamReader sr = new StreamReader(zipStream);
+            string tmp = sr.ReadToEnd();
+            int index = tmp.IndexOf("</data>?");
+            string fileContent = tmp.Substring(0, index + 7);
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(fileContent);
+            XmlNodeList formIDs = xmlDoc.GetElementsByTagName("id");
+            formID = formIDs[0].InnerXml;
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return formID;
     }
 
     /// <summary>
@@ -595,18 +735,6 @@ public class IncomingProcessor
             {
                 //s3 Duplicate img
             }
-
-            //using (StreamWriter file = new StreamWriter(folderPath + fileName, true))
-            //{
-            //    file.Write(data);
-            //    file.Close();
-            //}
-
-            //using (var imageFile = new FileStream(folderPath + "\\" + v.Key + ".jpg", FileMode.Create))
-            //{
-            //    imageFile.Write(bytes, 0, bytes.Length);
-            //    imageFile.Flush();
-            //}
             return true;
         }
         catch (Exception ex)
@@ -616,18 +744,18 @@ public class IncomingProcessor
         }
     }
 
-    private bool SaveIncommingVideo(string data, string sender, string formInstanceName, string videoFileName)
-    {
-        try
-        {
+    //private bool SaveIncommingVideo(string data, string sender, string formInstanceName, string videoFileName)
+    //{
+    //    try
+    //    {
 
-        }
-        catch (Exception ex)
-        {
-            LogUtils.WriteErrorLog(ex.ToString());
-        }
-        return false;
-    }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        LogUtils.WriteErrorLog(ex.ToString());
+    //    }
+    //    return false;
+    //}
 
     //private byte[] Decompress(byte[] compressedBytes)
     //{
@@ -712,6 +840,13 @@ public class IncomingProcessor
     //    }
     //}
 
+    /// <summary>
+    /// Gets the full relative image path.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="formInstanceName"></param>
+    /// <param name="imageFileName"></param>
+    /// <returns></returns>
     private string GetImagePathWithFileName(string sender, string formInstanceName, string imageFileName)
     {
         try
@@ -746,6 +881,12 @@ public class IncomingProcessor
         }
     }
 
+    /// <summary>
+    /// Saves duplicate file.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
     private bool SaveDuplicateForm(string data, string fileName)
     {
         bool isSuccess = false;
@@ -809,7 +950,7 @@ public class IncomingProcessor
             {
                 Directory.CreateDirectory(folderPath);
             }
-            using (StreamWriter file = new StreamWriter(folderPath + fileName, true))
+            using (StreamWriter file = new StreamWriter(folderPath + fileName, false))
             {
                 file.Write(data);
                 file.Close();

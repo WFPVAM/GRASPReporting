@@ -59,7 +59,8 @@ public partial class Admin_Statistics_ViewChart : System.Web.UI.Page
         FormID = Report.getFormID(ObjReport.ReportID);
         int responseStatusID = 0;
 
-        if (ddlResponseStatus.SelectedValue != null && ddlResponseStatus.SelectedValue != "")
+        if (ddlResponseStatus.SelectedValue != null 
+            && ddlResponseStatus.SelectedValue != "")
         {
             responseStatusID = Convert.ToInt32(ddlResponseStatus.SelectedValue);
         }
@@ -90,6 +91,16 @@ public partial class Admin_Statistics_ViewChart : System.Web.UI.Page
                     //if (dateFrom.SelectedDate != null) c2.ResponseValueDate = dateFrom.SelectedDate.Value.Date;
                     PlaceHolder1.Controls.Add(c2);
                     Literal1.Text += "createChartBar" + rep.ReportFieldID + "(); ";
+                    break;
+                case "line":
+                    UCLineChart ucLineChartUserControl = (UCLineChart)Page.LoadControl("../_uc/LineChart.ascx");
+                    ucLineChartUserControl.reportFieldID = Convert.ToInt32(rep.ReportFieldID);
+                    ucLineChartUserControl.ObjReport = ObjReport;
+                    ucLineChartUserControl.labelName = rep.ReportFieldTitle;
+                    ucLineChartUserControl.ResponseStatusID = responseStatusID;
+                    //if (dateFrom.SelectedDate != null) c2.ResponseValueDate = dateFrom.SelectedDate.Value.Date;
+                    PlaceHolder1.Controls.Add(ucLineChartUserControl);
+                    Literal1.Text += "createLineChart" + rep.ReportFieldID + "(); ";
                     break;
                 default:
                     break;

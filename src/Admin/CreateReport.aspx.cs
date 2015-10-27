@@ -182,6 +182,23 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, TxtChartTitle.Text, ReportFieldLabel, chartType, null, null, null, legend, table);
 
             }
+            else if (chartType.Equals("line"))
+            {
+                FormFieldID = Convert.ToInt32(ddlSerieField.SelectedValue);
+                FormFieldValueID = Convert.ToInt32(ddlValueField.SelectedValue);
+                ReportFieldLabel = (tbReportFieldSerie.Text != "") ? tbReportFieldSerie.Text : ddlSerieField.Text;
+                ReportFieldValue = (tbReportFieldValue.Text != "") ? tbReportFieldValue.Text : ddlValueField.Text;
+                aggregate = ddlAggregate.SelectedValue;
+                if (chkLegend.Checked)
+                    legend = 1;
+                if (chkTable.Checked)
+                    table = 1;
+                if (hdnReportID.Value == "")
+                {
+                    hdnReportID.Value = Report.createNewReport(tbReportName.Text, tbReportDescription.Text, FormID).ToString();
+                }
+                ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, TxtChartTitle.Text, ReportFieldLabel, chartType, ReportFieldValue, FormFieldValueID, aggregate, legend, table);
+            }
 
             success.Visible = true;
             error2.Visible = false;
@@ -292,13 +309,14 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
             chkLegend.Checked = true;
             pnlPie.Visible = true;
             pnlButton.Visible = true;
-            pnlBar.Visible = false;
+            pnlBar.Visible = true;
             error2.Visible = false;
             if(ddlLabelFormField.SelectedValue == "")
                 serieFieldBind(ddlLabelFormField);
-
+            divChkTabularData.Visible = true;
         }
-        else if(chartType == "bar")
+        else if(chartType == "bar"
+            || chartType == "line")
         {
             error2.Visible = false;
             ddlLabelFormField.Text = "";
@@ -316,9 +334,23 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 serieFieldBind(ddlSerieField);
             if(ddlValueField.SelectedValue == "")
                 serieValueBind();
+            divChkTabularData.Visible = false;
         }
 
     }
+
+    protected void ddlAggregate_SelectedIndexChanged(object sender,
+        Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
+    {
+        string aggregateFunc = ddlAggregate.SelectedValue;
+        
+        if(aggregateFunc.Equals("count"))
+        {
+            ddlValueField.Visible = false;
+        }else
+            ddlValueField.Visible = true;
+    }
+
     /// <summary>
     /// Fills the dropdwon list for selecting the Series Value in bar chart.
     /// Only numeric fields are shown.
@@ -422,7 +454,9 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
             {
                 foreach(FormFieldExport f in rosterFields.Where(x => x.FormFieldParentID == ff.id))
                 {
-                    if(f.type == "DROP_DOWN_LIST" || f.type == "RADIO_BUTTON")
+                    if (f.type == "DROP_DOWN_LIST" 
+                        || f.type == "RADIO_BUTTON" 
+                        || ff.type == GeneralEnums.FieldTypes.DATE_FIELD.ToString())
                     {
                         RadComboBoxItem item = new RadComboBoxItem();
                         item.Text = f.name + " (" + f.label + ")";
@@ -431,7 +465,8 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                     }
                 }
             }
-            else if(ff.type == "DROP_DOWN_LIST" || ff.type == "RADIO_BUTTON")
+            else if(ff.type == "DROP_DOWN_LIST" || ff.type == "RADIO_BUTTON"
+                || ff.type == GeneralEnums.FieldTypes.DATE_FIELD.ToString())
             {
                 RadComboBoxItem item = new RadComboBoxItem();
                 item.Text = ff.name + " (" + ff.label + ")";

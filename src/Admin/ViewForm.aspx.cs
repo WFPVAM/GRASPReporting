@@ -43,6 +43,7 @@ public partial class Admin_ViewForm : System.Web.UI.Page
         }
         if(Session["isAuthenticated"] != null)
         {
+            MaintainEditButtonVisibility();
             int resID = 0;
             int selVerID = 0;
             int roleID = Convert.ToInt32(Session["RoleID"].ToString());
@@ -151,6 +152,15 @@ public partial class Admin_ViewForm : System.Web.UI.Page
             Response.Write("Session Expired");
             Response.End();
         }
+    }
+
+    /// <summary>
+    /// Show the edit button only if the user has the edit permission.
+    /// </summary>
+    /// <author>Saad Mansour</author>
+    private void MaintainEditButtonVisibility()
+    {
+        editlnk.Visible = Permissions.IsLoggedUserHasPermission(GeneralEnums.Permissions.EditFormResponse);
     }
 
     protected void ShowResponse(int resID)
@@ -470,67 +480,85 @@ public partial class Admin_ViewForm : System.Web.UI.Page
     }
     protected void btnChangeStatus_Click(object sender, EventArgs e)
     {
-        pnlChangeStatus.Visible = true;
-
-        int responseID = 0;
-        if(Request["id"] != "" && Request["id"] != null && Session["RoleID"] != null)
+        try
         {
-            int roleID = Convert.ToInt32(Session["RoleID"].ToString());
-            responseID = Convert.ToInt32(Request["id"]);
+            //pnlChangeStatus.Visible = true;
 
-            using(GRASPEntities db = new GRASPEntities())
+            int responseID = 0;
+            if (Request["id"] != "" && Request["id"] != null && Session["RoleID"] != null)
             {
-                var res = from s in db.FormResponseStatus
-                          from fr in db.FormResponse
-                          where (s.ResponseStatusDependency) <= fr.ResponseStatusID && fr.id == responseID
+                int roleID = Convert.ToInt32(Session["RoleID"].ToString());
+                responseID = Convert.ToInt32(Request["id"]);
+
+                using (GRASPEntities db = new GRASPEntities())
+                {
+                    var res = from s in db.FormResponseStatus
+                              from fr in db.FormResponse
+                              where (s.ResponseStatusDependency) <= fr.ResponseStatusID && fr.id == responseID
+                              select s;
+                    res = from s in res
+                          from rs in db.RolesToResponseStatus
+                          where rs.RoleID == roleID && s.ResponseStatusID == rs.ResponseStatusID && rs.RoleToRespStatusTypeID == 1
                           select s;
-                res = from s in res
-                      from rs in db.RolesToResponseStatus
-                      where rs.RoleID == roleID && s.ResponseStatusID == rs.ResponseStatusID && rs.RoleToRespStatusTypeID==1
-                      select s;
-                ddlFormResponseStatus.DataSource = res.ToList();
-                ddlFormResponseStatus.Items.Clear();
-                ddlFormResponseStatus.DataBind();
+                    ddlFormResponseStatus.DataSource = res.ToList();
+                    ddlFormResponseStatus.Items.Clear();
+                    ddlFormResponseStatus.DataBind();
+                }
             }
+            pnlChangeStatus.Visible = true;
+            pnlHistory.Visible = false;
+            litTableResult.Visible = false;
+            LitMessage.Text = "";
+            pnlResponseStatus.Height = 260;
         }
-        pnlChangeStatus.Visible = true;
-        pnlHistory.Visible = false;
-        litTableResult.Visible = false;
-        LitMessage.Text = "";
-        pnlResponseStatus.Height = 260;
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
     }
     protected void btnSaveStatusChange_Click(object sender, EventArgs e)
     {
-        if(ddlFormResponseStatus.SelectedValue != "" && Request["id"] != "" && Request["id"] != null)
+        try
         {
-            if(ddlFormResponseStatus.SelectedValue == "3" && txtDetails.Text.Length == 0)
+            if (ddlFormResponseStatus.SelectedValue != "" && Request["id"] != "" && Request["id"] != null)
             {
-                LitMessage.Text = "<div>Please insert a reason in order to reject a form response.</div>";
-            }
-            else if(ddlFormResponseStatus.SelectedValue.Length>0)
-            {
-                int formResponseStatusID = Convert.ToInt32(ddlFormResponseStatus.SelectedValue);
-                int responseID = Convert.ToInt32(Request["id"]);
-                int prevStatusID = FormResponse.UpdateStatus(responseID, formResponseStatusID);
-                string userName = HttpContext.Current.User.Identity.Name.ToString();
-                FormResponseReviews.Insert(responseID, userName, prevStatusID, formResponseStatusID, txtDetails.Text);
-                pnlChangeStatus.Visible = false;
-                pnlHistory.Visible = true;
-                litTableResult.Visible = true;
-                grdHistory.Rebind();
-                FormResponseStatus responseStatus = FormResponse.GetStatus(responseID);
-                lblFormResponseStatus.Text = responseStatus.ResponseStatusName;
-                using(GRASPEntities db = new GRASPEntities())
+                if (ddlFormResponseStatus.SelectedValue == "3" && txtDetails.Text.Length == 0)
                 {
-                    int roleID = Convert.ToInt32(Session["RoleID"].ToString());
-                    if(db.RolesToResponseStatus.Where(r => r.RoleID == roleID && r.ResponseStatusID == responseStatus.ResponseStatusID && r.RoleToRespStatusTypeID == 2).Count() == 0)
-                    {
-                        btnChangeStatus.Enabled = false;
-                        btnChangeStatus.ToolTip = "Permission Denied.";
-                    }
+                    LitMessage.Text = "<div>Please insert a reason in order to reject a form response.</div>";
                 }
-                pnlResponseStatus.Height = Unit.Empty;
+                else if (ddlFormResponseStatus.SelectedValue.Length > 0)
+                {
+                    int formResponseStatusID = Convert.ToInt32(ddlFormResponseStatus.SelectedValue);
+                    int responseID = Convert.ToInt32(Request["id"]);
+                    int prevStatusID = FormResponse.UpdateStatus(responseID, formResponseStatusID);
+                    string userName = HttpContext.Current.User.Identity.Name.ToString();
+                    FormResponseReviews.Insert(responseID, userName, prevStatusID, formResponseStatusID, txtDetails.Text);
+                    pnlChangeStatus.Visible = false;
+                    pnlHistory.Visible = true;
+                    litTableResult.Visible = true;
+                    grdHistory.Rebind();
+                    FormResponseStatus responseStatus = FormResponse.GetStatus(responseID);
+                    lblFormResponseStatus.Text = responseStatus.ResponseStatusName;
+                    using (GRASPEntities db = new GRASPEntities())
+                    {
+                        int roleID = Convert.ToInt32(Session["RoleID"].ToString());
+                        if (
+                            db.RolesToResponseStatus.Where(
+                                r =>
+                                    r.RoleID == roleID && r.ResponseStatusID == responseStatus.ResponseStatusID &&
+                                    r.RoleToRespStatusTypeID == 2).Count() == 0)
+                        {
+                            btnChangeStatus.Enabled = false;
+                            btnChangeStatus.ToolTip = "Permission Denied.";
+                        }
+                    }
+                    pnlResponseStatus.Height = Unit.Empty;
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
         }
     }
     protected void grdHistory_NeedDataSource(object sender, Telerik.Web.UI.GridNeedDataSourceEventArgs e)

@@ -38,7 +38,7 @@ public partial class FormResponse
     /// <returns>The id of the created record</returns>
     public static int createFormResponse(int parentFormID)
     {
-        MembershipUser m = Membership.GetUser(HttpContext.Current.User.Identity.Name.ToString(), false);
+        //MembershipUser m = Membership.GetUser(HttpContext.Current.User.Identity.Name.ToString(), false);
         GRASPEntities db = new GRASPEntities();
 
         var response = new FormResponse();
@@ -46,8 +46,9 @@ public partial class FormResponse
         response.parentForm_id = parentFormID;
         response.fromDataEntry = 1;
         response.Code_Form = Form.getFormName(parentFormID);
-        response.senderMsisdn = m.Comment;
+        response.senderMsisdn = "+0000000000"; //The default web entry number.
         response.FRCreateDate = DateTime.Now;
+        response.LastUpdatedDate = response.FRCreateDate;
         response.ResponseStatusID = 1;  //default status ToBeReviewed
         response.pushed = 0;
 
@@ -63,7 +64,7 @@ public partial class FormResponse
     /// <param name="sender">the sender of the response</param>
     /// <param name="clientVersion">the client version of the response</param>
     /// <returns>The id of the created record</returns>
-    public static int createFormResponse(int parentFormID, string sender, string clientVersion)
+    public static int createFormResponse(int parentFormID, string sender, string clientVersion, string responseFileName = "")
     {
         GRASPEntities db = new GRASPEntities();
         string fName = Form.getFormName(parentFormID);
@@ -73,9 +74,10 @@ public partial class FormResponse
             response.clientVersion = clientVersion;
             response.parentForm_id = parentFormID;
             response.fromDataEntry = 0;
-            response.Code_Form = fName;
+            response.Code_Form = responseFileName;
             response.senderMsisdn = sender;
             response.FRCreateDate = DateTime.Now;
+            response.LastUpdatedDate = response.FRCreateDate;
             response.ResponseStatusID = 1;  //default status ToBeReviewed
             response.pushed = 0;
 
@@ -86,6 +88,25 @@ public partial class FormResponse
         }
         else return 0;
     }
+
+    /// <summary>
+    /// Updates the last updated date column.
+    /// </summary>
+    /// <param name="formResponseId"></param>
+    /// <returns></returns>
+    public static void UpdateById(GRASPEntities db, decimal formResponseId)
+    {
+        var formResponse = (from fr in db.FormResponse
+            where fr.id == formResponseId
+            select fr).FirstOrDefault();
+
+        if (formResponse != null)
+        {
+            formResponse.LastUpdatedDate = DateTime.Now;
+            db.SaveChanges();
+        }
+    }
+
     /// <summary>
     /// Queries the DB to obtain the id of a form by its name
     /// </summary>
@@ -135,6 +156,61 @@ public partial class FormResponse
             db.SaveChanges();
         }
     }
+
+    /// <summary>
+    /// Deleted form response with its dependences (ResponseValue, IndexHASHes, ...).
+    /// </summary>
+    /// <param name="formResponseID"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    public static bool DeleteWithAllDependences(int formResponseID)
+    {
+        
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                using (var dbContextTransaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        db.UserToFormResponses.RemoveRange(
+                            db.UserToFormResponses.Where(u => u.formResponseID == formResponseID));
+
+                        db.FormResponseCoords_ResponseValue.RemoveRange(
+                            db.FormResponseCoords_ResponseValue.Where(u => u.formResponses_id == formResponseID));
+
+                        db.FormResponseReviews.RemoveRange(
+                            db.FormResponseReviews.Where(f => f.FormResponseID == formResponseID));
+
+                        db.ResponseValueExt.RemoveRange(
+                            db.ResponseValueExt.Where(r => r.FormResponseID == formResponseID));
+
+                        db.FormResponseCoords.RemoveRange(
+                            db.FormResponseCoords.Where(f => f.FormResponseID == formResponseID));
+
+                        db.IndexHASHes.RemoveRange(
+                            db.IndexHASHes.Where(i => i.FormResponseID == formResponseID));
+
+                        db.ResponseValue.RemoveRange(
+                            db.ResponseValue.Where(i => i.FormResponseID == formResponseID));
+
+                        var objFormResponse = new FormResponse {id = formResponseID};
+                        db.FormResponse.Attach(objFormResponse);
+                        db.FormResponse.Remove(objFormResponse);
+
+                        db.SaveChanges();
+                        dbContextTransaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContextTransaction.Rollback();
+                        LogUtils.WriteErrorLog(ex.ToString());
+                        return false;
+                    }
+                }
+            }
+    }
+
     /// <summary>
     /// Queries the DB to check if a formResponse with that id exists
     /// </summary>
@@ -396,5 +472,21 @@ public partial class FormResponse
         }
 
         return jsonOutput;
+    }
+
+    public static int GetIdByResponseFileName(string responseFileName)
+    {
+        using (GRASPEntities db = new GRASPEntities())
+        {
+            var formResponseID = (from f in db.FormResponse
+                        where f.Code_Form == responseFileName
+                        select f.id).FirstOrDefault();
+            if (formResponseID != null)
+            {
+                return (int) formResponseID;
+            }
+            
+            return 0;
+        }
     }
 }

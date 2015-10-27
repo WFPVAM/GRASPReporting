@@ -60,13 +60,15 @@ public partial class _uc_barChart : System.Web.UI.UserControl
 
         List<string> categories = new List<string>();
         List<double> data = new List<double>();
-        Dictionary<string, double> axisValues = new Dictionary<string, double>();
+        Dictionary<string, double?> axisValues = new Dictionary<string, double?>();
+        
+        //Saves the response ids with each series item. Uses to match the series item with its corresponding value item (category) where 
+        //the response id is the common field between the two records in [FormFieldResponses] table.
+        Dictionary<int?, string> seriesResponseIds = new Dictionary<int?, string>();
         Dictionary<string, int> countAverage = new Dictionary<string, int>();
         Dictionary<string, List<double>> stDev = new Dictionary<string, List<double>>();
 
         GRASPEntities db = new GRASPEntities();
-
-
         var ReportData = (from rf in db.ReportFields
                           where rf.ReportFieldID == reportFieldID
                           select rf).FirstOrDefault();
@@ -91,14 +93,14 @@ public partial class _uc_barChart : System.Web.UI.UserControl
                                       where rs.ResponseStatusName == "Deleted"
                                       select new { rs.ResponseStatusID }).FirstOrDefault();
 
-        if(aggregate == "count" || aggregate == "")
+        if(aggregate == "count" || aggregate == "") //s3 check this if
         {
-            IEnumerable<FormFieldResponses> items = from ffr in db.FormFieldResponses.AsEnumerable()
+            IEnumerable<FormFieldResponses> items = (from ffr in db.FormFieldResponses
                 where ffr.formFieldId == serieID && 
                 (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
                       && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
                 //&& (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
-                select ffr;
+                select ffr).AsEnumerable();
 
             FilterFormResponses(db, formID, ref items, deleteRespStatusID.ResponseStatusID);
 
@@ -119,77 +121,170 @@ public partial class _uc_barChart : System.Web.UI.UserControl
         }
         else
         {
-            var resVal = from ffr in db.FormFieldResponses.AsEnumerable()
-                where ffr.parentForm_id == formID && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
+            //fields responses for both series and values fields.
+            var ffResponses = (from ffr in db.FormFieldResponses
+                where ffr.parentForm_id == formID 
+                      && (ResponseStatusID == 0 || ffr.ResponseStatusID == ResponseStatusID)
                       && ffr.ResponseStatusID != deleteRespStatusID.ResponseStatusID
                       && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
-                //s3 why is OR between serieID and valueID
                 //&& (ffr.RVCreateDate.Value.Date == (ResponseValueDate != null ? ResponseValueDate.Value.Date : ffr.RVCreateDate.Value.Date))
-                select ffr; //new { ffr.value, formFieldID = ffr.formFieldId, ffr.nvalue, ffr.FormResponseID };
+                select ffr).AsEnumerable(); //new { ffr.value, formFieldID = ffr.formFieldId, ffr.nvalue, ffr.FormResponseID };
 
-            FilterFormResponses(db, formID, ref resVal, deleteRespStatusID.ResponseStatusID);
-            
+            //var fieldResponses2 = from ffr in db.FormFieldResponses
+            //                     where ffr.parentForm_id == formID
+            //                     && (ffr.formFieldId == serieID || ffr.formFieldId == valueID)
+            //                     select ffr;
+
+            FilterFormResponses(db, formID, ref ffResponses, deleteRespStatusID.ResponseStatusID);
+
+            //Saves all series items, and their corresponding form response ids.
             string tmpValueKey = "";
-            foreach(var r in resVal)
+            foreach (var r in ffResponses)
             {
-                if(r.formFieldId == serieID)
+                // Series Field
+                if (r.formFieldId == serieID)
                 {
-                    // Series Field
                     tmpValueKey = r.value;
-                }
-                else
-                {
-                    // Value Field
-                    try
+                    if (!axisValues.ContainsKey(tmpValueKey))
                     {
-                        double val = axisValues[tmpValueKey];
-                        switch(aggregate)
-                        {
-                            case "average":
-                                countAverage[tmpValueKey] = countAverage[tmpValueKey] + 1;
-                                axisValues[tmpValueKey] += Convert.ToDouble(r.value);
-                                break;
-                            case "sum":
-                                if(r.nvalue != null)
-                                {
-                                    axisValues[tmpValueKey] += r.nvalue.Value;
-                                }
-                                break;
-                            case "stdev":
-                                List<double> list;
-                                if(!stDev.TryGetValue(tmpValueKey, out list))
-                                    stDev.Add(tmpValueKey, list = new List<double>());
-                                list.Add(Convert.ToDouble(r.value));
-                                break;
-                            case "min":
-                                if(Convert.ToDouble(r.value) < val)
-                                    axisValues[tmpValueKey] = Convert.ToDouble(r.value);
-                                break;
-                            case "max":
-                                if(Convert.ToDouble(r.value) > val)
-                                    axisValues[tmpValueKey] = Convert.ToDouble(r.value);
-                                break;
-                        }
+                        axisValues.Add(tmpValueKey, null);
                     }
-                    catch(Exception ex)
-                    {
-                        if(aggregate != "max" && aggregate != "min")
-                        {
-                            countAverage.Add(tmpValueKey, 1);
-                        }
-                        axisValues.Add(tmpValueKey, Convert.ToDouble(r.value));
 
-                        if(aggregate == "stdev")
-                        {
-                            List<double> list;
-                            if(!stDev.TryGetValue(tmpValueKey, out list))
-                                stDev.Add(tmpValueKey, list = new List<double>());
-                            list.Add(Convert.ToDouble(r.value));
-                        }
+                    //Saves the response ids with each series item. Uses to match the series item with its corresponding value item (category) where 
+                    //the response id is the common field between the two records in [FormFieldResponses] table.
+                    if (!seriesResponseIds.ContainsKey(r.FormResponseID))
+                    {
+                        seriesResponseIds.Add(r.FormResponseID, tmpValueKey);   
                     }
                 }
             }
 
+            foreach (var r in ffResponses)
+            {
+                // Value Field
+                if (r.formFieldId == valueID)
+                {
+                    string seriesItem = null;
+                    double? seriesValue = null;
+                    if (seriesResponseIds.ContainsKey(r.FormResponseID))
+                    {
+                        //get the corresponding series item of the value item.
+                        seriesItem = seriesResponseIds[r.FormResponseID];
+                        if (axisValues.ContainsKey(seriesItem))
+                        {
+                            seriesValue = axisValues[seriesItem];
+
+                            switch (aggregate)
+                            {
+                                case "average":
+                                    countAverage[seriesItem] += 1;
+                                    if (axisValues[seriesItem] == null)
+                                        axisValues[seriesItem] = Convert.ToDouble(r.value);
+                                    else
+                                        axisValues[seriesItem] += Convert.ToDouble(r.value);
+                                    break;
+                                case "sum":
+                                    if (r.nvalue != null)
+                                    {
+                                        if (axisValues[seriesItem] == null)
+                                        {
+                                            axisValues[seriesItem] = r.nvalue.Value;
+                                        }else
+                                            axisValues[seriesItem] += r.nvalue.Value;
+                                    }
+                                    break;
+                                case "stdev":
+                                    List<double> list;
+                                    if (!stDev.TryGetValue(seriesItem, out list))
+                                        stDev.Add(seriesItem, list = new List<double>());
+                                    list.Add(Convert.ToDouble(r.value));
+                                    break;
+                                case "min":
+                                    if (seriesValue == null)
+                                    {
+                                        axisValues[seriesItem] = Convert.ToDouble(r.value);
+                                    }else if (Convert.ToDouble(r.value) < seriesValue)
+                                    {
+                                        axisValues[seriesItem] = Convert.ToDouble(r.value);
+                                    }
+                                    break;
+                                case "max":
+                                    if (seriesValue == null)
+                                    {
+                                        axisValues[seriesItem] = Convert.ToDouble(r.value);
+                                    }
+                                    else if (Convert.ToDouble(r.value) > seriesValue)
+                                    {
+                                        axisValues[seriesItem] = Convert.ToDouble(r.value);
+                                    }
+                                    break;
+                            }
+                        }   
+                    }
+                }
+            }
+
+            //<deletedBy>Saad Mansour</deletedBy>
+            //string tmpValueKey = "";
+            //foreach (var r in fieldResponses)
+            //{
+            //    if (r.formFieldId == serieID)
+            //    {
+            //        // Series Field
+            //        tmpValueKey = r.value;
+            //    }
+            //    else
+            //    {
+            //        // Value Field
+            //        try
+            //        {
+            //            double val = axisValues[tmpValueKey];
+            //            switch (aggregate)
+            //            {
+            //                case "average":
+            //                    countAverage[tmpValueKey] = countAverage[tmpValueKey] + 1;
+            //                    axisValues[tmpValueKey] += Convert.ToDouble(r.value);
+            //                    break;
+            //                case "sum":
+            //                    if (r.nvalue != null)
+            //                    {
+            //                        axisValues[tmpValueKey] += r.nvalue.Value;
+            //                    }
+            //                    break;
+            //                case "stdev":
+            //                    List<double> list;
+            //                    if (!stDev.TryGetValue(tmpValueKey, out list))
+            //                        stDev.Add(tmpValueKey, list = new List<double>());
+            //                    list.Add(Convert.ToDouble(r.value));
+            //                    break;
+            //                case "min":
+            //                    if (Convert.ToDouble(r.value) < val)
+            //                        axisValues[tmpValueKey] = Convert.ToDouble(r.value);
+            //                    break;
+            //                case "max":
+            //                    if (Convert.ToDouble(r.value) > val)
+            //                        axisValues[tmpValueKey] = Convert.ToDouble(r.value);
+            //                    break;
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            if (aggregate != "max" && aggregate != "min")
+            //            {
+            //                countAverage.Add(tmpValueKey, 1);
+            //            }
+            //            axisValues.Add(tmpValueKey, Convert.ToDouble(r.value));
+
+            //            if (aggregate == "stdev")
+            //            {
+            //                List<double> list;
+            //                if (!stDev.TryGetValue(tmpValueKey, out list))
+            //                    stDev.Add(tmpValueKey, list = new List<double>());
+            //                list.Add(Convert.ToDouble(r.value));
+            //            }
+            //        }
+            //    }
+            //}
 
             foreach(var item in axisValues.ToList())
             {
@@ -206,10 +301,9 @@ public partial class _uc_barChart : System.Web.UI.UserControl
                 }
             }
 
-
             foreach(var item in axisValues)
             {
-                data.Add(item.Value);
+                data.Add(item.Value.GetValueOrDefault());
                 categories.Add(item.Key.Length > 20 ? item.Key.Substring(0, 20) : item.Key);
             }
         }

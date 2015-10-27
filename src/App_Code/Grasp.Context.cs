@@ -81,4 +81,6 @@ public partial class GRASPEntities : DbContext
     public virtual DbSet<ResponseRepeatableReviews> ResponseRepeatableReviews { get; set; }
     public virtual DbSet<ReportField> ReportFields { get; set; }
     public virtual DbSet<FormResponseServerStatus> FormResponseServerStatus { get; set; }
+    public virtual DbSet<Role_Permissions> Role_Permissions { get; set; }
+    public virtual DbSet<Permissions> Permissions { get; set; }
 }

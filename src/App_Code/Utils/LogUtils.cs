@@ -9,6 +9,11 @@ using System.IO;
 /// </summary>
 public class LogUtils
 {
+    /// <summary>
+    /// Writes error in the ErrorLog.txt file.
+    /// </summary>
+    /// <param name="errorInfo"></param>
+    /// <returns></returns>
     public static Guid WriteErrorLog(string errorInfo)
     {
         Guid errorID = Guid.NewGuid();

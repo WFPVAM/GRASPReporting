@@ -212,17 +212,17 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
             foreach (var f in fieldsLabels)
             {
-                if (f.name.Equals("gps"))
-                {
-                    SplitGPSLatitudeAndLongitude(f.name, f.label, sbColHeader, separator);
-                }
-                else
-                {
+                //if (f.name.Equals("gps"))
+                //{
+                //    SplitGPSLatitudeAndLongitude(f.name, f.label, sbColHeader, separator);
+                //}
+                //else
+                //{
                     fieldName = ChangeEnumeratorNameToTitle(f.positionIndex, f.name);
                     //Take the label, but if there is no label take the field name.
                     columnHeaderLabel = !string.IsNullOrEmpty(f.label) ? f.label : fieldName;
                     sbColHeader.Append(columnHeaderLabel + separator);
-                }
+                //}
             }   
         }
 
@@ -670,18 +670,18 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
     private string ReadSingleRow(IDataRecord record, string separator)
     {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < record.FieldCount; i++)
+        for (int i = 0; i < record.FieldCount; i++)
         {
             //Index 7 is the GPS, split it into two fields.
-            if (i == 7) //s3
-            {
-                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[0]))
-                    sb.Append(record[i].ToString().Split(' ')[0].Replace("\n", " ") + separator);
-                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[1]))
-                    sb.Append(record[i].ToString().Split(' ')[1].Replace("\n", " ") + separator);
-            }
-            else
-                sb.Append(record[i].ToString().Replace("\n", " ") + separator);
+            //if (i == 7) //s3
+            //{
+            //    if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[0]))
+            //        sb.Append(record[i].ToString().Split(' ')[0].Replace("\n", " ") + separator);
+            //    if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[1]))
+            //        sb.Append(record[i].ToString().Split(' ')[1].Replace("\n", " ") + separator);
+            //}
+            //else
+            sb.Append(record[i].ToString().Replace("\n", " ") + separator);
         }
 
         return sb.ToString().Substring(0, sb.ToString().Length - 1) + "\r\n";

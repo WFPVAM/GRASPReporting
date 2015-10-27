@@ -76,7 +76,7 @@ public partial class Admin_Dashboard : System.Web.UI.Page
         RadProgressArea.Localization.Uploaded = "";
         RadProgressArea.Localization.Total = "";
         RadProgressArea.Localization.TransferSpeed = "";
-        IncomingProcessor.CheckProcessIncomingFormsStatus(BtnProcessIncomingResponse, LitIncomingInfo);
+        IncomingProcessor.CheckProcessResponsesStatus(BtnProcessIncomingResponse, LitIncomingInfo);
     }
 
     protected void BtnProcessIncomingResponse_Click(object sender, EventArgs e)

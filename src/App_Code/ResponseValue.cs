@@ -35,7 +35,7 @@ public partial class ResponseValue
     public static void createResponseValue(string value, int formResponseID, int formFieldID, int rCount)
     {
         GRASPEntities db = new GRASPEntities();
-
+        
         var response = new ResponseValue();
         response.value = value;
         response.FormResponseID = formResponseID;
@@ -75,27 +75,7 @@ public partial class ResponseValue
             response.RVRepeatCount = rCount;
             response.positionIndex = positionIndex;
 
-            if(fieldType.Length != 0)
-            {
-                switch(fieldType)
-                {
-                    case "NUMERIC_TEXT_FIELD":
-                        double nvalue = 0;
-                        if(value.Length != 0)
-                        {
-                            Double.TryParse(value, out nvalue);
-                        }
-                        response.nvalue = nvalue;
-                        break;
-                    case "DATE_FIELD":
-                        DateTime dvalue;
-                        if(DateTime.TryParse(value, out dvalue))
-                        {
-                            response.dvalue = dvalue;
-                        }
-                        break;
-                }
-            }
+            UpdateNumericAndDate(response, fieldType);
 
             db.ResponseValue.Add(response);
             //ONLY FOR DEBUG
@@ -120,14 +100,58 @@ public partial class ResponseValue
     {
         updateResponseValue(db, value, formResponseID, formFieldID, positionIndex, rCount, "");
     }
+
     public static void updateResponseValue(GRASPEntities db, string value, int formResponseID, int formFieldID, int positionIndex, int rCount, string fieldType)
     {
         ResponseValue respValue = (from rv in db.ResponseValue
                                    where rv.FormResponseID == formResponseID && rv.formFieldId == formFieldID
                                         && rv.RVRepeatCount == rCount
                                    select rv).FirstOrDefault();
-        respValue.value = value;
+        if (respValue != null)
+        {
+            respValue.value = value;
+            UpdateNumericAndDate(respValue, fieldType);   
+        }        
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="responseValue"></param>
+    /// <param name="fieldType"></param>
+    /// <author>Saad Mansour</author>
+    private static void UpdateNumericAndDate(ResponseValue responseValue, string fieldType)
+    {
+        try
+        {
+            if (fieldType.Length != 0)
+            {
+                switch (fieldType)
+                {
+                    case "NUMERIC_TEXT_FIELD":
+                        double nvalue = 0;
+                        if (responseValue.value.Length != 0)
+                        {
+                            Double.TryParse(responseValue.value, out nvalue);
+                        }
+                        responseValue.nvalue = nvalue;
+                        break;
+                    case "DATE_FIELD":
+                        DateTime dvalue;
+                        if (DateTime.TryParse(responseValue.value, out dvalue))
+                        {
+                            responseValue.dvalue = dvalue;
+                        }
+                        break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+    }
+
     public static string UpdateWithSql(string value, int formFieldID, int positionIndex, int rCount)
     {
         string escVal = "";

@@ -35,8 +35,11 @@
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <!--<div style="width: 160px; float:left">-->
+                <a href="http://dm.pcd.ps/ar" target="_blank">
+                        <img style="margin-left: 8px; padding-top: 6px" src="_images/pcd_logo.png" height="75px" alt="PCD" title="PCD - إدارة الكوارث - الدفاع المدني الفلسطيني" />
+                </a>
                 <a href="index.html">
-                    <img style="padding-left: 25px; padding-top: 8px" src="_images/logo_wfp.gif" height="70px" alt="World Food Programme" /></a>
+                    <img style="padding-left: 10px; padding-top: 8px" src="_images/logo_wfp.gif" height="70px" alt="World Food Programme" /></a>
                 <span style="color: white">Version:
                     <asp:Literal ID="lblVersion" runat="server"></asp:Literal></span><!--</div>-->
                 <!--<div style="color: #f00;text-align: center;margin: 0 auto;width: 160px;padding-top: 8px;">PROVA</div>-->

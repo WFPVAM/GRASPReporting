@@ -75,6 +75,35 @@ public partial class User_Credential
             return role;
         else return "";
     }
+
+    /// <summary>
+    /// Gets the role id of the given user name.
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <returns></returns>
+    /// <author>Saad Mansour</author>
+    public static int GetRoleIdByUserName(string userName)
+    {
+        int userRoleId = -1;
+
+        try
+        {
+            using (GRASPEntities db = new GRASPEntities())
+            {
+                 var roleId = (from uc in db.User_Credential
+                               where uc.username == userName
+                               select uc.roles_id).FirstOrDefault();
+                userRoleId = roleId.GetValueOrDefault();
+            }
+        }
+        catch (Exception ex)
+        {
+            LogUtils.WriteErrorLog(ex.ToString());
+        }
+
+        return userRoleId;
+    }
+
     /// <summary>
     /// Queries the DB to obtain all the system's users
     /// </summary>

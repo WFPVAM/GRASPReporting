@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,7 @@ using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+
 /// <summary>
 /// Corresponds to the menu item Settings
 /// </summary>
@@ -41,6 +43,7 @@ public partial class Settings : System.Web.UI.Page
         {
             if(!IsPostBack)
             {
+                FillDdlRoles();
                 string pathFileInfo = Server.MapPath("../Public/InfoHP.txt");
                 if(File.Exists(pathFileInfo))
                 {
@@ -96,6 +99,7 @@ public partial class Settings : System.Web.UI.Page
             DdlRoles.DataBind();
         }
     }
+
     protected void FillCblReviewStatus(int roleID)
     {
         using(GRASPEntities db = new GRASPEntities())
@@ -107,6 +111,8 @@ public partial class Settings : System.Web.UI.Page
             CblSelectableStatus.DataBind();
             CblReviewableStatus.DataSource = status.ToList();
             CblReviewableStatus.DataBind();
+            cblPermissions.DataSource = Permissions.GetAllPermissionses();
+            cblPermissions.DataBind();
 
             var rolesToStatus = (from rs in db.RolesToResponseStatus
                                 where rs.RoleID == roleID
@@ -120,10 +126,22 @@ public partial class Settings : System.Web.UI.Page
                     li.Selected = true;
                 }
             }
+
             foreach(ListItem li in CblReviewableStatus.Items)
             {
                 int rsID = Convert.ToInt32(li.Value);
                 if(rolesToStatus.Where(w => w.RoleToRespStatusTypeID == 2 && w.ResponseStatusID == rsID).Count() > 0)
+                {
+                    li.Selected = true;
+                }
+            }
+
+            //Select the permission check boxes of the selected role.
+            List<Role_Permissions> rolePermissions = Permissions.GetRolePermissionsByRoleID(roleID);
+            foreach (ListItem li in cblPermissions.Items)
+            {
+                int permissionID = Convert.ToInt32(li.Value);
+                if (rolePermissions.Exists(p => p.PermissionID == permissionID))
                 {
                     li.Selected = true;
                 }
@@ -138,8 +156,10 @@ public partial class Settings : System.Web.UI.Page
         PnlRoleReviewAssociation.Visible = true;
         LblMessage.Text = "";
     }
+
     protected void BtnSaveRoleChanges_Click(object sender, EventArgs e)
     {
+        LblMessage.Text = "";
         int roleID = Convert.ToInt32(DdlRoles.SelectedValue);
         using(GRASPEntities db = new GRASPEntities())
         {
@@ -153,6 +173,7 @@ public partial class Settings : System.Web.UI.Page
                         new SqlParameter("@roleID", roleID), new SqlParameter("@respStatusID", li.Value));
                 }
             }
+
             foreach(ListItem li in CblReviewableStatus.Items)
             {
                 if(li.Selected)
@@ -161,7 +182,41 @@ public partial class Settings : System.Web.UI.Page
                         new SqlParameter("@roleID", roleID), new SqlParameter("@respStatusID", li.Value));
                 }
             }
-            LblMessage.Text = "Changes have been saved.";
+
+            //Save the new added permissions and remove the removed permissions.
+            List<Role_Permissions> previousRolePermissionses = Permissions.GetRolePermissionsByRoleID(roleID);            
+            List<Role_Permissions> newRolePermissionses = new List<Role_Permissions>();
+            foreach (ListItem li in cblPermissions.Items)
+            {
+                if (li.Selected)
+                {
+                    Role_Permissions rolePermission = new Role_Permissions() {RoleID=roleID, PermissionID = Convert.ToInt32(li.Value)};
+                    if (previousRolePermissionses.Exists(rp => rp.PermissionID == rolePermission.PermissionID))
+                    {
+                        int deletedItemIndex =
+                            previousRolePermissionses.FindIndex(rp => rp.PermissionID == rolePermission.PermissionID);
+                        previousRolePermissionses.RemoveAt(deletedItemIndex);
+                    }
+                    else
+                    {
+                        newRolePermissionses.Add(rolePermission);   
+                    }
+                }
+            }
+
+            bool isSaved = Permissions.UpdateRolePermissions(newRolePermissionses, previousRolePermissionses);
+
+            if (isSaved)
+            {
+                LblMessage.ForeColor = Color.Green;
+                LblMessage.Text = "Changes have been saved successfully.";
+            }
+            else
+            {
+                LblMessage.ForeColor = Color.Red;
+                LblMessage.Text = "Error happened, changes have not saved.";
+            }
+
         }
     }
 }

@@ -3,6 +3,9 @@
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
+    <Options>
+      <DesignerInfoPropertySet />
+    </Options>
     <edmx:Diagrams>
       <Diagram DiagramId="a7fd84b4f24841a5b388d472950d8b0c" Name="Diagram1" ZoomLevel="94">
         <EntityTypeShape EntityType="GRASPModel.BindingContainer" Width="1.5" PointX="10.5" PointY="20.125" IsExpanded="true" />
@@ -28,11 +31,11 @@
         <EntityTypeShape EntityType="GRASPModel.reminder" Width="1.5" PointX="3" PointY="24.625" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.Report" Width="1.625" PointX="12.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.ResponseValue" Width="1.5" PointX="7.5" PointY="8.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GRASPModel.Roles" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="GRASPModel.SmsInternetServiceSettings" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GRASPModel.SmsInternetServiceSettings_SmsInternetServiceSettingValue" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="GRASPModel.SmsInternetServiceSettingValue" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GRASPModel.SmsModemSettings" Width="1.5" PointX="13.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GRASPModel.Roles" Width="1.625" PointX="2.375" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GRASPModel.SmsInternetServiceSettings" Width="2.25" PointX="0.5" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="GRASPModel.SmsInternetServiceSettings_SmsInternetServiceSettingValue" Width="3.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="GRASPModel.SmsInternetServiceSettingValue" Width="2.625" PointX="0.5" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GRASPModel.SmsModemSettings" Width="2.5" PointX="13.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.StatisticsTable" Width="1.5" PointX="13.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.Survey" Width="1.5" PointX="5.25" PointY="16.5" IsExpanded="true" />
         <EntityTypeShape EntityType="GRASPModel.Survey_SurveyElement" Width="1.5" PointX="7.5" PointY="18.625" IsExpanded="true" />
@@ -96,6 +99,10 @@
         <EntityTypeShape EntityType="GRASPModel.ResponseRepeatableReviews" Width="1.5" PointX="21.375" PointY="21.75" />
         <EntityTypeShape EntityType="GRASPModel.ReportField" Width="1.5" PointX="22.375" PointY="0.75" />
         <EntityTypeShape EntityType="GRASPModel.FormResponseServerStatus" Width="1.5" PointX="22.375" PointY="4.75" />
+        <EntityTypeShape EntityType="GRASPModel.Role_Permissions" IsExpanded="true" PointY="3.25" PointX="24.625" Width="2.125" Height="2" />
+        <AssociationConnector Association="GRASPModel.FK_Role_Permissions_Roles" />
+        <EntityTypeShape EntityType="GRASPModel.Permissions" IsExpanded="true" PointY="24.875" PointX="5.5" Width="3.125" Height="2" />
+        <AssociationConnector Association="GRASPModel.FK_Role_Permissions_Permissions" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

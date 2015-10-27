@@ -58,7 +58,7 @@ public class Utility
 
     public static string getVersion()
     {
-        return "1.2.3";
+        return "1.2.5";
     }
 
     private static bool IsGRASPImagesFolderNotUnderReportingFolder()
@@ -96,6 +96,10 @@ public class Utility
     //    }
     //}
 
+    /// <summary>
+    /// Gets the path of the images folder.
+    /// </summary>
+    /// <returns></returns>
     public static string GetImagesFolderPath()
     {
         if (!IsGRASPImagesFolderNotUnderReportingFolder())
@@ -106,6 +110,10 @@ public class Utility
             return ConfigurationManager.AppSettings["GRASPImagesFolderPath"];
     }
 
+    /// <summary>
+    /// Gets the image's folder name.
+    /// </summary>
+    /// <returns></returns>
     public static string GetImagesFolderName()
     {
         if (!IsGRASPImagesFolderNotUnderReportingFolder())

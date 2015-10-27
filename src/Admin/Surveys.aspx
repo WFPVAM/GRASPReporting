@@ -100,6 +100,29 @@
             var tree = $find('<%=rgForm.ClientID %>');
             location.reload(true);
         }
+
+<%--        function closeFormWindow() {
+            var ss = '<%= Session["DeleteResponse"] %>';
+            alert(ss);
+            if (ss != null
+                && ss == "True") {
+                alert(ss);
+                document.location.reload();
+            }
+
+
+        }--%>
+
+        /**
+           * Calls when closes the window form, it reloades the page if there are deleted responses to update the responses count.
+		   */
+        function OnClientCloseWindowForm(oWnd) {
+            var deletedStatus = oWnd.argument;
+            if (deletedStatus != null
+                && deletedStatus == "responsesDeleted") {
+                window.location.reload();
+            }
+        }
     </script>
 
 </asp:Content>
@@ -107,7 +130,9 @@
     <telerik:RadWindowManager ID="RadWindow1" runat="server">
         <Windows>
             <telerik:RadWindow ID="wndwExport" Skin="Metro" VisibleStatusbar="false" Modal="true" Behaviors="Default" runat="server" Overlay="true" ShowContentDuringLoad="false" VisibleOnPageLoad="false" ReloadOnShow="true"></telerik:RadWindow>
-            <telerik:RadWindow ID="wndwForm" Skin="Metro" VisibleStatusbar="false" Modal="true" Behaviors="Default" runat="server" Overlay="true" ShowContentDuringLoad="false" VisibleOnPageLoad="false" ReloadOnShow="true"></telerik:RadWindow>
+            <telerik:RadWindow ID="wndwForm" Skin="Metro" VisibleStatusbar="false" Modal="true" Behaviors="Default" 
+                runat="server" Overlay="true" ShowContentDuringLoad="false" VisibleOnPageLoad="false" ReloadOnShow="true"
+                OnClientClose="OnClientCloseWindowForm"></telerik:RadWindow>
         </Windows>
     </telerik:RadWindowManager>
     <div class="row">
@@ -205,7 +230,7 @@
 
             <HeaderStyle BackColor="#0058B1" ForeColor="White"></HeaderStyle>
         </telerik:RadGrid>
-        <asp:LinqDataSource ID="ldsForm" runat="server" OnSelecting="ldsForm_Selecting" OrderBy="CreateDate"></asp:LinqDataSource>
+        <asp:LinqDataSource ID="ldsForm" runat="server" OnSelecting="ldsForm_Selecting"></asp:LinqDataSource>
     </div>
 </asp:Content>
 

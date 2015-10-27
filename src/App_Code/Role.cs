@@ -40,4 +40,9 @@ public partial class Role
             return role;
         else return "";
     }
+
+    //public static bool InsertRolePermission()
+    //{
+
+    //}
 }

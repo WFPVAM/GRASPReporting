@@ -729,7 +729,7 @@ using System.Web.Configuration;
                 if (WriteExceptionsToEventLog)
                 {
                     WriteToEventLog(e, "ValidateUser");
-                    throw new ProviderException(exceptionMessage);
+                    //throw new ProviderException(exceptionMessage);
                 }
                 else
                 {
@@ -872,12 +872,24 @@ using System.Web.Configuration;
         
         private void WriteToEventLog(Exception e, string action)
         {
-            EventLog log = new EventLog();
-            log.Source = eventSource;
-            log.Log = eventLog;
+            //s* commented, it caused this error:
+   //         System.Security.SecurityException: Requested registry access is not allowed.
+   //at System.ThrowHelper.ThrowSecurityException(ExceptionResource resource)
+   //at Microsoft.Win32.RegistryKey.OpenSubKey(String name, Boolean writable)
+   //at System.Diagnostics.EventLog.CreateEventSource(EventSourceCreationData sourceData)
+   //at System.Diagnostics.EventLogInternal.VerifyAndCreateSource(String sourceName, String currentMachineName)
+   //at System.Diagnostics.EventLogInternal.WriteEntry(String message, EventLogEntryType type, Int32 eventID, Int16 category, Byte[] rawData)
+   //at System.Diagnostics.EventLog.WriteEntry(String message)
+   //at CustomMembershipProvider.WriteToEventLog(Exception e, String action) in    c:\Grasp\GRASPReporting\App_Code\CustomMembershipProvider.cs:line 881
+   //at CustomMembershipProvider.ValidateUser(String username, String password) in c:\Grasp\GRASPReporting\App_Code\CustomMembershipProvider.cs:line 731
+   
+            //EventLog log = new EventLog();
+            //log.Source = eventSource;
+            //log.Log = eventLog;
             string message = "An exception occurred communicating with the data source.\n\n";
             message += "Action: " + action + "\n\n";
             message += "Exception: " + e.ToString();
-            log.WriteEntry(message);
+            //log.WriteEntry(message);
+            LogUtils.WriteErrorLog(message);
         }
     }

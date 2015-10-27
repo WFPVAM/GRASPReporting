@@ -28,7 +28,7 @@ using System.Web.UI.WebControls;
 using System.Windows.Forms.VisualStyles;
 using System.Xml;
 /// <summary>
-/// Used to receive HTTP Requests from Mobile, fetch them and then save data on the DB
+/// Used to receive HTTP Requests from Mobile, fetch them and then save data in the Response Files folder.
 /// </summary>
 public partial class MobileConnection : System.Web.UI.Page
 {
@@ -52,71 +52,66 @@ public partial class MobileConnection : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        string senderF = "";
-        string data = "";
-        string imei = "";
-        string formName = string.Empty;
-
-        System.Collections.Specialized.NameValueCollection postedValues = Request.Form;
-        senderF = postedValues[0];
-        data = Server.HtmlDecode(postedValues[1]);
-
         try
         {
-            imei = Server.HtmlDecode(postedValues[3]);
-        }
-        catch(Exception ex)
-        {
+            string senderF = "";
+            string data = "";
+            string formResponseName = string.Empty;
 
-        }
+            System.Collections.Specialized.NameValueCollection postedValues = Request.Form;
+            senderF = postedValues[0];
+            data = Server.HtmlDecode(postedValues[1]);
 
-        if(data == "test")
-        {
-            handleTestRequest(senderF);
-        }
-        else if(Request.QueryString["call"] != null)
-        {
-            string parameter = Request.QueryString["call"].ToString();
-            switch(parameter)
+            if (data == "test")
             {
-                case "test":
-                    handleTestRequest(senderF);
-                    break;
-                case "response":
-                    formName = postedValues[2];
-                    if(senderF == null || senderF == "")
-                    {
+                handleTestRequest(senderF);
+            }
+            else if (Request.QueryString["call"] != null)
+            {
+                string parameter = Request.QueryString["call"].ToString();
+                switch (parameter)
+                {
+                    case "test":
+                        handleTestRequest(senderF);
+                        break;
+                    case "response":
+                    case "editedResponse":
+                        formResponseName = postedValues[2];
+                        string formId = postedValues[3];
+                        if (senderF == null || senderF == "")
+                        {
+                            Response.Clear();
+                            Response.ContentType = "text/plain";
+                            Response.Write("ERROR:Client phone number not received");
+                            break;
+                        }
+                        bool isEditedResponse = parameter.Equals("editedResponse");
+                        handleResponseRequest(data, senderF, formResponseName, formId, isEditedResponse);
+                        break;
+                    case "sync":
+                        if (senderF == null || senderF == "")
+                        {
+                            Response.Clear();
+                            Response.ContentType = "text/plain";
+                            Response.Write("ERROR:Client phone number not received");
+                            break;
+                        }
+                        HandleSyncRequest(data, senderF);
+                        break;
+                    default:
                         Response.Clear();
                         Response.ContentType = "text/plain";
-                        Response.Write("ERROR:Client phone number not received");
+                        Response.Write("Generating a request response generated an error");
                         break;
-                    }
-                    handleResponseRequest(data, senderF, formName);
-                    break;
-                case "sync":
-                    if(senderF == null || senderF == "")
-                    {
-                        Response.Clear();
-                        Response.ContentType = "text/plain";
-                        Response.Write("ERROR:Client phone number not received");
-                        break;
-                    }
-                    HandleSyncRequest(data, senderF);
-                    break;
-                default:
-                    Response.Clear();
-                    Response.ContentType = "text/plain";
-                    Response.Write("Generating a request response generated an error");
-                    break;
+                }
             }
         }
-        try
-        { }
-        catch(Exception ex)
+        catch (Exception ex)
         {
+            LogUtils.WriteErrorLog(ex.ToString());
             Response.Clear();
             Response.ContentType = "text/plain";
-            Response.Write("Generating a request response generated an error");
+            Response.Write(ex.Message);
         }
     }
 
@@ -127,13 +122,12 @@ public partial class MobileConnection : System.Web.UI.Page
         Response.Write(User_Credential.checkUserFromNumber(senderF));
     }
 
-    private void handleResponseRequest(string data, string senderF, string formName)
+    private void handleResponseRequest(string data, string senderF, string formName, string formId, bool isEditedResponse)
     {
         Response.Clear();
         Response.ContentType = "text/plain";
         IncomingProcessor incomProc = new IncomingProcessor();
-        //Response.Write(incomProc.ProcessResponse(data, senderF));
-        string saveFormInstanceResult = incomProc.SaveFileResponse(data, senderF, formName);
+        string saveFormInstanceResult = incomProc.SaveFileResponse(data, senderF, formName, formId, isEditedResponse);
         Response.Write(saveFormInstanceResult);
     }
 
@@ -156,6 +150,13 @@ public partial class MobileConnection : System.Web.UI.Page
         }
     }
 
+    /// <summary>
+    /// Gets the manipulated list of forms, except of the given form Ids (the mobile sends the current installed form Ids,
+    /// so reporting sends the other forms).
+    /// </summary>
+    /// <param name="formsIDList"></param>
+    /// <param name="phone"></param>
+    /// <returns></returns>
     private string GetManipulatedFormsXML(XmlDocument formsIDList, string phone)
     {
         try
@@ -220,7 +221,8 @@ public partial class MobileConnection : System.Web.UI.Page
                 allFormsXML.Replace("&lt;form&gt;", "<form>&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?&gt;");
                 allFormsXML.Replace("&lt;/form&gt;", "</form>");
 
-                //Insert <forms> root.
+                //Insert <forms> root. Send the status of all current downloaded forms with a semicolon with the new finalized forms. Mobile first get the first 
+                //section of the current downloaded forms and check their statuses, then get the new forms section and download them.
                 allFormsXML.Insert(0, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><forms>");
                 allFormsXML.Append("</forms>");
             }

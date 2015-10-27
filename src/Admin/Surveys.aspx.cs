@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Data.Objects.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 /// <summary>
@@ -30,6 +31,7 @@ public partial class Admin_Surveys : System.Web.UI.Page
     {
 
     }
+
     /// <summary>
     /// Fills the grid with all the forms
     /// </summary>
@@ -39,7 +41,7 @@ public partial class Admin_Surveys : System.Web.UI.Page
     {
         GRASPEntities db = new GRASPEntities();
 
-        var forms = from f in db.Form
+        var forms = (from f in db.Form
                     join fr in db.FormResponse on f.id equals fr.parentForm_id into j1
                     from j2 in j1.DefaultIfEmpty()
                     where f.finalised == 1
@@ -52,7 +54,7 @@ public partial class Admin_Surveys : System.Web.UI.Page
                         Group = g.Key.permittedGroup_path,
                         Count = g.Count(t=>t.id !=null),
                         Id = g.Key.id
-                    };
+                    }).OrderByDescending(x => x.Id); //Order them by newest.
 
         e.Result = forms.AsEnumerable().Select(x => new
         {

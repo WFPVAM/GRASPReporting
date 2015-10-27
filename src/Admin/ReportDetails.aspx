@@ -76,7 +76,7 @@
                     </telerik:GridBoundColumn>
                     <telerik:GridTemplateColumn UniqueName="DeleteColumn" HeaderText="Actions">
                         <ItemTemplate>
-                            <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="javascript:if(!confirm('This action will delete the selected report. Are you sure?')){return false;}"
+                            <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="javascript:if(!confirm('This action will delete the selected chart. Are you sure?')){return false;}"
                                 CommandName="Delete"><i class="color fa fa-trash-o fa-2"></i><span class="color">Delete Chart</span></asp:LinkButton>
                             <%--<asp:ImageButton ID="btnDelete" runat="server" AlternateText="Delete Chart"
                                 OnClientClick="javascript:if(!confirm('This action will delete the selected chart. Are you sure?')){return false;}"

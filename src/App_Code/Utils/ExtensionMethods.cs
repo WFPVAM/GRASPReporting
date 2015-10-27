@@ -39,4 +39,20 @@ public static class ExtensionMethods
         else
             return null;
     }
+
+    public static string GetSubstringAfterFirstChar(this string source, char firstChar)
+    {
+        if (!string.IsNullOrEmpty(source))
+        {
+            int firstCharIndex = source.IndexOf(firstChar);
+            if (firstCharIndex > 0)
+            {
+                return source.Substring(firstCharIndex + 1, source.Length - firstCharIndex - 1);
+            }
+            else
+                return null;
+        }
+        else
+            return null;
+    }
 }

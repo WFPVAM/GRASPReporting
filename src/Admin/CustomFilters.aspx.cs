@@ -256,7 +256,9 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
         int formID = 0;
         int count = 0;
         double? max;
+        string sMax;
         double? min;
+        string sMin;
         int countNull = 0;
         RadComboBoxItem selItem = ddlFormFields.SelectedItem;
         Label lbltype = (Label)selItem.FindControl("lblType");
@@ -277,18 +279,14 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                     count = (from ffr in db.FormFieldResponses
                                      where ffr.parentForm_id == formID && ffr.formFieldId == formFieldID
                                      select ffr.nvalue).Count();
-                    max = (from ffr in db.FormFieldResponses
-                                   where ffr.parentForm_id == formID && ffr.formFieldId == formFieldID && ffr.nvalue != null
-                                   select ffr.nvalue).Max();
-                    min = (from ffr in db.FormFieldResponses
-                                   where ffr.parentForm_id == formID && ffr.formFieldId == formFieldID && ffr.nvalue != null
-                                   select ffr.nvalue).Min();
+                    sMax = FormFieldResponses.GetFieldMaxValue(formID, formFieldID, GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString());
+                    sMin = FormFieldResponses.GetFieldMinValue(formID, formFieldID, GeneralEnums.FieldTypes.NUMERIC_TEXT_FIELD.ToString());
                     countNull = (from ffr in db.FormFieldResponses
                                          where ffr.parentForm_id == formID && ffr.formFieldId == formFieldID && ffr.nvalue == null
                                          select ffr.nvalue).Count();
                     litFieldInfo.Text += "<br/><label>Total Values: </label>" + count.ToString();
-                    litFieldInfo.Text += "<br/><label>Max Value: </label>" + max.Value.ToString();
-                    litFieldInfo.Text += "<br/><label>Min Value: </label>" + min.Value.ToString();
+                    litFieldInfo.Text += "<br/><label>Max Value: </label>" + (sMax != null ? sMax : "");;
+                    litFieldInfo.Text += "<br/><label>Min Value: </label>" + (sMin != null ? sMin : "");
                     litFieldInfo.Text += "<br/><label>Null Values: </label>" + countNull.ToString();
 
                     SetFieldValueControlVisibility(FieldValueControls.txtFilterVal);
@@ -299,13 +297,13 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
 
                     //Finds the occurrences of the date field.
                     count = FormFieldResponses.GetFieldCount(formID, formFieldID);
-                    string max2 = FormFieldResponses.GetFieldMaxValue(formID, formFieldID);
-                    string min2 = FormFieldResponses.GetFieldMinValue(formID, formFieldID);
+                    sMax = FormFieldResponses.GetFieldMaxValue(formID, formFieldID, GeneralEnums.FieldTypes.DATE_FIELD.ToString());
+                    sMin = FormFieldResponses.GetFieldMinValue(formID, formFieldID, GeneralEnums.FieldTypes.DATE_FIELD.ToString());
                     countNull = FormFieldResponses.GetFieldNullValuesCount(formID, formFieldID);
 
                     litFieldInfo.Text += "<br/><label>Total Values: </label>" + count.ToString();
-                    litFieldInfo.Text += "<br/><label>Max Value: </label>" + (max2 != null ? max2 : "");
-                    litFieldInfo.Text += "<br/><label>Min Value: </label>" + (min2 != null ? min2 : "");
+                    litFieldInfo.Text += "<br/><label>Max Value: </label>" + (sMax != null ? sMax : "");
+                    litFieldInfo.Text += "<br/><label>Min Value: </label>" + (sMin != null ? sMin : "");
                     litFieldInfo.Text += "<br/><label>Null Values: </label>" + countNull.ToString();
 
                     SetFieldValueControlVisibility(FieldValueControls.dateFieldValue);
@@ -334,7 +332,6 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                     break;
                 case "RADIO_BUTTON":
                 case "DROP_DOWN_LIST":
-
                     litFieldInfo.Text = "<strong>" + e.Text + "</strong> is associated to a survey<br/>";
                     count = (from ffr in db.FormFieldResponses
                                      where ffr.parentForm_id == formID && ffr.formFieldId == formFieldID

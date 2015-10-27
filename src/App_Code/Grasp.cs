@@ -163,6 +163,11 @@ public partial class Form
     public string permittedGroup_path { get; set; }
     public Nullable<System.DateTime> FormCreateDate { get; set; }
     public Nullable<int> isHidden { get; set; }
+    public Nullable<byte> IsDeleted { get; set; }
+    public Nullable<System.DateTime> DeletedDate { get; set; }
+    public Nullable<byte> FormVersion { get; set; }
+    public string PreviousPublishedName { get; set; }
+    public string PreviousPublishedID { get; set; }
 
     public virtual frontline_group frontline_group { get; set; }
     public virtual ICollection<FormResponse> FormResponse { get; set; }
@@ -360,6 +365,7 @@ public partial class FormResponse
     public Nullable<byte> fromDataEntry { get; set; }
     public Nullable<System.DateTime> FRCreateDate { get; set; }
     public int ResponseStatusID { get; set; }
+    public Nullable<System.DateTime> LastUpdatedDate { get; set; }
 
     public virtual Form Form { get; set; }
     public virtual ICollection<FormField> FormField { get; set; }
@@ -709,12 +715,37 @@ public partial class Roles
     public Roles()
     {
         this.User_Credential = new HashSet<User_Credential>();
+        this.RolePermission = new HashSet<Role_Permissions>();
     }
 
     public int id { get; set; }
     public string description { get; set; }
 
     public virtual ICollection<User_Credential> User_Credential { get; set; }
+    public virtual ICollection<Role_Permissions> RolePermission { get; set; }
+}
+
+public partial class Permissions
+{
+    public Permissions()
+    {
+        this.RolePermission = new HashSet<Role_Permissions>();
+    }
+
+    public int id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public virtual ICollection<Role_Permissions> RolePermission { get; set; }
+}
+
+public partial class Role_Permissions
+{
+    public int id { get; set; }
+    public int RoleID { get; set; }
+    public int PermissionID { get; set; }
+
+    public virtual Role Roles { get; set; }
+    public virtual Permissions Permissions { get; set; }
 }
 
 public partial class RolesToResponseStatus
@@ -874,3 +905,4 @@ public partial class UserToFormResponses
     public decimal formResponseID { get; set; }
     public decimal formID { get; set; }
 }
+

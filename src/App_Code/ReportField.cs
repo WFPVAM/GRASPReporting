@@ -36,6 +36,7 @@ public partial class ReportField
     {
         return createNewReportField(ReportID, FormFieldID, title, ReportFieldLabel, chartType, null, null, null, null, null);
     }
+
     /// <summary>
     /// Creates a new bar chart for a report
     /// </summary>
@@ -45,7 +46,7 @@ public partial class ReportField
     /// <param name="chartType">The type of the chart</param>
     /// <param name="ValueField">An optional description for the series value</param>
     /// <param name="ValueFormFieldID">The id of the series value</param>
-    /// <param name="aggregate">A string representing an aggregate function</param>
+    /// <param name="aggregate">A string representing` an aggregate function</param>
     /// <param name="legend">1 if you want the legend to display</param>
     /// <param name="table">1 if you want the table to display</param>
     /// <returns>the reportField created</returns>
@@ -70,6 +71,7 @@ public partial class ReportField
 
         return reportField;
     }
+
     /// <summary>
     /// Queries the DB to obtain information about a ReportField
     /// </summary>
@@ -139,6 +141,7 @@ public partial class ReportField
         }
         db.SaveChanges();
     }
+
     /// <summary>
     /// Deletes a specific chart of a report
     /// </summary>
@@ -161,6 +164,7 @@ public partial class ReportField
         }
         else return 0;
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -176,5 +180,27 @@ public partial class ReportField
         if (item != null)
             return item;
         else return 0;
+    }
+
+    public static ReportField GetReportFieldById(int reportFieldID)
+    {
+        ReportField reportField = null;
+
+        using (GRASPEntities db = new GRASPEntities())
+        {
+
+            try
+            {
+                reportField = (from rf in db.ReportFields
+                                          where rf.ReportFieldID == reportFieldID
+                                          select rf).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                LogUtils.WriteErrorLog(ex.ToString());
+            }
+        }
+
+        return reportField;
     }
 }

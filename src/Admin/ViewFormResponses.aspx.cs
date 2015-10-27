@@ -17,6 +17,8 @@ using System.Data.Entity.Infrastructure;
 
 public partial class Admin_ViewFormResponses : System.Web.UI.Page
 {
+    public bool HasUserDeleteResponsePermission { get; private set; }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if(Utility.VerifyAccess(Request))
@@ -24,6 +26,7 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
             int formID = 0;
             if(Request["FormID"] != null && Request["FormID"] != "")
             {
+                HasUserDeleteResponsePermission = Permissions.IsLoggedUserHasPermission(GeneralEnums.Permissions.DeleteFormResponse);
                 formID = Convert.ToInt32(Request["FormID"]);
                 if(!IsPostBack)
                 {
@@ -45,6 +48,16 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
         {
             Response.Write("<h3>Access Denied</h3>");
             Response.End();
+        }
+    }
+
+    protected void RadGrid1_ItemDataBound(object sender, GridItemEventArgs e)
+    {
+        if (e.Item is GridDataItem)
+        {
+            GridDataItem dataItem = (GridDataItem)e.Item;
+            LinkButton deleteResponseButton = (LinkButton)dataItem.FindControl("linkBtnDeleteResponse");
+            deleteResponseButton.Visible = HasUserDeleteResponsePermission;
         }
     }
 
@@ -184,7 +197,7 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
                            where r.id == rv1.FormResponseID && r.id == rv2.FormResponseID && r.ResponseStatusID == rs.ResponseStatusID &&
                                    rv1.formFieldId == ffidCompileDate && rv2.formFieldId == ffidEnumerator && r.parentForm_id == formID
                            orderby r.id descending
-                           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, CompileDate = rv1.value, Enumerator = rv2.value, ResponseStatus = rs.ResponseStatusName });
+                           select new { r.id, r.clientVersion, r.senderMsisdn, r.FRCreateDate, r.LastUpdatedDate, CompileDate = rv1.value, Enumerator = rv2.value, ResponseStatus = rs.ResponseStatusName });
 
 
                 //var res = (from r in responses
@@ -256,5 +269,20 @@ public partial class Admin_ViewFormResponses : System.Web.UI.Page
     protected void btnApplyQuickFilter_Click(object sender, EventArgs e)
     {
         RadGrid1.Rebind();
+    }
+
+    /// <summary>
+    /// The delete command associated with the grid that allows users to delete a chart for that report
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <author>Saad Mansour</author>
+    protected void RadGrid1_DeleteCommand(object sender, Telerik.Web.UI.GridCommandEventArgs e)
+    {
+        int selectedFormResponseID = Convert.ToInt32(e.Item.OwnerTableView.DataKeyValues[e.Item.ItemIndex]["id"].ToString());
+        if (FormResponse.DeleteWithAllDependences(selectedFormResponseID)) //If deletes success, then refresh the grid.
+        {
+            RadGrid1.DataBind();
+        }
     }
 }
