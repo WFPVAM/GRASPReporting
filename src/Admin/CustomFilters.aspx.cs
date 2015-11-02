@@ -44,7 +44,7 @@ public partial class Admin_CustomFilter : System.Web.UI.Page
                 ddlOperator.Items.Add(new RadComboBoxItem(">", ">"));
                 ddlOperator.Items.Add(new RadComboBoxItem(">=", ">="));
                 ddlOperator.Items.Add(new RadComboBoxItem("<", "<"));
-                ddlOperator.Items.Add(new RadComboBoxItem("=<", "=<"));
+                ddlOperator.Items.Add(new RadComboBoxItem("<=", "<="));
                 ddlOperator.Items.Add(new RadComboBoxItem("!=", "!="));
 
                 GRASPEntities db = new GRASPEntities();

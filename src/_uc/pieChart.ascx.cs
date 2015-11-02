@@ -64,7 +64,7 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
         int formFieldID = ReportField.getFormFieldID(reportFieldID);
         int formID = Report.getFormID(reportID);
         firstColumn = ReportData.ReportFieldLabel;
-        secondColumn = ReportData.ReportFieldValueLabel;
+        secondColumn = ReportData.ReportFieldValueLabel; //it is always count, when make pie to accept aggregate func, change it.
 
         var deleteRespStatusID = (from rs in db.FormResponseStatus
                                   where rs.ResponseStatusName == "Deleted"
@@ -120,8 +120,8 @@ public partial class _uc_pieChart : System.Web.UI.UserControl
         {
             tableData.Visible = true;
             tabularData.DataSource = response;
-            tabularData.Columns[0].HeaderText = "Category";
-            tabularData.Columns[1].HeaderText = "Value";
+            tabularData.Columns[0].HeaderText = firstColumn;
+            tabularData.Columns[1].HeaderText = "Count";
         }
         else tableData.Visible = false;
 

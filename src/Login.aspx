@@ -35,9 +35,9 @@
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <!--<div style="width: 160px; float:left">-->
-                <a href="http://dm.pcd.ps/ar" target="_blank">
+                <%--<a href="http://dm.pcd.ps/ar" target="_blank">
                         <img style="margin-left: 8px; padding-top: 6px" src="_images/pcd_logo.png" height="75px" alt="PCD" title="PCD - إدارة الكوارث - الدفاع المدني الفلسطيني" />
-                </a>
+                </a>--%>
                 <a href="index.html">
                     <img style="padding-left: 10px; padding-top: 8px" src="_images/logo_wfp.gif" height="70px" alt="World Food Programme" /></a>
                 <span style="color: white">Version:

@@ -58,7 +58,7 @@ public class Utility
 
     public static string getVersion()
     {
-        return "1.2.5";
+        return "1.3.0";
     }
 
     private static bool IsGRASPImagesFolderNotUnderReportingFolder()

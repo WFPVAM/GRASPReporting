@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:ssdl="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" xmlns:edm="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:map="http://schemas.microsoft.com/ado/2009/11/mapping/cs" xmlns:codegen="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:huagati="http://www.huagati.com/edmxtools/annotations">
-  <!--Updated by Huagati EDMX Tools version 2.35.5259.25942 on 2015-10-21 11:20:45-->
+  <!--Updated by Huagati EDMX Tools version 2.35.5259.25942 on 2015-10-30 03:01:17-->
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
@@ -100,7 +100,7 @@
           <Property Name="permittedGroup_path" Type="nvarchar" MaxLength="255" />
           <Property Name="FormCreateDate" Type="datetime" />
           <Property Name="isHidden" Type="int" />
-          <Property Name="IsDeleted" Type="tinyint" Nullable="true" DefaultValue="0" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" DefaultValue="false" />
           <Property Name="DeletedDate" Type="datetime" Nullable="true" />
           <Property Name="FormVersion" Type="tinyint" Nullable="true" />
           <Property Name="PreviousPublishedName" Type="nvarchar" Nullable="true" MaxLength="100" />
@@ -1833,7 +1833,7 @@ warning 6002: The table/view 'GRASPPCB.dbo.SurveyListAPI' does not have a primar
           <NavigationProperty Name="Survey" Relationship="Self.FK9448937AAACA0E5F" FromRole="Form" ToRole="Survey" />
           <NavigationProperty Name="FormField" Relationship="Self.FKE1EB1E761F476EAE" FromRole="Form" ToRole="FormField" />
           <NavigationProperty Name="FormField1" Relationship="Self.Form_FormField" FromRole="Form" ToRole="FormField" />
-          <Property Name="IsDeleted" Type="Byte" Nullable="true" DefaultValue="0" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" DefaultValue="false" />
           <Property Name="DeletedDate" Type="DateTime" Nullable="true" />
           <Property Name="FormVersion" Type="Byte" Nullable="true" />
           <Property Name="PreviousPublishedName" Type="String" Nullable="true" MaxLength="100" FixedLength="false" Unicode="true" />

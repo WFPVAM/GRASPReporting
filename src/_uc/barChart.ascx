@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div id="tableData" runat="server" visible="false" style="width: 50%; margin: 0 auto;">
-                <telerik:RadGrid ID="tabularData" runat="server" AutoGenerateColumns="false" Height="100%" CellSpacing="0" GridLines="None" Skin="Metros"
+                <telerik:RadGrid ID="tabularData" runat="server" AutoGenerateColumns="false" Height="100%" CellSpacing="0" GridLines="None" Skin="Metro"
             ForeColor="#0058B1" BorderColor="White" AlternatingItemStyle-BackColor="#CCE6FF" HeaderStyle-BackColor="#0058B1" HeaderStyle-ForeColor="White">
                     <MasterTableView>
                         <Columns>

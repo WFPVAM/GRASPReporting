@@ -40,7 +40,7 @@
                                 valueAxis: {
                                     max: <%= MaxValueAxis%>,
                                     line: {
-                                        visible: false
+                                        visible: true
                                     },
                                     minorGridLines: {
                                         visible: true
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div id="tableData" runat="server" visible="false" style="width: 50%; margin: 0 auto;">
-                <telerik:radgrid id="tabularData" runat="server" autogeneratecolumns="false" height="100%" cellspacing="0" gridlines="None" skin="Metros"
+                <telerik:radgrid id="tabularData" runat="server" autogeneratecolumns="false" height="100%" cellspacing="0" gridlines="None" skin="Metro"
                     forecolor="#0058B1" bordercolor="White" alternatingitemstyle-backcolor="#CCE6FF" headerstyle-backcolor="#0058B1" headerstyle-forecolor="White">
                     <MasterTableView>
                         <Columns>

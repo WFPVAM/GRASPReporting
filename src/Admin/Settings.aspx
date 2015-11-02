@@ -59,7 +59,7 @@
                                 <asp:CheckBoxList ID="CblSelectableStatus" runat="server" RepeatDirection="Horizontal" DataTextField="ResponseStatusName" DataValueField="ResponseStatusID">
                                 </asp:CheckBoxList>
                             </div>
-                            <div class="cbGroup">
+                            <div class="cbGroup" runat="server" id="divPermissions">
                                 <h4>Permissions</h4>
                                 <asp:CheckBoxList ID="cblPermissions" runat="server" RepeatDirection="Horizontal" DataTextField="Description" DataValueField="id">
                                 </asp:CheckBoxList>

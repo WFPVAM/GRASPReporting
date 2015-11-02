@@ -17,7 +17,6 @@
         }
     </style>
     <script type="text/javascript">
-
         var browserWidth = $(window).width();
         var browserHeight = $(window).height();
         function ViewHelp() {
@@ -28,6 +27,20 @@
             oWnd.center();
             oWnd.Show();
             return false;
+        }
+
+        function EnableDisableCustomLabels() {
+            //var combo = $find("<%= rcbChartType.ClientID %>");
+            var checkbo = $('#<%= chkTable.ClientID %>').is(':checked');
+            if (checkbo) {
+                $("#divCustomDataLabel").show();
+                //if (combo.get_value() != "pie") {
+                    $("#divCustomSeriesLabel").show();
+                //}
+            } else {
+                $("#divCustomDataLabel").hide();
+                $("#divCustomSeriesLabel").hide();
+            }
         }
     </script>
 </asp:Content>
@@ -123,7 +136,7 @@
                     <div class="form-group"> 
                         <label>Chart Type</label>
                         <telerik:RadComboBox ID="rcbChartType" runat="server" AutoPostBack="true" EnableLoadOnDemand="true" CloseDropDownOnBlur="true" OnSelectedIndexChanged="rcbChartType_SelectedIndexChanged"
-                            EmptyMessage="Select a chart type" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White">
+                            EmptyMessage="Select a chart type" Skin="MetroTouch" OnClientItemChecked="EnableDisableCustomLabels()" Width="100%" BorderColor="#66afe9" BackColor="White">
                             <Items>
                                 <telerik:RadComboBoxItem Text="Bar" Value="bar" />
                                 <telerik:RadComboBoxItem Text="Pie" Value="pie" />
@@ -134,15 +147,15 @@
                     <asp:Panel ID="pnlPie" runat="server" Visible="false">
                         <div class="form-group">
                             <label>Select Field</label>
-                            <telerik:RadComboBox ID="ddlLabelFormField" runat="server" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White" EnableLoadOnDemand="true"
+                            <telerik:RadComboBox ID="ddlPieLabelFormField" runat="server" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White" EnableLoadOnDemand="true"
                                 CloseDropDownOnBlur="true" EmptyMessage="Select a label">
                             </telerik:RadComboBox>
                         </div>
 
-                        <div class="form-group">
+                        <%--<div class="form-group">
                             <label>Custom Label</label>
-                            <asp:TextBox ID="tbReportFieldLabel" runat="server" CssClass="form-control"></asp:TextBox>
-                        </div>
+                            <asp:TextBox ID="tbPieCustomReportFieldLabel" runat="server" CssClass="form-control"></asp:TextBox>
+                        </div>--%>
                     </asp:Panel>
                     <asp:Panel ID="pnlBar" runat="server" Visible="false">
                         <div class="form-group">
@@ -152,35 +165,25 @@
                             </telerik:RadComboBox>
                         </div>
                         <div class="form-group">
-                            <label>Custom Axis Label</label>
-                            <asp:TextBox ID="tbReportFieldSerie" runat="server" CssClass="form-control"></asp:TextBox>
-                        </div>
-                        <div class="form-group">
                             <label>Select an aggregate function</label>
-                            <telerik:RadComboBox ID="ddlAggregate" runat="server" EnableLoadOnDemand="true" CloseDropDownOnBlur="true" OnSelectedIndexChanged="ddlAggregate_SelectedIndexChanged"
+                            <telerik:RadComboBox ID="ddlAggregate" runat="server" AutoPostBack="true" EnableLoadOnDemand="true" CloseDropDownOnBlur="true" OnSelectedIndexChanged="ddlAggregate_SelectedIndexChanged"
                                 EmptyMessage="Select an aggregate function" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White">
                                 <Items>
-                                    <telerik:RadComboBoxItem Text="Average" Value="average" />
                                     <telerik:RadComboBoxItem Text="Sum" Value="sum" />
-                                    <telerik:RadComboBoxItem Text="St. Dev" Value="stdev" />
+                                    <telerik:RadComboBoxItem Text="Count" Value="count" />
+                                    <telerik:RadComboBoxItem Text="Average" Value="average" />
                                     <telerik:RadComboBoxItem Text="Max" Value="max" />
                                     <telerik:RadComboBoxItem Text="Min" Value="min" />
-                                    <telerik:RadComboBoxItem Text="Count" Value="count" />
+                                    <telerik:RadComboBoxItem Text="St. Dev" Value="stdev" />
                                 </Items>
                             </telerik:RadComboBox>
                         </div>
-                        <div class="form-group">
+                        <div id="divSeriesField" class="form-group" runat="server">
                             <label>Select Series Value</label>
                             <telerik:RadComboBox ID="ddlValueField" runat="server" Skin="MetroTouch" Width="100%" BorderColor="#66afe9" BackColor="White" EnableLoadOnDemand="true"
                                 CloseDropDownOnBlur="true" EmptyMessage="Select a field">
-
                             </telerik:RadComboBox>
                         </div>
-                        <div class="form-group">
-                            <label>Custom Axis Label</label>
-                            <asp:TextBox ID="tbReportFieldValue" runat="server" CssClass="form-control"></asp:TextBox>
-                        </div>
-
                     </asp:Panel>
                     <asp:Panel ID="pnlButton" runat="server" Visible="false">
                         <div class="form-group">
@@ -188,10 +191,17 @@
                             Show Legend
                         </div>
                         <div id="divChkTabularData" runat="server" class="form-group">
-                            <asp:CheckBox ID="chkTable" runat="server" />
+                            <asp:CheckBox ID="chkTable" runat="server" OnClick="JavaScript:EnableDisableCustomLabels();" />
                             Show Tabular Data
                         </div>
-
+                        <div id="divCustomDataLabel" class="form-group">
+                            <label>Custom Data Column Label</label>
+                            <asp:TextBox ID="tbCustomSeriesLabel" runat="server" CssClass="form-control"></asp:TextBox>
+                        </div>
+                        <div id="divCustomSeriesLabel" class="form-group">
+                            <label id="lblCustomSeriesColumn" runat="server">Custom Series Column Label</label>
+                            <asp:TextBox ID="tbCustomValueLabel" runat="server" CssClass="form-control"></asp:TextBox>
+                        </div>
                         <div style="float: right">
                             <telerik:RadButton ID="btnResetReport" runat="server" Text="Cancel" Skin="MetroTouch" BackColor="White" OnClick="btnResetReport_Click"></telerik:RadButton>
                             <telerik:RadButton ID="btnCreateReport" runat="server" Skin="MetroTouch" BackColor="White" Text="Create Graph" OnClick="btnCreateReport_Click"></telerik:RadButton>

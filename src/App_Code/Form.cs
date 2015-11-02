@@ -150,7 +150,7 @@ public partial class Form
         }
         else //The form is existed
         {
-            if (form.IsDeleted == 1)
+            if (form.IsDeleted)
             {
                 form.Status = GeneralEnums.FormStatuses.Deleted;
             }

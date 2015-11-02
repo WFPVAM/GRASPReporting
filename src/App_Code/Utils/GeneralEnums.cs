@@ -43,7 +43,8 @@ public class GeneralEnums
     public enum Permissions
     {
         DeleteFormResponse,
-        EditFormResponse
+        EditFormResponse,
+        SeePermissionsSection
     }
 
     public enum FormStatuses
@@ -67,5 +68,12 @@ public class GeneralEnums
         stdev,
         min,
         max
+    }
+
+    public enum ChartTypes
+    {
+        bar,
+        line,
+        pie
     }
 }

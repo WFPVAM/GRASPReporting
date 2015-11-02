@@ -54,7 +54,6 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
             if(Request["rid"] != null)
             {
                 //Add chart to an existing report.
-
                 error.Visible = false;
                 tbReportName.ReadOnly = true;
                 tbReportDescription.ReadOnly = true;
@@ -127,6 +126,7 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
 
         e.Result = forms.Distinct();
     }
+
     /// <summary>
     /// Creates the report for the choosen form and save all the data on the DB
     /// </summary>
@@ -148,14 +148,22 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
             {
                 FormID = Convert.ToInt32(ddlForm.SelectedValue);
             }
+            
             chartType = rcbChartType.SelectedValue;
-            if(chartType == "bar")
-            {
 
+            if(chartType == GeneralEnums.ChartTypes.bar.ToString()
+                || chartType == GeneralEnums.ChartTypes.line.ToString())
+            {
                 FormFieldID = Convert.ToInt32(ddlSerieField.SelectedValue);
-                FormFieldValueID = Convert.ToInt32(ddlValueField.SelectedValue);
-                ReportFieldLabel = (tbReportFieldSerie.Text != "") ? tbReportFieldSerie.Text : ddlSerieField.Text;
-                ReportFieldValue = (tbReportFieldValue.Text != "") ? tbReportFieldValue.Text : ddlValueField.Text;
+                ReportFieldValue = (tbCustomValueLabel.Text != "") ? tbCustomValueLabel.Text : ddlValueField.Text;
+                if (!ddlAggregate.SelectedValue.Equals(GeneralEnums.AggregateFuns.count.ToString()))
+                {
+                    FormFieldValueID = Convert.ToInt32(ddlValueField.SelectedValue);
+                }else
+                    ReportFieldValue = (tbCustomValueLabel.Text != "") ? tbCustomValueLabel.Text :
+                        GeneralEnums.AggregateFuns.count.ToString();
+
+                ReportFieldLabel = (tbCustomSeriesLabel.Text != "") ? tbCustomSeriesLabel.Text : ddlSerieField.Text;
                 aggregate = ddlAggregate.SelectedValue;
                 if(chkLegend.Checked)
                     legend = 1;
@@ -167,37 +175,19 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 }
                 ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, TxtChartTitle.Text, ReportFieldLabel, chartType, ReportFieldValue, FormFieldValueID, aggregate, legend, table);
             }
-            else if(chartType == "pie")
+            else if (chartType == GeneralEnums.ChartTypes.pie.ToString())
             {
                 if(chkLegend.Checked)
                     legend = 1;
                 if(chkTable.Checked)
                     table = 1;
-                ReportFieldLabel = (tbReportFieldLabel.Text != "") ? tbReportFieldLabel.Text : ddlLabelFormField.Text;
-                FormFieldID = Convert.ToInt32(ddlLabelFormField.SelectedValue);
+                ReportFieldLabel = (tbCustomSeriesLabel.Text != "") ? tbCustomSeriesLabel.Text : ddlPieLabelFormField.Text;
+                FormFieldID = Convert.ToInt32(ddlPieLabelFormField.SelectedValue);
                 if(hdnReportID.Value == "")
                 {
                     hdnReportID.Value = Report.createNewReport(tbReportName.Text, tbReportDescription.Text, FormID).ToString();
                 }
                 ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, TxtChartTitle.Text, ReportFieldLabel, chartType, null, null, null, legend, table);
-
-            }
-            else if (chartType.Equals("line"))
-            {
-                FormFieldID = Convert.ToInt32(ddlSerieField.SelectedValue);
-                FormFieldValueID = Convert.ToInt32(ddlValueField.SelectedValue);
-                ReportFieldLabel = (tbReportFieldSerie.Text != "") ? tbReportFieldSerie.Text : ddlSerieField.Text;
-                ReportFieldValue = (tbReportFieldValue.Text != "") ? tbReportFieldValue.Text : ddlValueField.Text;
-                aggregate = ddlAggregate.SelectedValue;
-                if (chkLegend.Checked)
-                    legend = 1;
-                if (chkTable.Checked)
-                    table = 1;
-                if (hdnReportID.Value == "")
-                {
-                    hdnReportID.Value = Report.createNewReport(tbReportName.Text, tbReportDescription.Text, FormID).ToString();
-                }
-                ReportField newReport = ReportField.createNewReportField(Convert.ToInt32(hdnReportID.Value), FormFieldID, TxtChartTitle.Text, ReportFieldLabel, chartType, ReportFieldValue, FormFieldValueID, aggregate, legend, table);
             }
 
             success.Visible = true;
@@ -225,19 +215,20 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
         tbReportDescription.Text = "";
         ddlForm.Text = "";
         ddlForm.ClearSelection();
-        ddlLabelFormField.Items.Clear();
+        ddlPieLabelFormField.Items.Clear();
         ddlSerieField.Items.Clear();
         ddlAggregate.ClearSelection();
         ddlValueField.Items.Clear();
-        tbReportFieldLabel.Text = "";
-        tbReportFieldSerie.Text = "";
-        tbReportFieldValue.Text = "";
+        //tbPieCustomReportFieldLabel.Text = "";
+        tbCustomSeriesLabel.Text = "";
+        tbCustomValueLabel.Text = "";
         rcbChartType.Text = "";
         rcbChartType.ClearSelection();
         chkTable.Checked = false;
         chkLegend.Checked = true;
         pnlReportFields.Visible = false;
     }
+
     /// <summary>
     /// Cleans up the panel with the selected data for the report (chart type, axis values)
     /// </summary>
@@ -245,13 +236,18 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
     /// <param name="e"></param>
     protected void btnResetReport_Click(object sender, EventArgs e)
     {
-        ddlLabelFormField.Items.Clear();
+        ResetFields();
+    }
+
+    private void ResetFields()
+    {
+        ddlPieLabelFormField.Items.Clear();
         ddlSerieField.Items.Clear();
         ddlAggregate.ClearSelection();
         ddlValueField.Items.Clear();
-        tbReportFieldLabel.Text = "";
-        tbReportFieldSerie.Text = "";
-        tbReportFieldValue.Text = "";
+        //tbPieCustomReportFieldLabel.Text = "";
+        tbCustomSeriesLabel.Text = "";
+        tbCustomValueLabel.Text = "";
         rcbChartType.Text = "";
         rcbChartType.ClearSelection();
         chkTable.Checked = false;
@@ -261,6 +257,7 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
         pnlButton.Visible = false;
         success.Visible = false;
     }
+
     /// <summary>
     /// Cleans up the panel with the selected data for the report  in order to enter new data for that report
     /// </summary>
@@ -268,13 +265,16 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
     /// <param name="e"></param>
     protected void btnNewLabel_Click(object sender, EventArgs e)
     {
-        ddlLabelFormField.Items.Clear();
+        ddlPieLabelFormField.Items.Clear();
+        ddlPieLabelFormField.ClearSelection();
         ddlSerieField.Items.Clear();
+        ddlSerieField.ClearSelection();
         ddlAggregate.ClearSelection();
         ddlValueField.Items.Clear();
-        tbReportFieldLabel.Text = "";
-        tbReportFieldSerie.Text = "";
-        tbReportFieldValue.Text = "";
+        ddlValueField.ClearSelection();
+        //tbPieCustomReportFieldLabel.Text = "";
+        tbCustomSeriesLabel.Text = "";
+        tbCustomValueLabel.Text = "";
         rcbChartType.Text = "";
         rcbChartType.ClearSelection();
         chkTable.Checked = false;
@@ -284,7 +284,9 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
         pnlBar.Visible = false;
         pnlPie.Visible = false;
         pnlButton.Visible = false;
+        error2.Visible = false; 
     }
+
     /// <summary>
     /// Shows the panel for the selected chart
     /// </summary>
@@ -293,7 +295,7 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
     protected void rcbChartType_SelectedIndexChanged(object sender, Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string chartType = rcbChartType.SelectedValue;
-        if(chartType == "pie")
+        if(chartType == GeneralEnums.ChartTypes.pie.ToString())
         {
             ddlSerieField.Text = "";
             ddlSerieField.ClearSelection();
@@ -302,53 +304,62 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
             ddlValueField.Text = "";
             ddlValueField.ClearSelection();
             ddlValueField.Items.Clear();
-            tbReportFieldLabel.Text = "";
-            tbReportFieldSerie.Text = "";
-            tbReportFieldValue.Text = "";
+            //tbPieCustomReportFieldLabel.Text = "";
+            tbCustomSeriesLabel.Text = "";
+            tbCustomValueLabel.Text = "";
             chkTable.Checked = false;
             chkLegend.Checked = true;
             pnlPie.Visible = true;
             pnlButton.Visible = true;
-            pnlBar.Visible = true;
+            pnlBar.Visible = false;
             error2.Visible = false;
-            if(ddlLabelFormField.SelectedValue == "")
-                serieFieldBind(ddlLabelFormField);
+            if (ddlPieLabelFormField.SelectedValue == "")
+                serieFieldBind(ddlPieLabelFormField);
             divChkTabularData.Visible = true;
         }
-        else if(chartType == "bar"
-            || chartType == "line")
+        else if (chartType == GeneralEnums.ChartTypes.bar.ToString()
+            || chartType == GeneralEnums.ChartTypes.line.ToString())
         {
             error2.Visible = false;
-            ddlLabelFormField.Text = "";
-            ddlLabelFormField.ClearSelection();
-            ddlLabelFormField.Items.Clear();
-            tbReportFieldLabel.Text = "";
-            tbReportFieldSerie.Text = "";
-            tbReportFieldValue.Text = "";
+            ddlPieLabelFormField.Text = "";
+            ddlPieLabelFormField.ClearSelection();
+            ddlPieLabelFormField.Items.Clear();
+            //tbPieCustomReportFieldLabel.Text = "";
+            tbCustomSeriesLabel.Text = "";
+            tbCustomValueLabel.Text = "";
             chkTable.Checked = false;
             chkLegend.Checked = true;
             pnlBar.Visible = true;
             pnlButton.Visible = true;
             pnlPie.Visible = false;
-            if(ddlSerieField.SelectedValue == "")
+            if (ddlSerieField.SelectedValue == "")
                 serieFieldBind(ddlSerieField);
-            if(ddlValueField.SelectedValue == "")
+            if (ddlValueField.SelectedValue == "")
                 serieValueBind();
-            divChkTabularData.Visible = false;
+            divChkTabularData.Visible = true;
         }
-
     }
 
     protected void ddlAggregate_SelectedIndexChanged(object sender,
         Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs e)
     {
         string aggregateFunc = ddlAggregate.SelectedValue;
-        
-        if(aggregateFunc.Equals("count"))
+
+        if (aggregateFunc.Equals(GeneralEnums.AggregateFuns.count.ToString()))
         {
-            ddlValueField.Visible = false;
-        }else
-            ddlValueField.Visible = true;
+            divSeriesField.Visible = false;
+            //lblCustomSeriesColumn.Visible = false;
+            //tbCustomValueLabel.Visible = false;
+        }
+        else
+        {
+            divSeriesField.Visible = true;
+            //if (chkTable.Checked)
+            //{
+            //    lblCustomSeriesColumn.Visible = true;
+            //    tbCustomValueLabel.Visible = true;   
+            //}
+        }
     }
 
     /// <summary>
@@ -456,7 +467,8 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 {
                     if (f.type == "DROP_DOWN_LIST" 
                         || f.type == "RADIO_BUTTON" 
-                        || ff.type == GeneralEnums.FieldTypes.DATE_FIELD.ToString())
+                        || ff.type == GeneralEnums.FieldTypes.DATE_FIELD.ToString()
+                        || ff.type == GeneralEnums.FieldTypes.CHECK_BOX.ToString())
                     {
                         RadComboBoxItem item = new RadComboBoxItem();
                         item.Text = f.name + " (" + f.label + ")";
@@ -466,7 +478,8 @@ public partial class Admin_Statistics_CreateReport : System.Web.UI.Page
                 }
             }
             else if(ff.type == "DROP_DOWN_LIST" || ff.type == "RADIO_BUTTON"
-                || ff.type == GeneralEnums.FieldTypes.DATE_FIELD.ToString())
+                || ff.type == GeneralEnums.FieldTypes.DATE_FIELD.ToString()
+                || ff.type == GeneralEnums.FieldTypes.CHECK_BOX.ToString())
             {
                 RadComboBoxItem item = new RadComboBoxItem();
                 item.Text = ff.name + " (" + ff.label + ")";

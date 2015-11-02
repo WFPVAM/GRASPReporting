@@ -163,7 +163,7 @@ public partial class Form
     public string permittedGroup_path { get; set; }
     public Nullable<System.DateTime> FormCreateDate { get; set; }
     public Nullable<int> isHidden { get; set; }
-    public Nullable<byte> IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
     public Nullable<System.DateTime> DeletedDate { get; set; }
     public Nullable<byte> FormVersion { get; set; }
     public string PreviousPublishedName { get; set; }

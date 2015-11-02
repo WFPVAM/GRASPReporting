@@ -145,7 +145,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         string responseStatusFilter = "";
         string sqlCmd = "";
         string columnList = "";
-
+        bool isFormHasDefaultGPSField = false; //Forms from very old designer does not have default GPS field at index 4.
         StringBuilder sb = new StringBuilder();
         StringBuilder sbColHeader = new StringBuilder();
         //Build columnList using PIVOT
@@ -178,7 +178,13 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         foreach(var f in fieldList.OrderBy(o => o.positionIndex))
         {
             sb.Append("[" + (1000 + f.positionIndex).ToString() + "_" + f.name + "1],");
-            
+
+            if (f.positionIndex == 4
+                && f.name.Equals("gps"))
+            {
+                isFormHasDefaultGPSField = true;
+            }
+
             //Build the column headers for SPSS file.
             if (RdbSpss.Checked)
             {
@@ -212,17 +218,17 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
 
             foreach (var f in fieldsLabels)
             {
-                //if (f.name.Equals("gps"))
-                //{
-                //    SplitGPSLatitudeAndLongitude(f.name, f.label, sbColHeader, separator);
-                //}
-                //else
-                //{
+                if (f.name.Equals("gps"))
+                {
+                    SplitGPSLatitudeAndLongitude(f.name, f.label, sbColHeader, separator);
+                }
+                else
+                {
                     fieldName = ChangeEnumeratorNameToTitle(f.positionIndex, f.name);
                     //Take the label, but if there is no label take the field name.
                     columnHeaderLabel = !string.IsNullOrEmpty(f.label) ? f.label : fieldName;
                     sbColHeader.Append(columnHeaderLabel + separator);
-                //}
+                }
             }   
         }
 
@@ -337,7 +343,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                         int respID = reader.GetInt32(0);
                         if(filteredResponseIDs.Contains(respID))
                         {
-                            sb.Append(ReadSingleRow((IDataRecord)reader, separator));
+                            sb.Append(ReadSingleRow((IDataRecord)reader, separator, isFormHasDefaultGPSField));
                         }
                     }
                 }
@@ -380,7 +386,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                 {
                     while(reader.Read())
                     {
-                        sb.Append(ReadSingleRow((IDataRecord)reader, separator));
+                        sb.Append(ReadSingleRow((IDataRecord)reader, separator, isFormHasDefaultGPSField));
                     }
                 }
             }
@@ -667,21 +673,22 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
         }
     }
 
-    private string ReadSingleRow(IDataRecord record, string separator)
+    private string ReadSingleRow(IDataRecord record, string separator, bool isFormHasDefaultGPSField)
     {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < record.FieldCount; i++)
         {
-            //Index 7 is the GPS, split it into two fields.
-            //if (i == 7) //s3
-            //{
-            //    if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[0]))
-            //        sb.Append(record[i].ToString().Split(' ')[0].Replace("\n", " ") + separator);
-            //    if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[1]))
-            //        sb.Append(record[i].ToString().Split(' ')[1].Replace("\n", " ") + separator);
-            //}
-            //else
-            sb.Append(record[i].ToString().Replace("\n", " ") + separator);
+            //Index 7 is the GPS, split it into two columns.
+            if (i == 7
+                && isFormHasDefaultGPSField) //s3
+            {
+                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[0]))
+                    sb.Append(record[i].ToString().Split(' ')[0].Replace("\n", " ") + separator);
+                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[1]))
+                    sb.Append(record[i].ToString().Split(' ')[1].Replace("\n", " ") + separator);
+            }
+            else
+                sb.Append(record[i].ToString().Replace("\n", " ") + separator);
         }
 
         return sb.ToString().Substring(0, sb.ToString().Length - 1) + "\r\n";

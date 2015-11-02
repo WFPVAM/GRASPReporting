@@ -39,15 +39,16 @@ public partial class Settings : System.Web.UI.Page
     /// <param name="e"></param>
     protected void Page_Load(object sender, EventArgs e)
     {
-        if(Utility.VerifyAccess(Request))
+        if (Utility.VerifyAccess(Request))
         {
-            if(!IsPostBack)
+            if (!IsPostBack)
             {
+                MaintainPermissionsSectionVisibility();
                 FillDdlRoles();
                 string pathFileInfo = Server.MapPath("../Public/InfoHP.txt");
-                if(File.Exists(pathFileInfo))
+                if (File.Exists(pathFileInfo))
                 {
-                    using(StreamReader sr = new StreamReader(pathFileInfo))
+                    using (StreamReader sr = new StreamReader(pathFileInfo))
                     {
                         RadEditor1.Content = sr.ReadToEnd();
                     }
@@ -61,6 +62,12 @@ public partial class Settings : System.Web.UI.Page
         }
 
     }
+
+    private void MaintainPermissionsSectionVisibility()
+    {
+        divPermissions.Visible = Permissions.IsLoggedUserHasPermission(GeneralEnums.Permissions.SeePermissionsSection);
+    }
+
     /// <summary>
     /// Saves the content of the RadEditor in the file InfoHP.txt
     /// </summary>
