@@ -47,7 +47,7 @@ public partial class Permissions
         {
             using (GRASPEntities db = new GRASPEntities())
             {
-                 rolePermissionsespermissionses = (from rp in db.Role_Permissions
+                 rolePermissionsespermissionses = (from rp in db.RolePermissions
                     where rp.RoleID == roleId
                     select rp).ToList();
             }
@@ -78,14 +78,14 @@ public partial class Permissions
                 {
                     foreach (Role_Permissions rolePermissions in deletedRolePermissionses)
                     {
-                        Role_Permissions rolePermissionsToRemove = db.Role_Permissions.Single(o => o.id == rolePermissions.id);
-                        db.Role_Permissions.Remove(rolePermissionsToRemove);
+                        Role_Permissions rolePermissionsToRemove = db.RolePermissions.Single(o => o.id == rolePermissions.id);
+                        db.RolePermissions.Remove(rolePermissionsToRemove);
                     }
                 }
 
                 if (newRolePermissionses != null)
                 {
-                    db.Role_Permissions.AddRange(newRolePermissionses);   
+                    db.RolePermissions.AddRange(newRolePermissionses);   
                 }
 
                 db.SaveChanges();
@@ -119,7 +119,7 @@ public partial class Permissions
             using (GRASPEntities db = new GRASPEntities())
             {
                 var permissionName = from p in db.Permissions
-                    join rp in db.Role_Permissions on p.id equals rp.PermissionID
+                    join rp in db.RolePermissions on p.id equals rp.PermissionID
                     where rp.RoleID == userRoleID
                     select p.Name;
 

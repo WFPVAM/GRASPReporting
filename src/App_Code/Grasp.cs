@@ -145,6 +145,7 @@ public partial class Form
 {
     public Form()
     {
+        this.IsDeleted = false;
         this.FormResponse = new HashSet<FormResponse>();
         this.Survey = new HashSet<Survey>();
         this.FormField = new HashSet<FormField>();
@@ -554,6 +555,20 @@ public partial class message
     public virtual ICollection<FrontlineMultimediaMessagePart> FrontlineMultimediaMessagePart { get; set; }
 }
 
+public partial class Permissions
+{
+    public Permissions()
+    {
+        this.RolePermission = new HashSet<Role_Permissions>();
+    }
+
+    public int id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+
+    public virtual ICollection<Role_Permissions> RolePermission { get; set; }
+}
+
 public partial class reminder
 {
     public string occurrence { get; set; }
@@ -710,6 +725,16 @@ public partial class ResponseValueReviews
     public Nullable<int> FormResponseReviewID { get; set; }
 }
 
+public partial class Role_Permissions
+{
+    public int id { get; set; }
+    public int RoleID { get; set; }
+    public int PermissionID { get; set; }
+
+    public virtual Roles Roles { get; set; }
+    public virtual Permissions Permissions { get; set; }
+}
+
 public partial class Roles
 {
     public Roles()
@@ -723,29 +748,6 @@ public partial class Roles
 
     public virtual ICollection<User_Credential> User_Credential { get; set; }
     public virtual ICollection<Role_Permissions> RolePermission { get; set; }
-}
-
-public partial class Permissions
-{
-    public Permissions()
-    {
-        this.RolePermission = new HashSet<Role_Permissions>();
-    }
-
-    public int id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public virtual ICollection<Role_Permissions> RolePermission { get; set; }
-}
-
-public partial class Role_Permissions
-{
-    public int id { get; set; }
-    public int RoleID { get; set; }
-    public int PermissionID { get; set; }
-
-    public virtual Role Roles { get; set; }
-    public virtual Permissions Permissions { get; set; }
 }
 
 public partial class RolesToResponseStatus
@@ -905,4 +907,3 @@ public partial class UserToFormResponses
     public decimal formResponseID { get; set; }
     public decimal formID { get; set; }
 }
-

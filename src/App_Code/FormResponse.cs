@@ -325,6 +325,9 @@ public partial class FormResponse
                             select new { r.name, r.type, r.value,r.nvalue };
             foreach(var r in responses)
             {
+                if (r.value == null)
+                    continue;
+                
                 switch(r.type)
                 {
                     case "TEXT_FIELD":
