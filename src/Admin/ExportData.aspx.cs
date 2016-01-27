@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -112,6 +113,36 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             string url = "../temp/" + folderName;
             Directory.CreateDirectory(folderPath);
 
+            int userID = 0;
+            if(Int32.TryParse(Session["userID"].ToString(), out userID))
+            {
+                using(GRASPEntities db = new GRASPEntities())
+                {
+                    UserFilters userFilter = (from uf in db.UserFilters
+                                              where uf.userID == userID && uf.UserFilterIsEnabled == 1
+                                              select uf).FirstOrDefault();
+
+                    if(userFilter != null)
+                    {
+                        string uFilterString = userFilter.UserFilterString;
+                        int uFilterCount = Regex.Matches(uFilterString, "formFieldID==").Count;
+                        if(uFilterCount > 0)
+                        {
+                            if(filter.Length > 0)
+                            {
+                                filter += " OR " + uFilterString;
+                                filterCount = (Int32.Parse(filterCount) + uFilterCount).ToString();
+                            }
+                            else
+                            {
+                                filter = uFilterString;
+                                filterCount = uFilterCount.ToString();
+                            }
+                        }
+                    }
+                }
+            }
+
             ExportRepeatables(formID, startFormResponseID, null, "", folderPath, separator, filter, filterCount, responseStatus);
             ExportSurveys(formID, folderPath, separator);
             ExportData(formID, startFormResponseID, null, "", folderPath, separator, filter, filterCount, responseStatus);
@@ -143,6 +174,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
     
     {
         string responseStatusFilter = "";
+        string filterForSQLPartition = "";
         string sqlCmd = "";
         string columnList = "";
         bool isFormHasDefaultGPSField = false; //Forms from very old designer does not have default GPS field at index 4.
@@ -250,6 +282,13 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             responseStatusFilter = " AND ResponseStatusID = " + responseStatusID.ToString();
         }
 
+        if(filter.Length > 0)
+        {
+            string tmpFilter = filter;
+            tmpFilter = tmpFilter.Replace("==", "=").Replace("'", "''").Replace("\"", "'");
+            tmpFilter = tmpFilter.Replace("value='", "value=N'");
+            filterForSQLPartition = " AND FormFieldResponses.formResponseID IN (SELECT formResponseID FROM [FormFieldResponses] WHERE  (" + tmpFilter + ")) ";
+        }
         //Export Responses Data
 
         sqlCmd = "SELECT * FROM (SELECT FormResponseID,CONVERT(char, FRCreateDate,126) AS FRCreateDate,senderMsisdn," + columnList + " FROM " +
@@ -257,7 +296,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
              "+ CAST( ROW_NUMBER() OVER(PARTITION BY FormResponseID, formFieldId, value ORDER BY (1000 + positionIndex)) AS VARCHAR(5)))" +
              ") fn FROM FormFieldResponses " +
              "WHERE type != 'SEPARATOR' AND type != 'TRUNCATED_TEXT' AND type!='WRAPPED_TEXT' AND type!='REPEATABLES_BASIC' AND type!='REPEATABLES' AND " +
-             "      RVRepeatCount=0 AND parentForm_id=" + formID + " AND FormResponseID>" + startFormResponseID + responseStatusFilter +
+             "      RVRepeatCount=0 AND parentForm_id=" + formID + " AND FormResponseID>" + startFormResponseID + responseStatusFilter + filterForSQLPartition +
              ") x pivot ( max(value) for fn in (" + columnList + ") ) p) AS X";
 
         //var result = db.Database.SqlQuery<IEnumerable<string>>(sqlCmd).ToList();
@@ -337,7 +376,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                     }
                 }
                 else
-                {
+                {                    
                     while (reader.Read()) //s3 code duplication
                     {
                         int respID = reader.GetInt32(0);
