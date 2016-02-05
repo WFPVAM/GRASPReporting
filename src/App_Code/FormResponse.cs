@@ -49,7 +49,7 @@ public partial class FormResponse
         response.senderMsisdn = "+0000000000"; //The default web entry number.
         response.FRCreateDate = DateTime.Now;
         response.LastUpdatedDate = response.FRCreateDate;
-        response.ResponseStatusID = 1;  //default status ToBeReviewed
+        //response.ResponseStatusID = 1;  //default status ToBeReviewed
         response.pushed = 0;
 
         db.FormResponse.Add(response);
