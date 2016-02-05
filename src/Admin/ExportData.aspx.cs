@@ -119,7 +119,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                 using(GRASPEntities db = new GRASPEntities())
                 {
                     UserFilters userFilter = (from uf in db.UserFilters
-                                              where uf.userID == userID && uf.UserFilterIsEnabled == 1
+                                              where uf.userID == userID && uf.formID== formID && uf.UserFilterIsEnabled == 1
                                               select uf).FirstOrDefault();
 
                     if(userFilter != null)
@@ -562,7 +562,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                 int fc = Convert.ToInt32(filterCount);
                 var respUnion = (from r in db.ResponseValue
                                  from fr in db.FormResponse
-                                 where fr.id == r.FormResponseID && fr.parentForm_id == 1
+                                 where fr.id == r.FormResponseID && fr.parentForm_id == formID
                                         && (responseStatusID == 0 || fr.ResponseStatusID == responseStatusID)
                                  select new
                                  {
@@ -573,7 +573,7 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
                                  }).Union(
                  from re in db.ResponseValueExt
                  from fr in db.FormResponse
-                 where fr.id == re.FormResponseID && fr.parentForm_id == 1
+                 where fr.id == re.FormResponseID && fr.parentForm_id == formID
                  select new { FormResponseID = re.FormResponseID, Value = "", nvalue = re.nvalue.Value, formFieldID = re.FormFieldID.Value });
 
                 var filteredResponseIDs = from r in respUnion.Where(filter)

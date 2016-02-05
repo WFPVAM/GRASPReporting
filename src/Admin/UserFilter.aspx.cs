@@ -51,9 +51,9 @@ public partial class Admin_UserFilter : System.Web.UI.Page
 
 
                     var users = from u in db.User_Credential.Where(w=>w.UserDeleteDate==null && w.roles_id != 3)
-                                join f in db.UserFilters on u.user_id equals f.userID into uf
+                                join f in db.UserFilters.Where(ufw=>ufw.formID==formID) on u.user_id equals f.userID into uf
                                 from jf in uf.DefaultIfEmpty()
-                                where jf == null ? true : jf.formID == formID
+                                //where jf == null ? true : jf.formID == formID
                                 select new { u.username, u.user_id, u.supervisor, jf.UserFilterDescription };
                     DdlUsers.DataSource = users.ToList();
                     DdlUsers.DataBind();
@@ -353,6 +353,8 @@ public partial class Admin_UserFilter : System.Web.UI.Page
                 UserFilters.Insert(formID, userID, lblFilter.Text, lblFilterSummary.Text.Replace("<br/>", " ").Trim());
                 //User_Credential.UpdateUserResponseFilter(userID,lblFilterSummary.Text.Replace("<br/>"," ").Trim());
                 lblTestResult.Text = UserToFormResponses.GenerateAssociation(userID, formID, true);
+                lblTestResult.Text += "<br/><br/><strong>Filter(s) Applied.</strong>";
+                pnlSave.Visible = false;
             }
             else
             {

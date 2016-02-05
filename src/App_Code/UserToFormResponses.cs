@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 /// <summary>
@@ -30,8 +31,10 @@ public partial class UserToFormResponses
             }
 
             filter = (from uf in db.UserFilters
-                             where uf.userID == userID && formID == formID && uf.UserFilterIsEnabled == 1
+                             where uf.userID == userID && uf.formID == formID && uf.UserFilterIsEnabled == 1
                              select uf.UserFilterString).FirstOrDefault();
+            int filterCount = Regex.Matches(filter, "formFieldID==").Count;
+
             IQueryable<ResValForFilter> respUnion;
             if(startFromFormResponseID == 0)
             {
@@ -61,7 +64,7 @@ public partial class UserToFormResponses
             }
             var filteredResponseIDs = (from r in respUnion.Where(filter)
                                        group r by r.FormResponseID into grp
-                                       where grp.Count() == 1
+                                       where grp.Count() == filterCount
                                        select grp.Key).ToList();
 
             Stopwatch stopWatch = new Stopwatch();
@@ -92,7 +95,7 @@ public partial class UserToFormResponses
         using(GRASPEntities db = new GRASPEntities())
         {
             List<UserFilters> userToFilter = (from uf in db.UserFilters
-                                              where formID == formID && uf.UserFilterIsEnabled == 1
+                                              where uf.formID == formID && uf.UserFilterIsEnabled == 1
                                               select uf).ToList();
 
             foreach(UserFilters u in userToFilter)

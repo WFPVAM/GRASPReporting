@@ -64,7 +64,7 @@
 
         <asp:Panel ID="pnlSelectUser" runat="server">
             <label>Select a User:</label>
-            <telerik:RadComboBox ID="DdlUsers" runat="server" DataTextField="username" EmptyMessage="Select a User"
+            <telerik:RadComboBox ID="DdlUsers" runat="server" DataTextField="username" EmptyMessage="Please select a User"
                 DataValueField="user_id" Skin="Metro" ForeColor="#222" HighlightTemplatedItems="true" DropDownWidth="650px" Width="250px">
                 <HeaderTemplate>
                     <ul>
