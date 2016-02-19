@@ -49,7 +49,7 @@ public partial class FormResponse
         response.senderMsisdn = "+0000000000"; //The default web entry number.
         response.FRCreateDate = DateTime.Now;
         response.LastUpdatedDate = response.FRCreateDate;
-        response.ResponseStatusID = 1;  //default status ToBeReviewed
+        //response.ResponseStatusID = 1;  //default status ToBeReviewed
         response.pushed = 0;
 
         db.FormResponse.Add(response);
@@ -325,6 +325,9 @@ public partial class FormResponse
                             select new { r.name, r.type, r.value,r.nvalue };
             foreach(var r in responses)
             {
+                if (r.value == null)
+                    continue;
+                
                 switch(r.type)
                 {
                     case "TEXT_FIELD":
@@ -474,10 +477,17 @@ public partial class FormResponse
         return jsonOutput;
     }
 
+    /// <summary>
+    /// Finds the response ID that correspond with the giving response file name.
+    /// </summary>
+    /// <param name="responseFileName"></param>
+    /// <returns></returns>
     public static int GetIdByResponseFileName(string responseFileName)
     {
         using (GRASPEntities db = new GRASPEntities())
         {
+            //Finds the response name in the "Code_Form" column. This is the ID that connects the response file
+            //under incoming folder with the response record in the database (response name = file name).
             var formResponseID = (from f in db.FormResponse
                         where f.Code_Form == responseFileName
                         select f.id).FirstOrDefault();

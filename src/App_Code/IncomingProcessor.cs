@@ -14,7 +14,6 @@ using System.Web.UI.WebControls;
 using System.Xml;
 using Telerik.Web.UI;
 
-
 /// <summary>
 /// Summary description for IncomingProcessor
 /// </summary>
@@ -745,102 +744,6 @@ public class IncomingProcessor
         }
     }
 
-    //private bool SaveIncommingVideo(string data, string sender, string formInstanceName, string videoFileName)
-    //{
-    //    try
-    //    {
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        LogUtils.WriteErrorLog(ex.ToString());
-    //    }
-    //    return false;
-    //}
-
-    //private byte[] Decompress(byte[] compressedBytes)
-    //{
-    //    using (var ms = new MemoryStream())
-    //    {
-    //        using (var bs = new MemoryStream(compressedBytes))
-    //        {
-    //            //bs.Seek(0, SeekOrigin.Begin);
-    //            using (var z = new GZipStream(bs, CompressionMode.Decompress))
-    //            {
-    //                //z.Seek(0, SeekOrigin.Begin);
-    //                z.CopyTo(ms);
-    //            }
-    //        }
-    //        return ms.ToArray();
-    //    }
-    //}
-
-    //public static string UnZip(string value)
-    //{
-    //    //Transform string into byte[]
-    //    byte[] byteArray = new byte[value.Length];
-    //    int indexBA = 0;
-    //    foreach (char item in value.ToCharArray())
-    //    {
-    //        byteArray[indexBA++] = (byte)item;
-    //    }
-
-    //    //Prepare for decompress
-    //    System.IO.MemoryStream ms = new System.IO.MemoryStream(byteArray);
-    //    System.IO.Compression.GZipStream sr = new System.IO.Compression.GZipStream(ms,
-    //        System.IO.Compression.CompressionMode.Decompress);
-
-    //    //Reset variable to collect uncompressed result
-    //    byteArray = new byte[byteArray.Length];
-
-    //    //Decompress
-    //    int rByte = sr.Read(byteArray, 0, byteArray.Length);
-
-    //    //Transform byte[] unzip data to string
-    //    System.Text.StringBuilder sB = new System.Text.StringBuilder(rByte);
-    //    //Read the number of bytes GZipStream red and do not a for each bytes in
-    //    //resultByteArray;
-    //    for (int i = 0; i < rByte; i++)
-    //    {
-    //        sB.Append((char)byteArray[i]);
-    //    }
-    //    sr.Close();
-    //    ms.Close();
-    //    sr.Dispose();
-    //    ms.Dispose();
-    //    return sB.ToString();
-    //}
-
-    ///// <span class="code-SummaryComment"><summary></span>
-    ///// Gets the uncompressed image. If the image is compressed, 
-    ///// it will be uncompressed first.
-    ///// <span class="code-SummaryComment"></summary></span>
-    //public Image GetDecompressedImage()
-    //{
-    //    if (decompressed == null)
-    //    {
-    //        stream.Seek(0, SeekOrigin.Begin);
-    //        decompressed = new Bitmap(stream);
-    //    }
-    //    return decompressed;
-    //}
-
-    ///// <span class="code-SummaryComment"><summary></span>
-    ///// Clears the uncompressed image, leaving the compressed one in memory.
-    ///// <span class="code-SummaryComment"></summary></span>
-    //public void ClearDecompressedImage()
-    //{
-    //    if (decompressed != null)
-    //    {
-    //        if (stream == null)
-    //        {
-    //            stream = new MemoryStream();
-    //            decompressed.Save(stream, format);
-    //        }
-    //        decompressed = null;
-    //    }
-    //}
-
     /// <summary>
     /// Gets the full relative image path.
     /// </summary>
@@ -1006,4 +909,100 @@ public class IncomingProcessor
             LogUtils.WriteErrorLog(ex.ToString());
         }
     }
+
+    //private bool SaveIncommingVideo(string data, string sender, string formInstanceName, string videoFileName)
+    //{
+    //    try
+    //    {
+
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        LogUtils.WriteErrorLog(ex.ToString());
+    //    }
+    //    return false;
+    //}
+
+    //private byte[] Decompress(byte[] compressedBytes)
+    //{
+    //    using (var ms = new MemoryStream())
+    //    {
+    //        using (var bs = new MemoryStream(compressedBytes))
+    //        {
+    //            //bs.Seek(0, SeekOrigin.Begin);
+    //            using (var z = new GZipStream(bs, CompressionMode.Decompress))
+    //            {
+    //                //z.Seek(0, SeekOrigin.Begin);
+    //                z.CopyTo(ms);
+    //            }
+    //        }
+    //        return ms.ToArray();
+    //    }
+    //}
+
+    //public static string UnZip(string value)
+    //{
+    //    //Transform string into byte[]
+    //    byte[] byteArray = new byte[value.Length];
+    //    int indexBA = 0;
+    //    foreach (char item in value.ToCharArray())
+    //    {
+    //        byteArray[indexBA++] = (byte)item;
+    //    }
+
+    //    //Prepare for decompress
+    //    System.IO.MemoryStream ms = new System.IO.MemoryStream(byteArray);
+    //    System.IO.Compression.GZipStream sr = new System.IO.Compression.GZipStream(ms,
+    //        System.IO.Compression.CompressionMode.Decompress);
+
+    //    //Reset variable to collect uncompressed result
+    //    byteArray = new byte[byteArray.Length];
+
+    //    //Decompress
+    //    int rByte = sr.Read(byteArray, 0, byteArray.Length);
+
+    //    //Transform byte[] unzip data to string
+    //    System.Text.StringBuilder sB = new System.Text.StringBuilder(rByte);
+    //    //Read the number of bytes GZipStream red and do not a for each bytes in
+    //    //resultByteArray;
+    //    for (int i = 0; i < rByte; i++)
+    //    {
+    //        sB.Append((char)byteArray[i]);
+    //    }
+    //    sr.Close();
+    //    ms.Close();
+    //    sr.Dispose();
+    //    ms.Dispose();
+    //    return sB.ToString();
+    //}
+
+    ///// <span class="code-SummaryComment"><summary></span>
+    ///// Gets the uncompressed image. If the image is compressed, 
+    ///// it will be uncompressed first.
+    ///// <span class="code-SummaryComment"></summary></span>
+    //public Image GetDecompressedImage()
+    //{
+    //    if (decompressed == null)
+    //    {
+    //        stream.Seek(0, SeekOrigin.Begin);
+    //        decompressed = new Bitmap(stream);
+    //    }
+    //    return decompressed;
+    //}
+
+    ///// <span class="code-SummaryComment"><summary></span>
+    ///// Clears the uncompressed image, leaving the compressed one in memory.
+    ///// <span class="code-SummaryComment"></summary></span>
+    //public void ClearDecompressedImage()
+    //{
+    //    if (decompressed != null)
+    //    {
+    //        if (stream == null)
+    //        {
+    //            stream = new MemoryStream();
+    //            decompressed.Save(stream, format);
+    //        }
+    //        decompressed = null;
+    //    }
+    //}
 }

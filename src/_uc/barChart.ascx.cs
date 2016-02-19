@@ -224,68 +224,6 @@ public partial class _uc_barChart : System.Web.UI.UserControl
                 }
             }
 
-            //<deletedBy>Saad Mansour</deletedBy>
-            //string tmpValueKey = "";
-            //foreach (var r in fieldResponses)
-            //{
-            //    if (r.formFieldId == serieID)
-            //    {
-            //        // Series Field
-            //        tmpValueKey = r.value;
-            //    }
-            //    else
-            //    {
-            //        // Value Field
-            //        try
-            //        {
-            //            double val = axisValues[tmpValueKey];
-            //            switch (aggregate)
-            //            {
-            //                case "average":
-            //                    countAverage[tmpValueKey] = countAverage[tmpValueKey] + 1;
-            //                    axisValues[tmpValueKey] += Convert.ToDouble(r.value);
-            //                    break;
-            //                case "sum":
-            //                    if (r.nvalue != null)
-            //                    {
-            //                        axisValues[tmpValueKey] += r.nvalue.Value;
-            //                    }
-            //                    break;
-            //                case "stdev":
-            //                    List<double> list;
-            //                    if (!stDev.TryGetValue(tmpValueKey, out list))
-            //                        stDev.Add(tmpValueKey, list = new List<double>());
-            //                    list.Add(Convert.ToDouble(r.value));
-            //                    break;
-            //                case "min":
-            //                    if (Convert.ToDouble(r.value) < val)
-            //                        axisValues[tmpValueKey] = Convert.ToDouble(r.value);
-            //                    break;
-            //                case "max":
-            //                    if (Convert.ToDouble(r.value) > val)
-            //                        axisValues[tmpValueKey] = Convert.ToDouble(r.value);
-            //                    break;
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            if (aggregate != "max" && aggregate != "min")
-            //            {
-            //                countAverage.Add(tmpValueKey, 1);
-            //            }
-            //            axisValues.Add(tmpValueKey, Convert.ToDouble(r.value));
-
-            //            if (aggregate == "stdev")
-            //            {
-            //                List<double> list;
-            //                if (!stDev.TryGetValue(tmpValueKey, out list))
-            //                    stDev.Add(tmpValueKey, list = new List<double>());
-            //                list.Add(Convert.ToDouble(r.value));
-            //            }
-            //        }
-            //    }
-            //}
-
             foreach(var item in axisValues.ToList())
             {
                 if(aggregate == "average")

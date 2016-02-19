@@ -145,7 +145,7 @@ public partial class Form
 {
     public Form()
     {
-        this.IsDeleted = 0;
+        this.IsDeleted = false;
         this.FormResponse = new HashSet<FormResponse>();
         this.Survey = new HashSet<Survey>();
         this.FormField = new HashSet<FormField>();
@@ -164,9 +164,9 @@ public partial class Form
     public string permittedGroup_path { get; set; }
     public Nullable<System.DateTime> FormCreateDate { get; set; }
     public Nullable<int> isHidden { get; set; }
-    public byte IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
     public Nullable<System.DateTime> DeletedDate { get; set; }
-    public byte FormVersion { get; set; }
+    public Nullable<byte> FormVersion { get; set; }
     public string PreviousPublishedName { get; set; }
     public string PreviousPublishedID { get; set; }
 
