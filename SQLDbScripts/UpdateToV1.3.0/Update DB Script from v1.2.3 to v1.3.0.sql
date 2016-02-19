@@ -3,7 +3,7 @@ GO
 
 /****** 1_AddColumnsToFormTable ******/
 Alter table [GRASP].[dbo].[Form] add 
-	[IsDeleted] [tinyint]  NULL,
+	[IsDeleted] [bit] NOT NULL,
 	[DeletedDate] [datetime] NULL,
 	[FormVersion] [tinyint] NULL,
 	[PreviousPublishedName] [nvarchar](100) NULL,
@@ -117,15 +117,4 @@ INSERT [dbo].[Role_Permissions] ([RoleID], [PermissionID]) VALUES (3, 3)
 --SET IDENTITY_INSERT [dbo].[Role_Permissions] OFF
 
 /****** 6_AddColumnToFormResponseTable ******/
-Alter table [GRASP].[dbo].[FormResponse] add [LastUpdatedDate] [datetime] NULL
-
-
-UPDATE [dbo].[Form] set FormVersion=1 WHERE FormVersion IS NULL
-UPDATE [dbo].[Form] set IsDeleted=0 WHERE IsDeleted IS NULL;
-
-
-/* alter form respone **/
-
-ALTER TABLE [FormResponse] DROP CONSTRAINT [DF_FormResponse_ResponseStatusID];
-
-ALTER TABLE [FormResponse] ADD CONSTRAINT DF_FormResponse_ResponseStatusID DEFAULT 1 FOR [ResponseStatusID];
+Alter table [GRASP].[dbo].[FormResponse] add [LastUpdatedDate] [datetime] NULL;
