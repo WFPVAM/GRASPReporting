@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<CompareOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="2.35" xmlns="http://huagati.com/edmxtools/compareoptions">
+  <Description>This file stores the various compare options for the Huagati EDMX Tools model comparer.</Description>
+  <DB>
+    <NewTables>true</NewTables>
+    <NewViews>true</NewViews>
+    <NewMembers>true</NewMembers>
+    <ChangedMembers>true</ChangedMembers>
+    <MemberDataType>true</MemberDataType>
+    <MemberNullability>true</MemberNullability>
+    <MemberMaxLength>true</MemberMaxLength>
+    <MemberPrecisionScale>true</MemberPrecisionScale>
+    <MemberIsPrimaryKey>true</MemberIsPrimaryKey>
+    <MemberIsIdentity>true</MemberIsIdentity>
+    <MemberIsComputed>true</MemberIsComputed>
+    <MemberDefaultConstraints>true</MemberDefaultConstraints>
+    <NewFKs>true</NewFKs>
+    <NewProcs>true</NewProcs>
+    <ChangedProcs>true</ChangedProcs>
+    <ParamCount>true</ParamCount>
+    <ParamDataType>true</ParamDataType>
+    <ParamMaxLength>true</ParamMaxLength>
+    <ParamPrecisionScale>true</ParamPrecisionScale>
+    <ProcReturnType>true</ProcReturnType>
+    <IgnoreTablesViews>
+      <IgnoreItem Permanent="true" Name="dbo.sysdiagrams" />
+    </IgnoreTablesViews>
+    <IgnoreMembers />
+    <IgnoreFKs />
+    <IgnoreProcs>
+      <IgnoreItem Permanent="true" Name="dbo.sp_upgraddiagrams" />
+      <IgnoreItem Permanent="true" Name="dbo.sp_helpdiagrams" />
+      <IgnoreItem Permanent="true" Name="dbo.sp_helpdiagramdefinition" />
+      <IgnoreItem Permanent="true" Name="dbo.sp_creatediagram" />
+      <IgnoreItem Permanent="true" Name="dbo.sp_renamediagram" />
+      <IgnoreItem Permanent="true" Name="dbo.sp_alterdiagram" />
+      <IgnoreItem Permanent="true" Name="dbo.sp_dropdiagram" />
+      <IgnoreItem Permanent="true" Name="dbo.fn_diagramobjects" />
+    </IgnoreProcs>
+    <IgnoreProcParams />
+    <IdentityConstraints>
+      <Constraint>newid()</Constraint>
+      <Constraint>newsequentialid()</Constraint>
+    </IdentityConstraints>
+    <ComputedConstraints />
+    <GuidIdentityDefaultConstraint>newsequentialid()</GuidIdentityDefaultConstraint>
+    <InferForeignKeyConstraintsForTables>false</InferForeignKeyConstraintsForTables>
+    <InferForeignKeyConstraintsForViews>false</InferForeignKeyConstraintsForViews>
+    <InferFKsWithPKTablePrefix>false</InferFKsWithPKTablePrefix>
+    <InferredFKsUseUnderscoreSeparator>false</InferredFKsUseUnderscoreSeparator>
+    <InferOneToOneFKs>false</InferOneToOneFKs>
+    <InferUsingRegexMatching>false</InferUsingRegexMatching>
+    <InferFKSideRegexMatch>^([\w\d]*)$</InferFKSideRegexMatch>
+    <InferFKSideRegexReplacement>$1</InferFKSideRegexReplacement>
+    <InferPKSideRegexMatch>^([\w\d]*)$</InferPKSideRegexMatch>
+    <InferPKSideRegexReplacement>%pktable%_$1</InferPKSideRegexReplacement>
+  </DB>
+  <SSDL>
+    <TablesNotInDB>true</TablesNotInDB>
+    <ViewsNotInDB>true</ViewsNotInDB>
+    <MembersNotInDB>true</MembersNotInDB>
+    <ProceduresNotInDB>true</ProceduresNotInDB>
+    <FKsNotInDB>true</FKsNotInDB>
+    <EntitiesNotInCSDL>true</EntitiesNotInCSDL>
+    <MembersNotInCSDL>true</MembersNotInCSDL>
+    <AssociationsNotInCSDL>true</AssociationsNotInCSDL>
+    <FunctionsNotInCSDL>true</FunctionsNotInCSDL>
+    <IgnoreEntitySets />
+    <IgnoreEntityTypes />
+    <IgnoreMembers />
+    <IgnoreAssociations />
+    <IgnoreFunctions />
+    <IgnoreFunctionParams />
+  </SSDL>
+  <CSDL>
+    <EntitiesNotInSSDL>true</EntitiesNotInSSDL>
+    <MembersNotInSSDL>true</MembersNotInSSDL>
+    <AssociationsNotInSSDL>true</AssociationsNotInSSDL>
+    <FunctionsNotInSSDL>true</FunctionsNotInSSDL>
+    <IgnoreEntitySets />
+    <IgnoreEntityTypes />
+    <IgnoreMembers />
+    <IgnoreAssociations />
+    <IgnoreFunctions />
+    <IgnoreFunctionParams />
+  </CSDL>
+  <CSDLvsSSDL>
+    <MemberType>true</MemberType>
+    <KeyMembership>true</KeyMembership>
+    <StoreGeneratedPattern>true</StoreGeneratedPattern>
+    <DefaultValue>true</DefaultValue>
+    <Collation>true</Collation>
+  </CSDLvsSSDL>
+  <InheritanceStrategy>Mixed</InheritanceStrategy>
+  <ModelFirstOptions>
+    <InheritanceStrategy>Mixed</InheritanceStrategy>
+    <DefaultSchemaName>dbo</DefaultSchemaName>
+    <TableName>EntityTypeName</TableName>
+    <SplitNames>false</SplitNames>
+    <LowercaseNames>false</LowercaseNames>
+  </ModelFirstOptions>
+</CompareOptions>

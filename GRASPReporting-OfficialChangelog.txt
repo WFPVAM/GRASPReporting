@@ -1,0 +1,341 @@
+GRASP Reporting version 1.3.0
+New Features:
+1-	In Reports, add the ability to create Line Charts (new chart type, mainly uses with Date fields, to show the changes of results over time).
+2-	In Surveys, add the ability to totally delete Form Responses. This functionality is disabled by default, and it can be enabled from Settings -> Roles -> Permissions section -> “Delete Form Response” permission (You have to be logged in by a SuperAdministrator user).
+3-	In Settings -> Roles, add a new section “Permissions”. This section gives the super adminisrator users the ability to maintain the following three permissions: 
+a.	Edit Form Response: to show the “Edit Data” button of the form response.
+b.	Delete Form Response: to show the “Delete” action button in the form responses grid (Surverys -> View action -> Delete button under actions column in the grid).
+c.	See Permissions Section: to show the Permissions section in the Roles page.
+4-	Send the form status to Mobile, where the mobile now handles whether the form is no logner exists in the server, or deleted, or published with a new version.
+5-	In Create a New Chart Pgae:
+a.	Add the DATE and CheckBox questions in the aggregate field list.
+6-	Implement a UI blugin to integrate the data collected using GRASP with the free open source web GIS application “GeoSDI”.
+7-	Add last updated date column in the form responses, to show the last updated date of the response, which is either updated using the edit of submitted responses from GRASP Mobile, or using the Edit Data in GRASP Reporting.
+8-	Handle editing of submitted form responses sent from GRASP Mobile, and update the last update date of the response.
+Enhancements:
+1-	If you want to send form responses from mobile devices, and process then again, now you have the ability to just move the form responses of the form from “processed” sub folder in “ResponseFiles” folder to the “incoming” sub folder, and process them again, rather than collecting all mobile devices, and send the responses again to the server. Note, when you process a response again, the response data will be updated, if you want to delete the old response and process it again, you have to delete the old response (Surverys -> View action -> Delete button under actions column in the grid), then process it again.
+2-	In Create a New Chart Pgae:
+a.	When selecting COUNT as aggregate function, hide the second field (Series field), because it is not needed.
+b.	Only Show the “Custom Data Column Label” and the “Custom Series Column Label” fileds, when the user check to Show Tabular Data of the chart.
+3-	In View Form page, by default shows the “Edit Data” button only for super administrators. This editing form response data permission can be allowed for other groups from Settings -> Roles -> Permissions section.
+4-	Sends the received Form Reponses with deleted, or with new form version status directly to the “unknownForms” sub folder in “ResponseFiles” folder, and before processing them.
+5-	In Surveys, sort the forms by the created date.
+6-	Remove form responses with the deleted status from the map in GeoSDI (A free web GIS application integrated with GRASP).
+7-	Change the Web data entry phone number from “+39000000000” to “+0000000000” (ten zeros).
+8-	Enhance the handling of exceptions and errors.
+9-	In Settings page, make the Roles Tab as the default one.
+Fixes:
+1-	In few cases, some forms could not be downloaded from Mobile.
+2-	In few cases, Bar Charts shows an extra bar without a label.
+3-	Sometimes, Bar charts do not show all data in the database.
+4-	In Surveys -> Custom Filter, the ‘<=’ condition does not work.
+5-	In Custom Filters, sometimes the summary on the right pane of numeric questions do not show the edited values.
+6-	A bug in Reporting version 1.2.3, an error happens when you try to export an old form data with no GPS default question.
+7-	In Create a New Chart Pgae, the table data do not appear with bar charts.
+8-	When you edit a report and click on Delete Chart button the message is "This action will delete the selected report. Are you sure?" Replace "report" with "chart".
+9-  When a user with a user filter exports the data, the data was not being filtered
+10- Bug fixed on exporting repeatable (roster/table) when custom filter is applied
+
+Previous Releases
+GRASP Reporting version 1.2.3
+New Features:
+1.	In Reports, add the ability to add custom filters on any field or group of fields on the form exactly as the custom filters on Surveys. In addition, user can also save the report filters, in case he wants to keep the filters with the Report.
+2.	In Reports, add the functionality to export report’s charts as images.
+
+Enhancements:
+1.	Write user manual in both English and Arabic.
+2.	In case of errors or exceptions, shows a friendly error page with a unique Error ID, instead of showing the actual error page.
+3.	If GRASP Reporting receives a form response for an old form that is no longer existed in the database, the process responses function moves it to another folder called “unknownForms” under the “ResponseFiles” folder. Therefore, it is removed from the incoming Reponses number, and not processed every time.
+4.	In Bar Charts, always show the information represented by each bar without having to hover by mouse.
+5.	In edit form page, enable editing the GPS coordinates (latitude and longitude), and automatically creates the geometry and geography values (spatial data), which are used for the integration with the GeoSDI Web GIS system to show GRASP data on maps.
+6.	In Home, and Login pages, remove the Barcode apk download link, as it is no longer needed, where the new GRASP Mobile version reads barcodes without using a third party apk.
+
+Fixes:
+1.	In some cases, fix the problem of not saving the Table and Roster questions data from Web Data Entry.
+2.	In some cases, in process form responses, the Tables and Rosters questions are not saved in the database. 
+3.	In some cases, in View Form page, if you view a form with Table questions, the view page only shows the Table’s label without viewing the questions inside the Table.
+4.	In some cases, if you try to edit a form with Table questions, an error happens.
+5.	In some cases, in Edit Form page, some values are inserted to database, all values should be updated.
+6.	In Web Data Entry page, you can't leave any check box question unchecked before saving the form.
+7.	In View Form page, the Table’s drop down list labels are not shown, it only prints answers of the Table’s questions.
+8.	In Custom Filters on Surveys, fix the problem in filtering data by date fields. Now, if you select a date field, the system shows a date picker control.
+9.	In some cases, when you try to export a form with Table questions, the Table questions are not exported.
+10.	In some cases, in exporting a form, if you select SPSS option, any drop down list questions inside a Table or Roster question are not exported.
+11.	In exporting a form using SPSS option, for drop down list questions, export the selected list item Value instead of ID.
+12.	In some cases, in Edit Form page, the questions inside Rosters or Tables other than drop down list or numeric questions are not updated.
+13.	In some cases, in Edit Form page, after you edit some values and click save button, the new saved values are not filled correctly in some fields, especially in numeric fields (the page shows the old values and not the new saved values).
+14.	In Edit and Data Entry pages, numeric and GPS fields should accept numeric numbers not only integer number.
+15.	In Web Data Entry, Longitude field’s value is limited to -90 to +90. It should be limited to -180 to +180.
+16.	In some cases, in View Form page, if the form has concurrent Tables/Rosters questions, the page prints only the last one.
+17.	In some cases, processing Responses button does not save the Table and Roster questions fields IDs correctly in the database.
+18.	In some cases, if you edit a form, the Roster questions do not filled.
+19.	In some cases, in Edit Form Page, Reporting does not save “false” value for unchecked checkbox fields.
+20.	Fix a problem in exporting the form data. When you export with the EXCEL option, any added server side calculated fields in the form are there but there is no labels for them.
+21.	Sometimes, exporting of Rosters and Tables prints two records in one row. Each record should be in a separate row.
+22.	In Web Data Entry, numbers fields are assumed to be integers instead of decimals. They should accept decimal values.
+23.	In some cases, after adding custom filters and then try to export the filtered data, the exported file is empty.
+24.	In view form data page, remove the number after the decimal point if it is zero (i.e. 2.0) for numeric fields.
+25.	Add a new user page requires all fields to be entered and gives an error if one is left blank, e.g. phone number. Now, just the First Name, User Name, and Password are the required fields.
+26.	Fix a label problem for the mandatory Title field. The mandatory ENUMERATOR field’s label is changed to “Title”, but when you export the data it is still called ENUMERATOR and not Title.
+27.	In custom filter, if you leave the fields empty, and click on “Add Filter” button, an error happens.
+28.	In the exported file of a form, in case if a Table question has another question after it, it prints the first two labels in one header such as “ResponseID|n1”.
+
+
+GRASP Mobile version 1.1.0
+New Features:
+1.	Make the update app function to update the app automatically.
+2.	Barcode scanning is handled in GRASP Mobile, so no external apps are needed to do the scanning.
+3.	Add the ability to modify forms when they are completed. A new setting is added in the settings to disable/enable this functionality.
+4.	Add a Notifications appear in the pull down bar, to remind the user to send completed forms and images.
+
+Enhancements:
+1.	Write user manual in both English and Arabic.
+2.	In Go To Index screen, add the ability to view the left empty fields, when you go to index the empty required fields are shown with red background.
+3.	Add the ability to go back to the previous section without having to fill the yellow fields in the current section.
+4.	Enhance the GPS button to wait until it gets a GPS coordinates with indicating the accuracy of the current reading coordinate (i.e. 10 meters).
+5.	Categorize the settings into two groups, advance settings which need the password (“brains”), and user settings such as keep screen portrait.
+6.	An option is added in the settings to keep the screen portrait for the app screens, which is useful in Tablets.
+7.	In a form has an xml formatting error, the app shows an error popup indicating to the user that the form has xml error (we fixed all the xml formatting problems we found, but this is just in case of any new error happens).
+8.	When you click update the app, changed the downloaded apk file path directory for from temporary to home.
+9.	Show the taken GPS coordinates in Numeric and not in Degree, to standardize it with GRASP Reporting.
+10.	Show the taken GPS coordinated accuracy. Where the user can see the accuracy of the taken GPS, if the accuracy is under the accepted value, then he can try to click the GPS button again and wait until getting a better accuracy.
+
+Fixes:
+1.	In some cases, the app crashes if you open a form with Table or Roster fields next to section break or at the end of the form.
+2.	In some cases, some forms arrive with empty name (blank item), and hence cause a crash.
+3.	“Send all forms” button sometimes get disabled.
+4.	Sometimes, if you click the “Synchronize” button multiple times, it adds a new form with empty name (blank item) to the inbox list.
+5.	Sometimes, click “synchronize” button, it does not download some published forms from server.
+6.	In some cases, when take the GPS coordinates quickly by clicking “Get GPS Point “ it returns GPS for Ramallah city in Palestine.
+7.	In some cases, in photo field, if you take a photo, then return to it later from another section it shows in yellow.
+8.	In some cases, if you send a form with some Unicode text (i.e. specific Arabic characters), it does not submitted to the server.
+9.	When Android system language is in Arabic, the server returns error code regarding encoding the Arabic date.
+10.	In some cases, the validation of Numeric fields inside Table or Roster question does not work properly. It Changes the Red color, and sometime it lets you pass without checking the validation
+11.	In the Roster questions, sometimes when you go next and click "No" to finish adding elements in the Roster, the mobile does not go to the next section but keeps showing the dialog and you can't move next.
+12.	In some cases, Barcode scanning do not work.
+13.	Sometimes, the numeric validation does not always show the red color while typing.
+14.	Text field/text Area does not start new line only expand when the user hit enter.
+15.	When the cursor is in a numeric or text field and the user scrolls down to click on radio buttons, dropdowns, etc. The screen keeps scrolling back to display the cursor in the numeric/text field every time the user clicks on anything.
+16.	In the completed tab, hold on a form, select to send it using SMS but without having a number, an error message appears but does not disappear:
+
+GRASP Designer version 0.0.32
+Note: the GRASP Designer has no update since the last update version (0.0.32), but we added some enhancements (such as Manual) and some fixes in Reporting and Mobile that enhanced the Designer.
+Enhancements:
+1.	Write user manual in both English and Arabic.
+2.	Write specialized user manual for form’s controls with screen shots from GRASP Mobile in both English and Arabic.
+
+Fixes:
+1.	Now, you can design a form with Table or Roster at end of the form, or at end of a section. There is no update on the designer, the problem is fixed from the Reporting and Mobile side.
+2.	Now, you can design a form with concurrent Roster and Table questions.
+
+
+*************************************************************************
+
+GRASPDesigner Version 0.0.32 (on 13/02/2015):
+New Features:
+1.	In Form Editor:
+a.	Add a new GPS default field (field position 5).
+
+Enhancements:
+1.	In Form Editor:
+a.	Change the label of the second default field from “Enumerator ID” to “Title”.
+b.	When the user click on “Edit button” to edit the “List”, the selected item in “List” is automatically selected in the list editor popup.
+b.	Improve the performance of populating items in “List” drop down list.
+c.	Increase the width of “List” drop down list.
+3.	Remove the “Internet Connection” tab (as it is not used anymore).
+4.	In Reference List editor:
+ .	Automatically select the new added item.
+a.	Automatically select the copied item.
+b.	After the user closes the editing popup, the selected item is automatically selected in “List” drop down in the form editor.
+c.	Change the “Reference List” to accept only one item.
+d.	Change the “Reference List Elements” to accept the new line as the only separator (now it does not accept the comma separator between elements).
+
+Fixes:
+1.	In Form Editor:
+a.	Fix the selection problems in “List” after switching to another application.
+b.	Fix the problem of the “List” from getting disabled (becomes in gray color) in some cases.
+c.	Fix the problem of not saving the selected item in “List” in some cases.
+d.	Fix changing the selected item in “List” in some cases.
+
+GRASPMobile Version 0.1.59:
+New Features:
+1.	Fix the crash problem after taking images.
+2.	Update app function: in the settings the user may update the app without the need for knowing the password.
+3.	Photo upload: photo upload directly from GRASP mobile and not from FolderSync 
+4.	Pending tab is replaced with Submit Images tab , where it has the functionality to send one image or all images 
+5.	Change the default setting for virtual repository to "graspreporting" instead of "grasp".
+
+Enhancements:
+1.	"By" changed to "Title" , "Last saved" changed to "First opened".
+2.	after sending the forms, display message will appear to guide the user to send the images 
+
+Fixes: 
+1.	The progress Bar to update app publish the progress
+2.	Bug fixed: a bug during sending of data: If the device's screen orientation is changed the  dialog box saying "sending..." disappears and control returns to the user while it is still sending.
+3.	Bug fixed: GPS and photo buttons are yellow when the field is obligatory.
+4.	Bug fixed: When transmission settings are "Network Preferred" SEND ALL still asks Network or SMS.
+5.	forms generating the 0kb (form not found) will not be submitted, a message saying: "file does not exist" will be displayed.
+
+GRASPReporting: 
+Version 1.1.6 (on 22/04/2015):
+Fixes:
+1.	Fix the problems of saving tables and rosters data of forms coming from Mobile.
+2.	Fix the problems in saving tables and rosters data in Data Entry.
+3.	Fix the problems in exporting tables and rosters in both EXCEL and SPSS options.
+4.	Fix the problem in exporting a form, in case if the table control has another control after it. It prints the first two labels in one header (for example: ResponseID|n1).
+5.	Fix the problem in SPSS exporting option, the data of list controls inside a table or roster is not exported.
+6.	Fix the problem in SPSS exporting option, export the selected list item ID instead of value in SPSS option.
+
+Version 1.1.5 (on 22/03/2015):
+
+New Features:
+1.	New Scheduler page support, in case if the administrator want to create a windows scheduler task to process the incoming forms every period of time (I already added a section in the manual to show how to create that schedule task).
+
+Enhancements:
+1.	In viewing form, check if the image is not existed, then shows no picture.
+2.	Change CSV to EXCEL, and export the labels in column headers instead of field names (The SPSS option, exports the names and not the labels).
+3.	Remove the FileSync link at Home page.
+
+Fixes:
+1.	Fix the problem of gray area at the bottom of images on server.
+
+Version 1.1.4:
+New Features:
+2.	Accept and save the uploaded images from mobile.
+3.	Add a security access to GRASPImage folder. Now, the unauthorized users can’t access the images in GRASPImage folder. 
+
+Enhancements:
+4.	Name the incoming, processed, and error forms received from GRASPMobile using the same form name of form instance name saved in mobile.
+
+Fixes:
+1.	Fix some of the cases that cause the problem of duplications and missing of some forms. In case if the GRASPReporting receives a duplicate form (a form with a name that already received), the duplicate form is saved under “ResponseFiles\duplicate” for logging.
+
+
+
+________________
+Version 1.1.3
+________________
+Released on 15 December 2014
+
+
+New features
+* Review Restore: it’s possible to restore an entire review cycle based on review data filter, by reviewer or by response status.
+* Review Process: 2 steps review workflow
+* Response View: it’s possible to filter by sender number
+
+
+Improvements
+* Reports: it’s possible to filter the any reports by response status
+* Reports: speed optimization up to 7x in generating the reports
+* Reports: both value and percentage are shown on the pie charts
+* Reports: calculated fields can be used to generate charts
+* Response View: Response Status is shown in the responses table.
+* Calculated Fields: when a field associated to a survey is selected, a dropdown with values is shown.
+
+
+Fixes
+* Data Edit: bug on empty values for numerical fields
+* Data Edit: bug on repeatable fields visualization.
+* Form View: is not shown anymore field name for empty values
+* Form View: bug on repeatable fields visualization.
+* Duplicated Search: fixed bug on duplicated record view page
+
+
+
+
+Database Changes:
+In order to properly upgrade GRASP Reporting, the following database schema changes must be done:
+
+
+1. Add table RolesToResponseStatus
+2. Add record to Roles
+3. Add record FormResponseStatus
+4. Add fields to ReportFields
+5.   
+6. Add view FormFieldResponseReviews
+7. Add view ResponseRepeatableReviews
+8. CREATE NONCLUSTERED INDEX IX_Value_FormFieldId ON [dbo].[ResponseValue] ([FormResponseID])
+    INCLUDE ([value],[formFieldId])
+     GO
+9. Add Index IX_HashString_FormResponseId to IndexHASHes
+   CREATE NONCLUSTERED INDEX IX_HashString_FormResponseId ON [dbo].[IndexHASHes] ([IndexID])
+  INCLUDE ([IndexHASHString],[FormResponseID])
+
+
+
+
+The following web.config key must be created under appSettings section:
+<add key="FileResponseFolder" value=" physicalPathToYourWebApplication \responsefiles” />
+-> replace physicalPathToYourWebApplication  with the local physical path of your web application.
+Create in the root of your web application the folder “responsefiles” with the following subfolders: “incoming”, “error” and “processed”.
+
+
+
+________________
+Version 1.1.2
+________________
+
+
+Released on 30 October 2014
+Author: Marco Giorgi (marco.giorgi@brainsen.com)
+
+
+New features
+* Server-side calculated fields: now it’s possible to add calculated fields to the forms specifying a mathematical formula using the existing form fields.
+* Indexes: indexes are used to search and discover duplicated records based on a combination of one or more fields that are expected to be unique.
+* User Permission: the web application has now a complete redesigned security check to deny access to resources based on user roles. Users can now be associated to view or edit only form responses that contains a specific value in a specific field.
+* Custom Filter: it’s possible to define custom advanced filter on view and export data function.
+* Data Edit: it’s possible to edit form responses using the same interface of web data entry.
+* Data Review Workflow: responses can be reviewed and any status change is recorded in the response history.
+
+
+Improvements
+All the heavy tasks have been refactored to support multiprocessor/multicore support to improve calculation speed and more use of RAM memory to reduce access to database. 
+This changes guarantee an optimal load scalability.
+
+
+Fixes
+Response value field has been expanded from 255 to 4000 chars in order to avoid exceptions in data entry. 
+If the input is longer than 4000 chars, it will be truncated.
+
+
+
+
+Database Schema Changes:
+In order to properly upgrade GRASP Reporting the following database schema changes must be done:
+
+
+1. Added table FormFieldExt
+2. Added table FormFieldExtDependencies
+3. Added table FormResponseReviews
+4. Added table FormResponseStatus
+5. Added table Indexes
+6. Added table IndexFields
+7. Added table IndexHASHes
+8. Added table ResponseValueExt
+9. Added table ResponseValueReviews
+10. Added table UserFilters
+11. Added table UserToFormResponses
+12. Added table UserToResponseStatus
+13. Added field to User_Credential  [UserResponseFilter] [nvarchar](max) 
+14. Changed type ResponseValue.value to nvarchar(4000)
+15. Added field to ResponseValue [nvalue] [float] NULL
+16. Added field to ResponseValue [dvalue] [datetime] NULL
+17. Added field to FormResponse [ResponseStatusID] [int] NOT NULL
+18. Modified View FormFieldExport
+19. Modified View FormFieldResponses
+20. Modified View ResponseDetails
+21. Modified View ResponseRepeatable
+22. Modified View SurveyListAPI
+23. Add records to table Roles
+24. Add records to table FormResponseStatus
+
+
+These scripts are for GRASP Database never updated from the release of May 2014.
+If some of the tables or fields listed above have been already added to the Database you will receive an error or warning when the script is launched. In this case you must proceed with a manual update.
+
+
+The above scripts will not erase any data in your database.
+
+
+SQL scripts can be found in the folder SQLDbScripts
