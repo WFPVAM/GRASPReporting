@@ -102,7 +102,7 @@ public partial class DataEntry : System.Web.UI.Page
                                                   select ff;
 
             createRelevant();
-            createConstraint();
+            createConstraint(formID);
 
             IEnumerable<FormFieldExport> rosterFields = from i in db.FormFieldExport
                                                         where i.FormFieldParentID != null
@@ -2643,7 +2643,7 @@ public partial class DataEntry : System.Web.UI.Page
     /// <summary>
     /// Creates the HTML structure for the min/max constraints to be included in the numeric fields
     /// </summary>
-    private void createConstraint()
+    private void createConstraint(int fid)
     {
         int formFid = 0;
         int key = 0;
@@ -2651,8 +2651,12 @@ public partial class DataEntry : System.Web.UI.Page
 
         GRASPEntities db = new GRASPEntities();
 
+/// Fixed to filter on the fields of the form being edited instead of all forms - GEORGE 20160510
         var constr = from c in db.ConstraintContainer
                      join fc in db.FormField_ConstraintContainer on c.id equals fc.constraints_id
+                     join ff in db.FormField on fc.FormField_id equals ff.id
+                     where ff.form_id == fid
+                     
                      select new { c, fc };
 
         foreach(var c in constr)
