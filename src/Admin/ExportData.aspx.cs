@@ -721,10 +721,17 @@ public partial class Admin_Surveys_ExportSettings : System.Web.UI.Page
             if (i == 7
                 && isFormHasDefaultGPSField) //s3
             {
-                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[0]))
-                    sb.Append(record[i].ToString().Split(' ')[0].Replace("\n", " ") + separator);
-                if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[1]))
-                    sb.Append(record[i].ToString().Split(' ')[1].Replace("\n", " ") + separator);
+                if (!string.IsNullOrEmpty(record[i].ToString()) && record[i].ToString().Split(' ').Length > 1)
+                {
+                    if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[0]))
+                        sb.Append(record[i].ToString().Split(' ')[0].Replace("\n", " ") + separator);
+                    if (!string.IsNullOrEmpty(record[i].ToString().Split(' ')[1]))
+                        sb.Append(record[i].ToString().Split(' ')[1].Replace("\n", " ") + separator);
+                }
+                else
+                {
+                    sb.Append(record[i].ToString().Replace("\n", " ") + separator);
+                }
             }
             else
                 sb.Append(record[i].ToString().Replace("\n", " ") + separator);
